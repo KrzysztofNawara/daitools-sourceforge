@@ -1,0 +1,230 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{B6ED8858-F46F-480B-AB1B-1C1A0D5DADF3}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>DA_Tool</RootNamespace>
+    <AssemblyName>DA_Tool</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>
+    </StartupObject>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="ICSharpCode.SharpZipLib">
+      <HintPath>.\ICSharpCode.SharpZipLib.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.DirectX, Version=1.0.2902.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\dlls\Microsoft.DirectX.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.DirectX.Direct3D, Version=1.0.2902.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\dlls\Microsoft.DirectX.Direct3D.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.DirectX.Direct3DX, Version=1.0.2909.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\dlls\Microsoft.DirectX.Direct3DX.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.VisualBasic" />
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="BitTool\BitTool.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="BitTool\BitTool.Designer.cs">
+      <DependentUpon>BitTool.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Bundle Explorer\BundleExplorer.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Bundle Explorer\BundleExplorer.Designer.cs">
+      <DependentUpon>BundleExplorer.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Frostbite\Ebx.cs" />
+    <Compile Include="Frostbite\HalfUtils.cs" />
+    <Compile Include="Frostbite\Mesh.cs" />
+    <Compile Include="Bundle Explorer\MeshPreview.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Bundle Explorer\MeshPreview.Designer.cs">
+      <DependentUpon>MeshPreview.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Frostbite\Skeleton.cs" />
+    <Compile Include="Frostbite\Talktable.cs" />
+    <Compile Include="Frostbite\Texture.cs" />
+    <Compile Include="CASExplorer\CASExplorer.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="CASExplorer\CASExplorer.Designer.cs">
+      <DependentUpon>CASExplorer.cs</DependentUpon>
+    </Compile>
+    <Compile Include="CATReader\CATReader.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="CATReader\CATReader.Designer.cs">
+      <DependentUpon>CATReader.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DASReader\DASReader.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DASReader\DASReader.Designer.cs">
+      <DependentUpon>DASReader.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Frontend.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Frontend.Designer.cs">
+      <DependentUpon>Frontend.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Frostbite\Bundle.cs" />
+    <Compile Include="Frostbite\CATFile.cs" />
+    <Compile Include="Frostbite\CASFile.cs" />
+    <Compile Include="Frostbite\SBFile.cs" />
+    <Compile Include="Frostbite\TOCFile.cs" />
+    <Compile Include="Frostbite\Tools.cs" />
+    <Compile Include="Frostbite\Tools.Hashes.cs" />
+    <Compile Include="InitFSExplorer\InitFS_Explorer.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="InitFSExplorer\InitFS_Explorer.Designer.cs">
+      <DependentUpon>InitFS_Explorer.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ResExplorer\ResExplorer.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ResExplorer\ResExplorer.Designer.cs">
+      <DependentUpon>ResExplorer.cs</DependentUpon>
+    </Compile>
+    <Compile Include="SBReader\SBReader.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SBReader\SBReader.Designer.cs">
+      <DependentUpon>SBReader.cs</DependentUpon>
+    </Compile>
+    <Compile Include="SoundExplorer\SoundExplorer.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SoundExplorer\SoundExplorer.Designer.cs">
+      <DependentUpon>SoundExplorer.cs</DependentUpon>
+    </Compile>
+    <Compile Include="TOCReader\TOCReader.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="TOCReader\TOCReader.Designer.cs">
+      <DependentUpon>TOCReader.cs</DependentUpon>
+    </Compile>
+    <EmbeddedResource Include="BitTool\BitTool.resx">
+      <DependentUpon>BitTool.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Bundle Explorer\BundleExplorer.resx">
+      <DependentUpon>BundleExplorer.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Bundle Explorer\MeshPreview.resx">
+      <DependentUpon>MeshPreview.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CASExplorer\CASExplorer.resx">
+      <DependentUpon>CASExplorer.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CATReader\CATReader.resx">
+      <DependentUpon>CATReader.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DASReader\DASReader.resx">
+      <DependentUpon>DASReader.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Frontend.resx">
+      <DependentUpon>Frontend.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="InitFSExplorer\InitFS_Explorer.resx">
+      <DependentUpon>InitFS_Explorer.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <EmbeddedResource Include="ResExplorer\ResExplorer.resx">
+      <DependentUpon>ResExplorer.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SBReader\SBReader.resx">
+      <DependentUpon>SBReader.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SoundExplorer\SoundExplorer.resx">
+      <DependentUpon>SoundExplorer.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="TOCReader\TOCReader.resx">
+      <DependentUpon>TOCReader.cs</DependentUpon>
+    </EmbeddedResource>
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Be.Windows.Forms.HexBox\Be.Windows.Forms.HexBox.csproj">
+      <Project>{26C5F25F-B450-4CAF-AD8B-B8D11AE73457}</Project>
+      <Name>Be.Windows.Forms.HexBox</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

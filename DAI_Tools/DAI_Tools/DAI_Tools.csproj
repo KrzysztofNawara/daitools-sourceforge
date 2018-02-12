@@ -1,0 +1,261 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{2B5895CA-7634-474C-A1A5-CAC75B529125}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>DAI_Tools</RootNamespace>
+    <AssemblyName>DAI_Tools</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="DevIL.NET">
+      <HintPath>dlls\DevIL.NET.dll</HintPath>
+    </Reference>
+    <Reference Include="ICSharpCode.SharpZipLib">
+      <HintPath>dlls\ICSharpCode.SharpZipLib.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.DirectX, Version=1.0.2902.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>dlls\Microsoft.DirectX.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.DirectX.Direct3D, Version=1.0.2902.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>dlls\Microsoft.DirectX.Direct3D.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.DirectX.Direct3DX, Version=1.0.2909.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>dlls\Microsoft.DirectX.Direct3DX.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.VisualBasic" />
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data.SQLite">
+      <HintPath>.\System.Data.SQLite.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AboutBox.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AboutBox.Designer.cs">
+      <DependentUpon>AboutBox.cs</DependentUpon>
+    </Compile>
+    <Compile Include="BundleBrowser\BundleBrowser.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="BundleBrowser\BundleBrowser.Designer.cs">
+      <DependentUpon>BundleBrowser.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Database.cs" />
+    <Compile Include="DBManager\DBManager.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DBManager\DBManager.Designer.cs">
+      <DependentUpon>DBManager.cs</DependentUpon>
+    </Compile>
+    <Compile Include="EBXExplorer\EBXExplorer.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="EBXExplorer\EBXExplorer.Designer.cs">
+      <DependentUpon>EBXExplorer.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Frontend.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Frontend.Designer.cs">
+      <DependentUpon>Frontend.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Frostbite\Bundle.cs" />
+    <Compile Include="Frostbite\CASFile.cs" />
+    <Compile Include="Frostbite\CATFile.cs" />
+    <Compile Include="Frostbite\Ebx.cs" />
+    <Compile Include="Frostbite\HalfUtils.cs" />
+    <Compile Include="Frostbite\Mesh.cs" />
+    <Compile Include="Frostbite\Mod.cs" />
+    <Compile Include="Frostbite\SBFile.cs" />
+    <Compile Include="Frostbite\Skeleton.cs" />
+    <Compile Include="Frostbite\Talktable.cs" />
+    <Compile Include="Frostbite\Texture.cs" />
+    <Compile Include="Frostbite\TOCFile.cs" />
+    <Compile Include="Frostbite\Tools.cs" />
+    <Compile Include="Frostbite\Tools.Hashes.cs" />
+    <Compile Include="Frostbite\XMLHelper.cs" />
+    <Compile Include="GlobalStuff.cs" />
+    <Compile Include="ModScript.cs" />
+    <Compile Include="ModScriptTool\ModScriptTool.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ModScriptTool\ModScriptTool.Designer.cs">
+      <DependentUpon>ModScriptTool.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ScriptExplorer\ScriptExplorer.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ScriptExplorer\ScriptExplorer.Designer.cs">
+      <DependentUpon>ScriptExplorer.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ShaderExplorer\ShaderExplorer.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ShaderExplorer\ShaderExplorer.Designer.cs" />
+    <Compile Include="SoundExplorer\SoundExplorer.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SoundExplorer\SoundExplorer.Designer.cs">
+      <DependentUpon>SoundExplorer.cs</DependentUpon>
+    </Compile>
+    <Compile Include="TalktableEditor\TalktableEditor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="TalktableEditor\TalktableEditor.Designer.cs">
+      <DependentUpon>TalktableEditor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="TalktableExplorer\TalktableExplorer.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="TalktableExplorer\TalktableExplorer.Designer.cs">
+      <DependentUpon>TalktableExplorer.cs</DependentUpon>
+    </Compile>
+    <Compile Include="TextureExplorer\TextureExplorer.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="TextureExplorer\TextureExplorer.Designer.cs">
+      <DependentUpon>TextureExplorer.cs</DependentUpon>
+    </Compile>
+    <EmbeddedResource Include="AboutBox.resx">
+      <DependentUpon>AboutBox.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="BundleBrowser\BundleBrowser.resx">
+      <DependentUpon>BundleBrowser.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DBManager\DBManager.resx">
+      <DependentUpon>DBManager.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="EBXExplorer\EBXExplorer.resx">
+      <DependentUpon>EBXExplorer.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Frontend.resx">
+      <DependentUpon>Frontend.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ModScriptTool\ModScriptTool.resx">
+      <DependentUpon>ModScriptTool.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <EmbeddedResource Include="ScriptExplorer\ScriptExplorer.resx">
+      <DependentUpon>ScriptExplorer.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ShaderExplorer\ShaderExplorer.resx" />
+    <EmbeddedResource Include="SoundExplorer\SoundExplorer.resx">
+      <DependentUpon>SoundExplorer.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="TalktableEditor\TalktableEditor.resx">
+      <DependentUpon>TalktableEditor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="TalktableExplorer\TalktableExplorer.resx">
+      <DependentUpon>TalktableExplorer.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="TextureExplorer\TextureExplorer.resx">
+      <DependentUpon>TextureExplorer.cs</DependentUpon>
+    </EmbeddedResource>
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include=".NETFramework,Version=v4.5">
+      <Visible>False</Visible>
+      <ProductName>Microsoft .NET Framework 4.5 %28x86 and x64%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="Be.Windows.Forms.HexBox\Be.Windows.Forms.HexBox.csproj">
+      <Project>{26C5F25F-B450-4CAF-AD8B-B8D11AE73457}</Project>
+      <Name>Be.Windows.Forms.HexBox</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

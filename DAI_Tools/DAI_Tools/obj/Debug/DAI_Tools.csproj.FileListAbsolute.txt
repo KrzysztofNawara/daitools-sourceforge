@@ -1,0 +1,91 @@
+D:\CODE\C#\DAI_Tools\DAI_Tools\bin\Debug\DAI_Tools.exe.config
+D:\CODE\C#\DAI_Tools\DAI_Tools\obj\Debug\DAI_Tools.Frontend.resources
+D:\CODE\C#\DAI_Tools\DAI_Tools\obj\Debug\DAI_Tools.Properties.Resources.resources
+D:\CODE\C#\DAI_Tools\DAI_Tools\obj\Debug\DAI_Tools.csproj.GenerateResource.Cache
+D:\CODE\C#\DAI_Tools\DAI_Tools\bin\Debug\DAI_Tools.exe
+D:\CODE\C#\DAI_Tools\DAI_Tools\bin\Debug\DAI_Tools.pdb
+D:\CODE\C#\DAI_Tools\DAI_Tools\obj\Debug\DAI_Tools.exe
+D:\CODE\C#\DAI_Tools\DAI_Tools\obj\Debug\DAI_Tools.pdb
+D:\CODE\C#\DAI_Tools\DAI_Tools\bin\Debug\System.Data.SQLite.dll
+D:\CODE\C#\DAI_Tools\DAI_Tools\bin\Debug\System.Data.SQLite.xml
+D:\CODE\C#\DAI_Tools\DAI_Tools\bin\Debug\ICSharpCode.SharpZipLib.dll
+D:\CODE\C#\DAI_Tools\DAI_Tools\obj\Debug\DAI_Tools.DBManager.DBManager.resources
+D:\CODE\SVN\DAI_Tools\DAI_Tools\DAI_Tools\bin\Debug\DAI_Tools.exe.config
+D:\CODE\SVN\DAI_Tools\DAI_Tools\DAI_Tools\obj\Debug\DAI_Tools.exe
+D:\CODE\SVN\DAI_Tools\DAI_Tools\DAI_Tools\obj\Debug\DAI_Tools.pdb
+D:\CODE\SVN\DAI_Tools\DAI_Tools\DAI_Tools\bin\Debug\DAI_Tools.exe
+D:\CODE\SVN\DAI_Tools\DAI_Tools\DAI_Tools\bin\Debug\DAI_Tools.pdb
+D:\CODE\SVN\DAI_Tools\DAI_Tools\DAI_Tools\bin\Debug\ICSharpCode.SharpZipLib.dll
+D:\CODE\SVN\DAI_Tools\DAI_Tools\DAI_Tools\bin\Debug\System.Data.SQLite.dll
+D:\CODE\SVN\DAI_Tools\DAI_Tools\DAI_Tools\bin\Debug\System.Data.SQLite.xml
+D:\CODE\SVN\DAI_Tools\DAI_Tools\DAI_Tools\obj\Debug\DAI_Tools.DBManager.DBManager.resources
+D:\CODE\SVN\DAI_Tools\DAI_Tools\DAI_Tools\obj\Debug\DAI_Tools.Frontend.resources
+D:\CODE\SVN\DAI_Tools\DAI_Tools\DAI_Tools\obj\Debug\DAI_Tools.Properties.Resources.resources
+D:\CODE\SVN\DAI_Tools\DAI_Tools\DAI_Tools\obj\Debug\DAI_Tools.csproj.GenerateResource.Cache
+D:\CODE\SVN\DAI_Tools\DAI_Tools\DAI_Tools\obj\Debug\DAI_Tools.BundleBrowser.BundleBrowser.resources
+D:\CODE\SVN\DAI_Tools\DAI_Tools\DAI_Tools\obj\Debug\DAI_Tools.csprojResolveAssemblyReference.cache
+D:\CODE\SVN\DAI_Tools\DAI_Tools\DAI_Tools\bin\Debug\Be.Windows.Forms.HexBox.dll
+D:\CODE\SVN\DAI_Tools\DAI_Tools\DAI_Tools\bin\Debug\Be.Windows.Forms.HexBox.pdb
+D:\CODE\SVN\DAI_Tools\DAI_Tools\DAI_Tools\bin\Debug\Be.Windows.Forms.HexBox.xml
+D:\Development\C#\DA_Tools\DAI_Tools\DAI_Tools\bin\Debug\DAI_Tools.exe.config
+D:\Development\C#\DA_Tools\DAI_Tools\DAI_Tools\obj\Debug\DAI_Tools.exe
+D:\Development\C#\DA_Tools\DAI_Tools\DAI_Tools\obj\Debug\DAI_Tools.pdb
+D:\Development\C#\DA_Tools\DAI_Tools\DAI_Tools\bin\Debug\DAI_Tools.exe
+D:\Development\C#\DA_Tools\DAI_Tools\DAI_Tools\bin\Debug\DAI_Tools.pdb
+D:\Development\C#\DA_Tools\DAI_Tools\DAI_Tools\bin\Debug\Be.Windows.Forms.HexBox.dll
+D:\Development\C#\DA_Tools\DAI_Tools\DAI_Tools\bin\Debug\ICSharpCode.SharpZipLib.dll
+D:\Development\C#\DA_Tools\DAI_Tools\DAI_Tools\bin\Debug\System.Data.SQLite.dll
+D:\Development\C#\DA_Tools\DAI_Tools\DAI_Tools\bin\Debug\Be.Windows.Forms.HexBox.pdb
+D:\Development\C#\DA_Tools\DAI_Tools\DAI_Tools\bin\Debug\Be.Windows.Forms.HexBox.xml
+D:\Development\C#\DA_Tools\DAI_Tools\DAI_Tools\bin\Debug\System.Data.SQLite.xml
+D:\Development\C#\DA_Tools\DAI_Tools\DAI_Tools\obj\Debug\DAI_Tools.csprojResolveAssemblyReference.cache
+D:\Development\C#\DA_Tools\DAI_Tools\DAI_Tools\obj\Debug\DAI_Tools.BundleBrowser.BundleBrowser.resources
+D:\Development\C#\DA_Tools\DAI_Tools\DAI_Tools\obj\Debug\DAI_Tools.DBManager.DBManager.resources
+D:\Development\C#\DA_Tools\DAI_Tools\DAI_Tools\obj\Debug\DAI_Tools.Frontend.resources
+D:\Development\C#\DA_Tools\DAI_Tools\DAI_Tools\obj\Debug\DAI_Tools.Properties.Resources.resources
+D:\Development\C#\DA_Tools\DAI_Tools\DAI_Tools\obj\Debug\DAI_Tools.csproj.GenerateResource.Cache
+D:\CODE\SVN\DAI_Tools\DAI_Tools\DAI_Tools\obj\Debug\DAI_Tools.SoundExplorer.SoundExplorer.resources
+D:\CODE\SVN\DAI_Tools\DAI_Tools\DAI_Tools\obj\Debug\DAI_Tools.TextureExplorer.TextureExplorer.resources
+D:\CODE\SVN\DAI_Tools\DAI_Tools\DAI_Tools\bin\Debug\DevIL.NET.dll
+D:\CODE\SVN\DAI_Tools\DAI_Tools\DAI_Tools\obj\Debug\DAI_Tools.EBXExplorer.EBXExplorer.resources
+D:\CODE\SVN\DAI_Tools\DAI_Tools\DAI_Tools\obj\Debug\DAI_Tools.ScriptExplorer.ScriptExplorer.resources
+D:\CODE\SVN\DAI_Tools\DAI_Tools\DAI_Tools\obj\Debug\DAI_Tools.AboutBox.resources
+D:\CODE\SVN\DAI_Tools\DAI_Tools\DAI_Tools\obj\Debug\DAI_Tools.ModScriptTool.ModScriptTool.resources
+D:\CODE\SVN\DAI_Tools\DAI_Tools\DAI_Tools\obj\Debug\DAI_Tools.TalktableExplorer.TalktableExplorer.resources
+G:\Temp6\latest get\DAI_Tools\bin\Debug\DAI_Tools.exe.config
+G:\Temp6\latest get\DAI_Tools\obj\Debug\DAI_Tools.exe
+G:\Temp6\latest get\DAI_Tools\obj\Debug\DAI_Tools.pdb
+G:\Temp6\latest get\DAI_Tools\bin\Debug\DAI_Tools.exe
+G:\Temp6\latest get\DAI_Tools\bin\Debug\DAI_Tools.pdb
+G:\Temp6\latest get\DAI_Tools\bin\Debug\Be.Windows.Forms.HexBox.dll
+G:\Temp6\latest get\DAI_Tools\bin\Debug\DevIL.NET.dll
+G:\Temp6\latest get\DAI_Tools\bin\Debug\ICSharpCode.SharpZipLib.dll
+G:\Temp6\latest get\DAI_Tools\bin\Debug\System.Data.SQLite.dll
+G:\Temp6\latest get\DAI_Tools\bin\Debug\Be.Windows.Forms.HexBox.pdb
+G:\Temp6\latest get\DAI_Tools\bin\Debug\Be.Windows.Forms.HexBox.xml
+G:\Temp6\latest get\DAI_Tools\bin\Debug\System.Data.SQLite.xml
+G:\Temp6\latest get\DAI_Tools\obj\Debug\DAI_Tools.csprojResolveAssemblyReference.cache
+G:\Temp6\latest get\DAI_Tools\obj\Debug\DAI_Tools.AboutBox.resources
+G:\Temp6\latest get\DAI_Tools\obj\Debug\DAI_Tools.BundleBrowser.BundleBrowser.resources
+G:\Temp6\latest get\DAI_Tools\obj\Debug\DAI_Tools.DBManager.DBManager.resources
+G:\Temp6\latest get\DAI_Tools\obj\Debug\DAI_Tools.EBXExplorer.EBXExplorer.resources
+G:\Temp6\latest get\DAI_Tools\obj\Debug\DAI_Tools.Frontend.resources
+G:\Temp6\latest get\DAI_Tools\obj\Debug\DAI_Tools.ModScriptTool.ModScriptTool.resources
+G:\Temp6\latest get\DAI_Tools\obj\Debug\DAI_Tools.Properties.Resources.resources
+G:\Temp6\latest get\DAI_Tools\obj\Debug\DAI_Tools.ScriptExplorer.ScriptExplorer.resources
+G:\Temp6\latest get\DAI_Tools\obj\Debug\DAI_Tools.SoundExplorer.SoundExplorer.resources
+G:\Temp6\latest get\DAI_Tools\obj\Debug\DAI_Tools.TalktableExplorer.TalktableExplorer.resources
+G:\Temp6\latest get\DAI_Tools\obj\Debug\DAI_Tools.TextureExplorer.TextureExplorer.resources
+G:\Temp6\latest get\DAI_Tools\obj\Debug\DAI_Tools.csproj.GenerateResource.Cache
+D:\CODE\SVN\DAI_Tools\DAI_Tools\DAI_Tools\obj\Debug\DAI_Tools.TalktableEditor.TalktableEditor.resources
+D:\Development\C#\DA_Tools\DAI_Tools\DAI_Tools\bin\Debug\DevIL.NET.dll
+D:\Development\C#\DA_Tools\DAI_Tools\DAI_Tools\obj\Debug\DAI_Tools.AboutBox.resources
+D:\Development\C#\DA_Tools\DAI_Tools\DAI_Tools\obj\Debug\DAI_Tools.EBXExplorer.EBXExplorer.resources
+D:\Development\C#\DA_Tools\DAI_Tools\DAI_Tools\obj\Debug\DAI_Tools.ModScriptTool.ModScriptTool.resources
+D:\Development\C#\DA_Tools\DAI_Tools\DAI_Tools\obj\Debug\DAI_Tools.ScriptExplorer.ScriptExplorer.resources
+D:\Development\C#\DA_Tools\DAI_Tools\DAI_Tools\obj\Debug\DAI_Tools.ShaderExplorer.ShaderExplorer.resources
+D:\Development\C#\DA_Tools\DAI_Tools\DAI_Tools\obj\Debug\DAI_Tools.SoundExplorer.SoundExplorer.resources
+D:\Development\C#\DA_Tools\DAI_Tools\DAI_Tools\obj\Debug\DAI_Tools.TalktableEditor.TalktableEditor.resources
+D:\Development\C#\DA_Tools\DAI_Tools\DAI_Tools\obj\Debug\DAI_Tools.TalktableExplorer.TalktableExplorer.resources
+D:\Development\C#\DA_Tools\DAI_Tools\DAI_Tools\obj\Debug\DAI_Tools.TextureExplorer.TextureExplorer.resources
+D:\CODE\SVN\DAI_Tools\DAI_Tools\DAI_Tools\obj\Debug\DAI_Tools.ShaderExplorer.ShaderExplorer.resources
