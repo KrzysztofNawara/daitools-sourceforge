@@ -50,6 +50,7 @@ namespace DAI_Tools.EBXExplorer
                 this.BeginInvoke(new MethodInvoker(Close));
                 return;
             }
+            this.WindowState = FormWindowState.Maximized;
             rtb1.Text = "Loading CAT for faster lookup...\n";
             Application.DoEvents();
             string path = GlobalStuff.FindSetting("gamepath");
@@ -59,7 +60,6 @@ namespace DAI_Tools.EBXExplorer
             SQLiteConnection con = Database.GetConnection();
             con.Open();
             rtb1.AppendText("Querying...\n");
-            this.WindowState = FormWindowState.Maximized;
             Application.DoEvents();
             SQLiteDataReader reader = new SQLiteCommand("SELECT DISTINCT name,sha1 FROM ebx", con).ExecuteReader();
             while (reader.Read())
@@ -117,6 +117,8 @@ namespace DAI_Tools.EBXExplorer
 
         private void treeView1_AfterSelect(object sender, TreeViewEventArgs e)
         {
+            resetSearchComponents();
+
             try
             {
                 if (ignoreonce)
@@ -127,9 +129,11 @@ namespace DAI_Tools.EBXExplorer
                 TreeNode t = treeView1.SelectedNode;
                 if (t == null || t.Name == "")
                     return;
+
                 string sha1 = t.Name;
                 byte[] data = Tools.GetDataBySHA1(sha1, cat);
                 rtb1.Text = Encoding.UTF8.GetString(Tools.ExtractEbx(new MemoryStream(data)));
+                findButton.Enabled = true;
             }
             catch (Exception)
             {
@@ -241,6 +245,45 @@ namespace DAI_Tools.EBXExplorer
         private void EBXExplorer_FormClosing(object sender, FormClosingEventArgs e)
         {
             stop = true;
+        }
+
+        private void findButton_Click(object sender, EventArgs e)
+        {
+            if (rtb1.TextLength > 0)
+            {
+                var cursorPos = rtb1.SelectionStart;
+
+                rtb1.SelectAll();
+                rtb1.SelectionBackColor = Color.White;
+
+                int matchCount = 0;
+                var query = findTextBox.Text;
+                var lastMatchStart = 0;
+
+                while (lastMatchStart >= 0 && lastMatchStart + 1 < rtb1.TextLength)
+                {
+                    lastMatchStart = rtb1.Find(query, lastMatchStart + 1, -1, 0);
+
+                    if (lastMatchStart >= 0)
+                    {
+                        rtb1.SelectionBackColor = Color.Yellow;
+                        matchCount += 1;
+                    }
+                }
+
+                rtb1.SelectionStart = cursorPos;
+                rtb1.SelectionLength = 0;
+
+                matchesCountLabel.Visible = true;
+                matchesCountLabel.Text = "Found " + matchCount + " matches";
+            }
+        }
+
+        private void resetSearchComponents()
+        {
+            matchesCountLabel.Visible = false;
+            findButton.Enabled = false;
+            findTextBox.Clear();
         }
     }
 }
