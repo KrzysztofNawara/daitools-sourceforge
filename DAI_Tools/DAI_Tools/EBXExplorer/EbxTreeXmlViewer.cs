@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using DAI_Tools.Frostbite;
 
 namespace DAI_Tools.EBXExplorer
 {
@@ -15,6 +16,11 @@ namespace DAI_Tools.EBXExplorer
         public EbxTreeXmlViewer()
         {
             InitializeComponent();
+        }
+
+        public void setEbxFile(DAIEbx ebxFile)
+        {
+            
         }
     }
 }

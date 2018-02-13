@@ -134,12 +134,9 @@ namespace DAI_Tools.EBXExplorer
 
         private void treeView1_AfterSelect(object sender, TreeViewEventArgs e)
         {
-            String xml = "";
-
             if (ignoreonce)
             {
                 ignoreonce = false;
-                xml = "";
                 hideViewer();
             }
             else
@@ -154,7 +151,9 @@ namespace DAI_Tools.EBXExplorer
 
                     string sha1 = t.Name;
                     byte[] data = Tools.GetDataBySHA1(sha1, cat);
-                    xml = Encoding.UTF8.GetString(Tools.ExtractEbx(new MemoryStream(data)));
+
+                    DAIEbx ebxFile = deserializeEbx(data);
+                    setEbxFile(ebxFile);
 
                     status.Text = "Done.";
                     showViewer();
@@ -165,8 +164,6 @@ namespace DAI_Tools.EBXExplorer
                     hideViewer();
                 }
             }
-
-            rawXmlViewer.setXmlContent(xml);
         }
 
         private void toolStripButton1_Click(object sender, EventArgs e)
@@ -192,14 +189,16 @@ namespace DAI_Tools.EBXExplorer
                     byte[] data = Tools.GetDataBySHA1(t.Name, cat);
                     if (data.Length != 0)
                     {
-                        string xml = Encoding.UTF8.GetString(Tools.ExtractEbx(new MemoryStream(data)));
+                        DAIEbx ebxFile = deserializeEbx(data);
+                        string xml = ebxFile.ToXml();
+
                         if (xml.Contains(search))
                         {
                             ignoreonce = true;
                             treeView1.SelectedNode = t;
 
                             showViewer();
-                            rawXmlViewer.setXmlContent(xml);
+                            setEbxFile(ebxFile);
                             rawXmlViewer.search(search);
 
                             status.Text = "";
@@ -276,6 +275,12 @@ namespace DAI_Tools.EBXExplorer
             stop = true;
         }
 
+        private void setEbxFile(DAIEbx ebxFile)
+        {
+            rawXmlViewer.setEbxFile(ebxFile);
+            treeXmlViewer.setEbxFile(ebxFile);
+        }
+
         private void hideViewer()
         {
             rawXmlViewer.Visible = false;
@@ -304,6 +309,13 @@ namespace DAI_Tools.EBXExplorer
                 splitContainer1.Panel2.Controls.Add(newlySelectedViewer);
                 this.currentViewer = newlySelectedViewer;
             }
+        }
+
+        private DAIEbx deserializeEbx(byte[] bytes)
+        {
+            DAIEbx ebxFile = new DAIEbx();
+            ebxFile.Serialize(new MemoryStream(bytes));
+            return ebxFile;
         }
     }
 }
