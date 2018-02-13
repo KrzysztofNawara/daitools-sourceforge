@@ -106,6 +106,12 @@
     <Compile Include="EBXExplorer\EBXExplorer.Designer.cs">
       <DependentUpon>EBXExplorer.cs</DependentUpon>
     </Compile>
+    <Compile Include="EBXExplorer\EbxRawXmlViewer.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="EBXExplorer\EbxRawXmlViewer.Designer.cs">
+      <DependentUpon>EbxRawXmlViewer.cs</DependentUpon>
+    </Compile>
     <Compile Include="Frontend.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -182,6 +188,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="EBXExplorer\EBXExplorer.resx">
       <DependentUpon>EBXExplorer.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="EBXExplorer\EbxRawXmlViewer.resx">
+      <DependentUpon>EbxRawXmlViewer.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Frontend.resx">
       <DependentUpon>Frontend.cs</DependentUpon>

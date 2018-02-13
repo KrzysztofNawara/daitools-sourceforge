@@ -23,6 +23,9 @@ namespace DAI_Tools.EBXExplorer
         public bool stop = false;
         public bool ignoreonce = false;
 
+        private EbxRawXmlViewer rawXmlViewer;
+        private Control currentViewer = null;
+
         public struct EBXEntry
         {
             public string path;
@@ -34,6 +37,7 @@ namespace DAI_Tools.EBXExplorer
         public EBXExplorer()
         {
             InitializeComponent();
+            rawXmlViewer = new EbxRawXmlViewer();
         }
 
         private void EBXExplorer_Activated(object sender, EventArgs e)
@@ -44,8 +48,6 @@ namespace DAI_Tools.EBXExplorer
 
         public void Init()
         {
-            disableSearch();
-
             if (GlobalStuff.FindSetting("isNew") == "1")
             {
                 MessageBox.Show("Please initialize the database in Database Manager with Scan");
@@ -125,6 +127,7 @@ namespace DAI_Tools.EBXExplorer
             {
                 ignoreonce = false;
                 xml = "";
+                setViewer(null);
             }
             else
             {
@@ -141,14 +144,16 @@ namespace DAI_Tools.EBXExplorer
                     xml = Encoding.UTF8.GetString(Tools.ExtractEbx(new MemoryStream(data)));
 
                     status.Text = "Done.";
+                    setViewer(rawXmlViewer);
                 }
                 catch (Exception ex)
                 {
                     status.Text = ex.ToString();
+                    setViewer(null);
                 }
             }
 
-            setXmlContent(xml);
+            rawXmlViewer.setXmlContent(xml);
         }
 
         private void toolStripButton1_Click(object sender, EventArgs e)
@@ -180,8 +185,9 @@ namespace DAI_Tools.EBXExplorer
                             ignoreonce = true;
                             treeView1.SelectedNode = t;
 
-                            setXmlContent(xml);
-                            findAndHighlightInEbx(search);
+                            setViewer(rawXmlViewer);
+                            rawXmlViewer.setXmlContent(xml);
+                            rawXmlViewer.search(search);
 
                             status.Text = "";
                             toolStripButton2.Visible = false;
@@ -257,58 +263,20 @@ namespace DAI_Tools.EBXExplorer
             stop = true;
         }
 
-        private void findButton_Click(object sender, EventArgs e)
+        private void setViewer(Control newViewer)
         {
-            findAndHighlightInEbx(findTextBox.Text);
-        }
-
-        private void setXmlContent(String xml)
-        {
-            if (xml.Length > 0)
+            if (currentViewer != null)
             {
-                rtb1.Text = xml;
-                findButton.Enabled = true;
+                splitContainer1.Panel2.Controls.Remove(currentViewer);
+                this.currentViewer = null;
             }
-            else
-                disableSearch();
+
+            if (newViewer != null)
+                splitContainer1.Panel2.Controls.Add(newViewer);
+
+            this.currentViewer = newViewer;
         }
 
-        private void findAndHighlightInEbx(String what)
-        {
-            if (rtb1.TextLength > 0)
-            {
-                var cursorPos = rtb1.SelectionStart;
-
-                rtb1.SelectAll();
-                rtb1.SelectionBackColor = Color.White;
-
-                int matchCount = 0;
-                var lastMatchStart = 0;
-
-                while (lastMatchStart >= 0 && lastMatchStart + 1 < rtb1.TextLength)
-                {
-                    lastMatchStart = rtb1.Find(what, lastMatchStart + 1, -1, 0);
-
-                    if (lastMatchStart >= 0)
-                    {
-                        rtb1.SelectionBackColor = Color.Yellow;
-                        matchCount += 1;
-                    }
-                }
-
-                rtb1.SelectionStart = cursorPos;
-                rtb1.SelectionLength = 0;
-
-                matchesCountLabel.Visible = true;
-                matchesCountLabel.Text = "Found " + matchCount + " matches";
-            }
-        }
-
-        private void disableSearch()
-        {
-            matchesCountLabel.Visible = false;
-            findButton.Enabled = false;
-            findTextBox.Clear();
-        }
+        
     }
 }
