@@ -23,7 +23,10 @@ namespace DAI_Tools.EBXExplorer
         public bool stop = false;
         public bool ignoreonce = false;
 
+        private String rawXmlViewerStr = "RawXML";
+        private String treeXmlViewerStr = "TreeXML";
         private EbxRawXmlViewer rawXmlViewer;
+        private EbxTreeXmlViewer treeXmlViewer;
         private Control currentViewer = null;
 
         public struct EBXEntry
@@ -37,7 +40,12 @@ namespace DAI_Tools.EBXExplorer
         public EBXExplorer()
         {
             InitializeComponent();
+
             rawXmlViewer = new EbxRawXmlViewer();
+            treeXmlViewer = new EbxTreeXmlViewer();
+            viewerSelector.Items.Add(rawXmlViewerStr);
+            viewerSelector.Items.Add(treeXmlViewerStr);
+            viewerSelector.SelectedIndex = 0;
         }
 
         private void EBXExplorer_Activated(object sender, EventArgs e)
@@ -127,7 +135,7 @@ namespace DAI_Tools.EBXExplorer
             {
                 ignoreonce = false;
                 xml = "";
-                setViewer(null);
+                hideViewer();
             }
             else
             {
@@ -144,12 +152,12 @@ namespace DAI_Tools.EBXExplorer
                     xml = Encoding.UTF8.GetString(Tools.ExtractEbx(new MemoryStream(data)));
 
                     status.Text = "Done.";
-                    setViewer(rawXmlViewer);
+                    showViewer();
                 }
                 catch (Exception ex)
                 {
                     status.Text = ex.ToString();
-                    setViewer(null);
+                    hideViewer();
                 }
             }
 
@@ -185,7 +193,7 @@ namespace DAI_Tools.EBXExplorer
                             ignoreonce = true;
                             treeView1.SelectedNode = t;
 
-                            setViewer(rawXmlViewer);
+                            showViewer();
                             rawXmlViewer.setXmlContent(xml);
                             rawXmlViewer.search(search);
 
@@ -263,20 +271,32 @@ namespace DAI_Tools.EBXExplorer
             stop = true;
         }
 
-        private void setViewer(Control newViewer)
+        private void hideViewer()
         {
-            if (currentViewer != null)
-            {
-                splitContainer1.Panel2.Controls.Remove(currentViewer);
-                this.currentViewer = null;
-            }
-
-            if (newViewer != null)
-                splitContainer1.Panel2.Controls.Add(newViewer);
-
-            this.currentViewer = newViewer;
+            splitContainer1.Panel2.Controls.Clear();
         }
 
-        
+        private void showViewer()
+        {
+            if (splitContainer1.Panel2.Controls.Count == 0 && currentViewer != null)
+                splitContainer1.Panel2.Controls.Add(currentViewer);
+        }
+
+        private void viewerSelector_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            var selection = (String) viewerSelector.SelectedItem;
+            Control newlySelectedViewer;
+
+            if (selection.Equals(treeXmlViewerStr))
+                newlySelectedViewer = treeXmlViewer;
+            else
+                newlySelectedViewer = rawXmlViewer;
+
+            if (newlySelectedViewer != this.currentViewer)
+            {
+                hideViewer();
+                splitContainer1.Panel2.Controls.Add(newlySelectedViewer);
+            }
+        }
     }
 }
