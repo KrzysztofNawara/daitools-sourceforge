@@ -51,7 +51,7 @@ namespace DAI_Tools.EBXExplorer
                 return;
             }
             this.WindowState = FormWindowState.Maximized;
-            rtb1.Text = "Loading CAT for faster lookup...\n";
+            status.Text = "Loading CAT for faster lookup...";
             Application.DoEvents();
             string path = GlobalStuff.FindSetting("gamepath");
             path += "Data\\cas.cat";
@@ -59,7 +59,7 @@ namespace DAI_Tools.EBXExplorer
             EBXList = new List<EBXEntry>();
             SQLiteConnection con = Database.GetConnection();
             con.Open();
-            rtb1.AppendText("Querying...\n");
+            status.Text = "Querying...";
             Application.DoEvents();
             SQLiteDataReader reader = new SQLiteCommand("SELECT DISTINCT name,sha1 FROM ebx", con).ExecuteReader();
             while (reader.Read())
@@ -70,10 +70,10 @@ namespace DAI_Tools.EBXExplorer
                 EBXList.Add(e);
             }
             con.Close();
-            rtb1.AppendText("Making Tree...\n");
+            status.Text = "Making Tree...";
             Application.DoEvents();
-            MakeTree();            
-            rtb1.Text = "Done.";
+            MakeTree();
+            status.Text = "Done.";
             init = true;
         }
 
@@ -126,6 +126,8 @@ namespace DAI_Tools.EBXExplorer
                     ignoreonce = false;
                     return;
                 }
+                status.Text = "Loading requested EBX...";
+
                 TreeNode t = treeView1.SelectedNode;
                 if (t == null || t.Name == "")
                     return;
@@ -133,6 +135,8 @@ namespace DAI_Tools.EBXExplorer
                 string sha1 = t.Name;
                 byte[] data = Tools.GetDataBySHA1(sha1, cat);
                 rtb1.Text = Encoding.UTF8.GetString(Tools.ExtractEbx(new MemoryStream(data)));
+
+                status.Text = "Done.";
                 findButton.Enabled = true;
             }
             catch (Exception)
