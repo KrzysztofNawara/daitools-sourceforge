@@ -32,23 +32,31 @@ namespace DAI_Tools.EBXExplorer
                 foreach (var instance in ebxFile.Instances)
                 {
                     var instanceGuid = DAIEbx.GuidToString(instance.Key);
-
-                    var instanceParentNode = new TreeNode(instanceGuid);
-                    root.Nodes.Add(instanceParentNode);
-                    
-                    processEbxTree(instance.Value, instanceParentNode);
+                    processEbxTree(wrapWithFakeField(instanceGuid, instance.Value), root);
                 }
 
                 treeView1.Nodes.Add(root);
             }
         }
 
-        /**
-         * Processes passed ebxRoot and schedules processing for all children nodes of complex type
-         */
-        private void processEbxTree(DAIComplex ebxRoot, TreeNode parentNode)
+        private DAIField wrapWithFakeField(String fieldName, DAIComplex value)
         {
-            
+            var fakeField = new DAIField();
+            fakeField.ValueType = DAIFieldType.DAI_Complex;
+            fakeField.Descriptor = new DAIFieldDescriptor();
+            fakeField.Descriptor.FieldName = fieldName;
+            fakeField.ComplexValue = value;
+            return fakeField;
+        }
+
+        /**
+         * Processes passed field, attaches new node for that field
+         * For each simple value attaches node for it
+         * For each complex value simply calls recursively processEbxTree - it'll handle adding node for DAIComplex
+         */
+        private void processEbxTree(DAIField field, TreeNode parentNode)
+        {
+
         }
     }
 }
