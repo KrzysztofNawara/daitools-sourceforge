@@ -745,5 +745,16 @@ namespace DAI_Tools.Frostbite
 
             return ebx;
         }
+
+        public static String GuidToString(byte[] guid)
+        {
+            if (guid.Length != 16)
+                throw new Exception("Guid length should be 16, is " + guid.Length);
+
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < 16; i++)
+                sb.Append(guid[i].ToString("X2"));
+            return sb.ToString();
+        }
     }
 }
