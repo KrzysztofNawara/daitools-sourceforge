@@ -41,6 +41,7 @@
             this.toolStrip2 = new System.Windows.Forms.ToolStrip();
             this.findTextBox = new System.Windows.Forms.ToolStripTextBox();
             this.findButton = new System.Windows.Forms.ToolStripButton();
+            this.matchesCountLabel = new System.Windows.Forms.ToolStripLabel();
             this.statusStrip1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -151,7 +152,8 @@
             this.toolStrip2.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
             this.toolStrip2.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.findTextBox,
-            this.findButton});
+            this.findButton,
+            this.matchesCountLabel});
             this.toolStrip2.Location = new System.Drawing.Point(0, 0);
             this.toolStrip2.Name = "toolStrip2";
             this.toolStrip2.Size = new System.Drawing.Size(372, 25);
@@ -171,6 +173,13 @@
             this.findButton.Size = new System.Drawing.Size(34, 22);
             this.findButton.Text = "Find";
             this.findButton.Click += new System.EventHandler(this.findButton_Click);
+            // 
+            // matchesCountLabel
+            // 
+            this.matchesCountLabel.Name = "matchesCountLabel";
+            this.matchesCountLabel.Size = new System.Drawing.Size(86, 22);
+            this.matchesCountLabel.Text = "toolStripLabel1";
+            this.matchesCountLabel.Visible = false;
             // 
             // EBXExplorer
             // 
@@ -214,5 +223,6 @@
         private System.Windows.Forms.ToolStrip toolStrip2;
         private System.Windows.Forms.ToolStripTextBox findTextBox;
         private System.Windows.Forms.ToolStripButton findButton;
+        private System.Windows.Forms.ToolStripLabel matchesCountLabel;
     }
 }

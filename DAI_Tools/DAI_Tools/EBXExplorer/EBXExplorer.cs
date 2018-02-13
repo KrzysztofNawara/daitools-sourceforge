@@ -117,7 +117,7 @@ namespace DAI_Tools.EBXExplorer
 
         private void treeView1_AfterSelect(object sender, TreeViewEventArgs e)
         {
-            findButton.Enabled = false;
+            resetSearchComponents();
 
             try
             {
@@ -256,18 +256,34 @@ namespace DAI_Tools.EBXExplorer
                 rtb1.SelectAll();
                 rtb1.SelectionBackColor = Color.White;
 
+                int matchCount = 0;
                 var query = findTextBox.Text;
                 var lastMatchStart = 0;
 
                 while (lastMatchStart >= 0 && lastMatchStart + 1 < rtb1.TextLength)
                 {
                     lastMatchStart = rtb1.Find(query, lastMatchStart + 1, -1, 0);
-                    rtb1.SelectionBackColor = Color.Yellow;
+
+                    if (lastMatchStart >= 0)
+                    {
+                        rtb1.SelectionBackColor = Color.Yellow;
+                        matchCount += 1;
+                    }
                 }
 
                 rtb1.SelectionStart = cursorPos;
                 rtb1.SelectionLength = 0;
+
+                matchesCountLabel.Visible = true;
+                matchesCountLabel.Text = "Found " + matchCount + " matches";
             }
+        }
+
+        private void resetSearchComponents()
+        {
+            matchesCountLabel.Visible = false;
+            findButton.Enabled = false;
+            findTextBox.Clear();
         }
     }
 }
