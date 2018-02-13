@@ -44,6 +44,8 @@ namespace DAI_Tools.EBXExplorer
 
         public void Init()
         {
+            disableSearch();
+
             if (GlobalStuff.FindSetting("isNew") == "1")
             {
                 MessageBox.Show("Please initialize the database in Database Manager with Scan");
@@ -117,31 +119,36 @@ namespace DAI_Tools.EBXExplorer
 
         private void treeView1_AfterSelect(object sender, TreeViewEventArgs e)
         {
-            resetSearchComponents();
+            String xml = "";
 
-            try
+            if (ignoreonce)
             {
-                if (ignoreonce)
+                ignoreonce = false;
+                xml = "";
+            }
+            else
+            {
+                try
                 {
-                    ignoreonce = false;
-                    return;
+                    status.Text = "Loading requested EBX...";
+
+                    TreeNode t = treeView1.SelectedNode;
+                    if (t == null || t.Name == "")
+                        return;
+
+                    string sha1 = t.Name;
+                    byte[] data = Tools.GetDataBySHA1(sha1, cat);
+                    xml = Encoding.UTF8.GetString(Tools.ExtractEbx(new MemoryStream(data)));
+
+                    status.Text = "Done.";
                 }
-                status.Text = "Loading requested EBX...";
-
-                TreeNode t = treeView1.SelectedNode;
-                if (t == null || t.Name == "")
-                    return;
-
-                string sha1 = t.Name;
-                byte[] data = Tools.GetDataBySHA1(sha1, cat);
-                rtb1.Text = Encoding.UTF8.GetString(Tools.ExtractEbx(new MemoryStream(data)));
-
-                status.Text = "Done.";
-                findButton.Enabled = true;
+                catch (Exception ex)
+                {
+                    status.Text = ex.ToString();
+                }
             }
-            catch (Exception)
-            {
-            }
+
+            setXmlContent(xml);
         }
 
         private void toolStripButton1_Click(object sender, EventArgs e)
@@ -172,11 +179,10 @@ namespace DAI_Tools.EBXExplorer
                         {
                             ignoreonce = true;
                             treeView1.SelectedNode = t;
-                            rtb1.Text = xml;
-                            int start = xml.IndexOf(search);
-                            rtb1.SelectionStart = start;
-                            rtb1.ScrollToCaret();
-                            rtb1.SelectionLength = search.Length;
+
+                            setXmlContent(xml);
+                            findAndHighlightInEbx(search);
+
                             status.Text = "";
                             toolStripButton2.Visible = false;
                             return;
@@ -256,6 +262,17 @@ namespace DAI_Tools.EBXExplorer
             findAndHighlightInEbx(findTextBox.Text);
         }
 
+        private void setXmlContent(String xml)
+        {
+            if (xml.Length > 0)
+            {
+                rtb1.Text = xml;
+                findButton.Enabled = true;
+            }
+            else
+                disableSearch();
+        }
+
         private void findAndHighlightInEbx(String what)
         {
             if (rtb1.TextLength > 0)
@@ -287,7 +304,7 @@ namespace DAI_Tools.EBXExplorer
             }
         }
 
-        private void resetSearchComponents()
+        private void disableSearch()
         {
             matchesCountLabel.Visible = false;
             findButton.Enabled = false;
