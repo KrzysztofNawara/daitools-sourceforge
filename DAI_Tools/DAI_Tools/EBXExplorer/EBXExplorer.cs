@@ -253,6 +253,11 @@ namespace DAI_Tools.EBXExplorer
 
         private void findButton_Click(object sender, EventArgs e)
         {
+            findAndHighlightInEbx(findTextBox.Text);
+        }
+
+        private void findAndHighlightInEbx(String what)
+        {
             if (rtb1.TextLength > 0)
             {
                 var cursorPos = rtb1.SelectionStart;
@@ -261,12 +266,11 @@ namespace DAI_Tools.EBXExplorer
                 rtb1.SelectionBackColor = Color.White;
 
                 int matchCount = 0;
-                var query = findTextBox.Text;
                 var lastMatchStart = 0;
 
                 while (lastMatchStart >= 0 && lastMatchStart + 1 < rtb1.TextLength)
                 {
-                    lastMatchStart = rtb1.Find(query, lastMatchStart + 1, -1, 0);
+                    lastMatchStart = rtb1.Find(what, lastMatchStart + 1, -1, 0);
 
                     if (lastMatchStart >= 0)
                     {
