@@ -33,20 +33,50 @@ namespace DAI_Tools.EBXExplorer
                 var tbc = new TreeBuilderContext();
                 tbc.file = ebxFile;
 
+                SortedDictionary<String, ReferenceTreeEntry> instanceNodes = new SortedDictionary<string, ReferenceTreeEntry>();
+
+                /* traverse tree, cache references */
                 foreach (var instance in ebxFile.Instances)
                 {
                     var instanceGuid = DAIEbx.GuidToString(instance.Key);
                     var tnode = processEbxTree(wrapWithFakeField(instanceGuid, instance.Value), tbc);
-                    root.Nodes.Add(tnode);
+                    instanceNodes.Add(instanceGuid, new ReferenceTreeEntry(tnode));
+                }
+
+                /* process cached references */
+                foreach (Tuple<String, TreeNode> t in tbc.referencingNodes)
+                {
+                    var guid = t.Item1;
+                    if (instanceNodes.ContainsKey(guid))
+                    {
+                        var refTreeEntry = instanceNodes[guid];
+                        t.Item2.Nodes.Add(refTreeEntry.tnode);
+                        refTreeEntry.refCount += 1;
+                    }
+                }
+
+                /* attach instance TreeNodes to root */
+                foreach (var refTreeEntry in instanceNodes.Values)
+                {
+                    root.Nodes.Add(refTreeEntry.tnode);
                 }
 
                 treeView1.Nodes.Add(root);
             }
         }
 
+        private class ReferenceTreeEntry
+        {
+            public ReferenceTreeEntry(TreeNode tnode) { this.tnode = tnode; }
+
+            public TreeNode tnode;
+            public int refCount = 0;
+        }
+
         private class TreeBuilderContext
         {
             public DAIEbx file;
+            public List<Tuple<String, TreeNode>> referencingNodes;
         }
 
         private DAIField wrapWithFakeField(String fieldName, DAIComplex value)
@@ -74,6 +104,16 @@ namespace DAI_Tools.EBXExplorer
             {
                 tnode = complexFieldTNode(field);
                 spawnRecursiveActionAndAttach(field.GetArrayValue().Fields, tnode, tbc);
+            }
+            else if (field.ValueType == DAIFieldType.DAI_Guid)
+            {
+                var guid = tbc.file.GetDaiGuidFieldValue(field);
+                var fileGuidPrefix = guid.external ? (guid.fileGuid + " ") : "";
+                var strValue = "[" + fileGuidPrefix + guid.instanceGuid + "]";
+                tnode = simpleFieldTNode(fieldName, strValue);
+
+                if (!guid.external)
+                    tbc.referencingNodes.Add(new Tuple<string, TreeNode>(guid.instanceGuid, tnode));
             }
             else
             {
@@ -112,11 +152,6 @@ namespace DAI_Tools.EBXExplorer
                         break;
                     case DAIFieldType.DAI_LongLong:
                         strValue = "LL " + DAIEbx.GuidToString(field.GetLongLongValue());
-                        break;
-                    case DAIFieldType.DAI_Guid:
-                        var guid = tbc.file.GetDaiGuidFieldValue(field);
-                        var fileGuidPrefix = (guid.external) ? (guid.fileGuid + " ") : "";
-                        strValue = "[" + fileGuidPrefix + guid.instanceGuid + "]";
                         break;
                     case DAIFieldType.DAI_Bool:
                         strValue = field.GetBoolValue().ToString();
