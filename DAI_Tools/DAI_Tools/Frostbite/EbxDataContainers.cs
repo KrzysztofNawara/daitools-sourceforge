@@ -90,6 +90,9 @@ namespace DAI_Tools.Frostbite
         public List<DAIField> correspondingDaiFields { get; }
     }
 
+    /**
+     * Partials are returned with original casing, but can be searched by any - they are case-insenitive
+     */
     class DataContainer
     {
         public DataContainer(String guid, AStruct data)
@@ -101,6 +104,31 @@ namespace DAI_Tools.Frostbite
         public String guid;
         public AStruct data;
         public uint internalRefCount = 0;
+
+        public List<String> getAllPartials() { return partialsList; }
+
+        public AStruct getPartial(String typeName)
+        {
+            return partialsMap[typeName.ToLower()];
+        }
+
+        public void addPartial(String typeName, AStruct partialData)
+        {
+            if (hasPartial(typeName))
+                throw new Exception("Already have partial: " + typeName);
+            
+            partialsList.Add(typeName);
+            partialsMap.Add(typeName.ToLower(), partialData);
+        }
+
+        public bool hasPartial(String typeName)
+        {
+            return partialsMap.ContainsKey(typeName.ToLower());
+        }
+
+        /* order: most specific to most generic */
+        private List<String> partialsList = new List<string>();
+        private Dictionary<String, AStruct> partialsMap = new Dictionary<string, AStruct>();
     }
     
     /**
@@ -144,7 +172,10 @@ namespace DAI_Tools.Frostbite
             }
 
             var fileGuid = DAIEbx.GuidToString(file.FileGuid);
-            return new EbxDataContainers(fileGuid, instances, file);
+            var edc = new EbxDataContainers(fileGuid, instances, file);
+            edc.populatePartials();
+
+            return edc;
         }
 
         private class ConverterContext
@@ -274,5 +305,33 @@ namespace DAI_Tools.Frostbite
         public String fileGuid { get; }
         public Dictionary<String, DataContainer> instances { get; }
         private DAIEbx correspondingEbx;
+
+        public List<DataContainer> getAllWithPartial(String typeName)
+        {
+            var result = new List<DataContainer>();
+
+            foreach (var instance in instances.Values)
+            {
+                if (instance.hasPartial(typeName))
+                    result.Add(instance);
+            }
+
+            return result;
+        }
+
+        private void populatePartials()
+        {
+            foreach(var instance in instances)
+            {
+                var dataRoot = instance.Value.data;
+
+                AStruct partialToProcess =  dataRoot;
+                while (partialToProcess != null)
+                {
+                    instance.Value.addPartial(partialToProcess.name, partialToProcess);
+                    partialToProcess = partialToProcess.fields.ContainsKey("$") ? partialToProcess.fields["$"].castTo<AStruct>() : null;
+                }
+            }
+        }
     }
 }
