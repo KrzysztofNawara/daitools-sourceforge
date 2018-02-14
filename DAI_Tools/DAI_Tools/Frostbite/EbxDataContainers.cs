@@ -31,14 +31,25 @@ namespace DAI_Tools.Frostbite
 
     class ANullRef : AValue { public ANullRef() : base(ValueTypes.NULL_REF) { } }
 
+    enum RefStatus
+    {
+        UNRESOLVED,
+        RESOLVED_SUCCESS,
+        RESOLVED_FAILURE,
+    }
+
     class AIntRef : AValue
     {
         public AIntRef(String instanceGuid) : base(ValueTypes.IN_REF)
         {
             this.instanceGuid = instanceGuid;
+            this.refTarget = null;
+            this.refStatus = RefStatus.UNRESOLVED;
         }
 
         public String instanceGuid { get; set; }
+        public AValue refTarget { get; set; }
+        public RefStatus refStatus { get; set; }
     }
 
     class AExRef : AValue
@@ -68,12 +79,28 @@ namespace DAI_Tools.Frostbite
 
     class AArray : AValue
     {
-        public AArray() : base(ValueTypes.ARRAY) { elements = new List<AValue>(); }
+        public AArray() : base(ValueTypes.ARRAY)
+        {
+            elements = new List<AValue>();
+            correspondingDaiFields = new List<DAIField>();
+        }
 
         public List<AValue> elements { get; }
         public List<DAIField> correspondingDaiFields { get; }
     }
 
+    class DataContainer
+    {
+        public DataContainer(String guid, AStruct data)
+        {
+            this.guid = guid;
+            this.data = data;
+        }
+        
+        public String guid;
+        public AStruct data;
+        public uint internalRefCount = 0;
+    }
     
     /**
      * Offers higher-level view on EBX files - as an asset container. 
@@ -82,7 +109,7 @@ namespace DAI_Tools.Frostbite
     {
         public static EbxDataContainers fromDAIEbx(DAIEbx file)
         {
-            Dictionary<String, AStruct> instances = new Dictionary<string, AStruct>();
+            Dictionary<String, DataContainer> instances = new Dictionary<string, DataContainer>();
 
             var ctx = new ConverterContext();
             ctx.file = file;
@@ -95,7 +122,24 @@ namespace DAI_Tools.Frostbite
 
                 Debug.Assert(convertedTreeRoot.Type == ValueTypes.STRUCT);
                 AStruct treeRoot = (AStruct) convertedTreeRoot;
-                instances.Add(instanceGuid, treeRoot);
+                instances.Add(instanceGuid, new DataContainer(instanceGuid, treeRoot));
+            }
+
+            foreach (var refEntry in ctx.intReferences)
+            {
+                var targetGuid = refEntry.Item1;
+                var refObj = refEntry.Item2;
+
+                if (instances.ContainsKey(targetGuid))
+                {
+                    var target = instances[targetGuid];
+                    refObj.refTarget = target.data;
+                    target.internalRefCount += 1;
+                    refObj.refStatus = RefStatus.RESOLVED_SUCCESS;
+                } else 
+                {
+                    refObj.refStatus = RefStatus.RESOLVED_FAILURE;
+                }
             }
 
             var fileGuid = DAIEbx.GuidToString(file.FileGuid);
@@ -105,6 +149,7 @@ namespace DAI_Tools.Frostbite
         private class ConverterContext
         {
             public DAIEbx file;
+            public List<Tuple<String, AIntRef>> intReferences = new List<Tuple<string, AIntRef>>();
         }
 
         private static DAIField wrapWithFakeField(DAIComplex value)
@@ -159,8 +204,12 @@ namespace DAI_Tools.Frostbite
                 {
                     if (guid.external)
                         result = new AExRef(guid.fileGuid, guid.instanceGuid);
-                    else 
-                        result = new AIntRef(guid.instanceGuid);
+                    else
+                    {
+                        var ainref = new AIntRef(guid.instanceGuid);
+                        ctx.intReferences.Add(new Tuple<string, AIntRef>(guid.instanceGuid, ainref));
+                        result = ainref;
+                    }
                 }
             }
             else
@@ -214,7 +263,7 @@ namespace DAI_Tools.Frostbite
             return result;
         }
 
-        EbxDataContainers(String fileGuid, Dictionary<String, AStruct> instances, DAIEbx correspondingEbx)
+        EbxDataContainers(String fileGuid, Dictionary<String, DataContainer> instances, DAIEbx correspondingEbx)
         {
             this.fileGuid = fileGuid;
             this.instances = instances;
@@ -222,7 +271,7 @@ namespace DAI_Tools.Frostbite
         }
 
         private String fileGuid;
-        private Dictionary<String, AStruct> instances;
+        private Dictionary<String, DataContainer> instances;
         private DAIEbx correspondingEbx;
         
         private bool intRefResolved = false;
