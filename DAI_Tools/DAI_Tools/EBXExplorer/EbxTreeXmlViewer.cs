@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Drawing;
 using System.Data;
@@ -33,7 +34,8 @@ namespace DAI_Tools.EBXExplorer
                 var tbc = new TreeBuilderContext();
                 tbc.file = ebxFile;
 
-                SortedDictionary<String, ReferenceTreeEntry> instanceNodes = new SortedDictionary<string, ReferenceTreeEntry>();
+                /* <String, ReferenceTreeEntry> */
+                OrderedDictionary instanceNodes = new OrderedDictionary();
 
                 /* traverse tree, cache references */
                 foreach (var instance in ebxFile.Instances)
@@ -47,9 +49,9 @@ namespace DAI_Tools.EBXExplorer
                 foreach (Tuple<String, TreeNode> t in tbc.referencingNodes)
                 {
                     var guid = t.Item1;
-                    if (instanceNodes.ContainsKey(guid))
+                    if (instanceNodes.Contains(guid))
                     {
-                        var refTreeEntry = instanceNodes[guid];
+                        var refTreeEntry = (ReferenceTreeEntry) instanceNodes[guid];
                         t.Item2.Nodes.Add((TreeNode) refTreeEntry.tnode.Clone());
                         refTreeEntry.refCount += 1;
                     }
@@ -58,7 +60,7 @@ namespace DAI_Tools.EBXExplorer
                 /* attach instance TreeNodes to root */
                 foreach (var refTreeEntry in instanceNodes.Values)
                 {
-                    root.Nodes.Add(refTreeEntry.tnode);
+                    root.Nodes.Add(((ReferenceTreeEntry) refTreeEntry).tnode);
                 }
 
                 treeView1.Nodes.Add(root);
