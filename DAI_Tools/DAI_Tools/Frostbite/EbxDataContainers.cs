@@ -101,6 +101,16 @@ namespace DAI_Tools.Frostbite
         public String guid;
         public AStruct data;
         public uint internalRefCount = 0;
+
+        public void addPartial(String typeName, AStruct partialData)
+        {
+            partialsList.Add(typeName);
+            partialsMap.Add(typeName, partialData);
+        }
+
+        /* order: most specific to most generic */
+        private List<String> partialsList = new List<string>();
+        private Dictionary<String, AStruct> partialsMap = new Dictionary<string, AStruct>();
     }
     
     /**
@@ -144,7 +154,10 @@ namespace DAI_Tools.Frostbite
             }
 
             var fileGuid = DAIEbx.GuidToString(file.FileGuid);
-            return new EbxDataContainers(fileGuid, instances, file);
+            var edc = new EbxDataContainers(fileGuid, instances, file);
+            edc.populatePartials();
+
+            return edc;
         }
 
         private class ConverterContext
@@ -274,5 +287,20 @@ namespace DAI_Tools.Frostbite
         public String fileGuid { get; }
         public Dictionary<String, DataContainer> instances { get; }
         private DAIEbx correspondingEbx;
+
+        private void populatePartials()
+        {
+            foreach(var instance in instances)
+            {
+                var dataRoot = instance.Value.data;
+
+                AStruct partialToProcess =  dataRoot;
+                while (partialToProcess != null)
+                {
+                    instance.Value.addPartial(partialToProcess.name, partialToProcess);
+                    partialToProcess = partialToProcess.fields.ContainsKey("$") ? partialToProcess.fields["$"].castTo<AStruct>() : null;
+                }
+            }
+        }
     }
 }
