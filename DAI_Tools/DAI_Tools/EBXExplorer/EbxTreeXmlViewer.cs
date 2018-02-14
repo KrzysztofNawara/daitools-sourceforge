@@ -36,7 +36,8 @@ namespace DAI_Tools.EBXExplorer
                 foreach (var instance in ebxFile.Instances)
                 {
                     var instanceGuid = DAIEbx.GuidToString(instance.Key);
-                    processEbxTree(wrapWithFakeField(instanceGuid, instance.Value), root, tbc);
+                    var tnode = processEbxTree(wrapWithFakeField(instanceGuid, instance.Value), tbc);
+                    root.Nodes.Add(tnode);
                 }
 
                 treeView1.Nodes.Add(root);
@@ -58,25 +59,25 @@ namespace DAI_Tools.EBXExplorer
             return fakeField;
         }
 
-        private void processEbxTree(DAIField field, TreeNode parentNode, TreeBuilderContext tbc)
+        private TreeNode processEbxTree(DAIField field, TreeBuilderContext tbc)
         {
             var fieldName = field.Descriptor.FieldName;
-            
+            TreeNode tnode;
 
             /* for complex fields spawn recursive actions, for simple attach leaf nodes */
             if (field.ValueType == DAIFieldType.DAI_Complex)
             {
-                var tnode = attachComplexField(field, parentNode);
-                spawnRecursiveAction(field.GetComplexValue().Fields, tnode, tbc);
+                tnode = complexFieldTNode(field);
+                spawnRecursiveActionAndAttach(field.GetComplexValue().Fields, tnode, tbc);
             }
             else if(field.ValueType == DAIFieldType.DAI_Array)
             {
-                var tnode = attachComplexField(field, parentNode);
-                spawnRecursiveAction(field.GetArrayValue().Fields, tnode, tbc);
+                tnode = complexFieldTNode(field);
+                spawnRecursiveActionAndAttach(field.GetArrayValue().Fields, tnode, tbc);
             }
             else
             {
-                String strValue = null;
+                String strValue;
 
                 switch (field.ValueType)
                 {
@@ -124,28 +125,31 @@ namespace DAI_Tools.EBXExplorer
                         throw new ArgumentOutOfRangeException();
                 }
 
-                attachSimpleField(fieldName, strValue, parentNode);
+                tnode = simpleFieldTNode(fieldName, strValue);
             }
-        }
 
-        private void spawnRecursiveAction(List<DAIField> childFields, TreeNode parentNode, TreeBuilderContext tbc)
-        {
-            foreach (var childField in childFields)
-                processEbxTree(childField, parentNode, tbc);
-        }
-
-        private TreeNode attachComplexField(DAIField field, TreeNode parent)
-        {
-            var str = field.Descriptor.FieldName + " -> " + field.GetComplexValue().Descriptor.FieldName;
-            var tnode = new TreeNode(str);
-            parent.Nodes.Add(tnode);
             return tnode;
         }
 
-        private void attachSimpleField(String name, String value, TreeNode parent)
+        private void spawnRecursiveActionAndAttach(List<DAIField> childFields, TreeNode parentNode, TreeBuilderContext tbc)
         {
-            var tnode = new TreeNode(name + ": " + value);
-            parent.Nodes.Add(tnode);
+            foreach (var childField in childFields)
+            {
+                var tnode = processEbxTree(childField, tbc);
+                parentNode.Nodes.Add(tnode);
+            }
+        }
+
+        private TreeNode complexFieldTNode(DAIField field)
+        {
+            var str = field.Descriptor.FieldName + " -> " + field.GetComplexValue().Descriptor.FieldName;
+            var tnode = new TreeNode(str);
+            return tnode;
+        }
+
+        private TreeNode simpleFieldTNode(String name, String value)
+        {
+            return new TreeNode(name + ": " + value);
         }
     }
 }
