@@ -78,9 +78,9 @@ namespace DAI_Tools.Frostbite
     /**
      * Offers higher-level view on EBX files - as an asset container. 
      */
-    class EbxAssetContainer
+    class EbxDataContainers
     {
-        public static EbxAssetContainer fromDAIEbx(DAIEbx file)
+        public static EbxDataContainers fromDAIEbx(DAIEbx file)
         {
             Dictionary<String, AStruct> instances = new Dictionary<string, AStruct>();
 
@@ -99,7 +99,7 @@ namespace DAI_Tools.Frostbite
             }
 
             var fileGuid = DAIEbx.GuidToString(file.FileGuid);
-            return new EbxAssetContainer(fileGuid, instances, file);
+            return new EbxDataContainers(fileGuid, instances, file);
         }
 
         private class ConverterContext
@@ -214,7 +214,7 @@ namespace DAI_Tools.Frostbite
             return result;
         }
 
-        EbxAssetContainer(String fileGuid, Dictionary<String, AStruct> instances, DAIEbx correspondingEbx)
+        EbxDataContainers(String fileGuid, Dictionary<String, AStruct> instances, DAIEbx correspondingEbx)
         {
             this.fileGuid = fileGuid;
             this.instances = instances;

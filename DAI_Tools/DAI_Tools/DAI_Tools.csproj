@@ -128,7 +128,7 @@
     <Compile Include="Frostbite\CASFile.cs" />
     <Compile Include="Frostbite\CATFile.cs" />
     <Compile Include="Frostbite\Ebx.cs" />
-    <Compile Include="Frostbite\EbxAssetContainer.cs" />
+    <Compile Include="Frostbite\EbxDataContainers.cs" />
     <Compile Include="Frostbite\HalfUtils.cs" />
     <Compile Include="Frostbite\Mesh.cs" />
     <Compile Include="Frostbite\Mod.cs" />
