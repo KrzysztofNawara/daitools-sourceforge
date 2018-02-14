@@ -50,62 +50,56 @@ namespace DAI_Tools.EBXExplorer
             return fakeField;
         }
 
-        /**
-         * Processes passed field, attaches new node for that field (fieldname + DAIComplex name)
-         * For each simple value attaches node for it
-         * For each complex value simply calls recursively processEbxTree - it'll handle adding node for DAIComplex
-         */
         private void processEbxTree(DAIField field, TreeNode parentNode)
         {
-            Debug.Assert(field.ValueType == DAIFieldType.DAI_Complex || field.ValueType == DAIFieldType.DAI_Array, 
-                "this method should be invoked only for complex/array fields (invoked for: " + field.ValueType.ToString() + ")");
+            var fieldName = field.Descriptor.FieldName;
+            
 
-            var treeNode = new TreeNode(formatComplexField(field));
-            parentNode.Nodes.Add(treeNode);
-
-            var value = field.GetComplexValue();
-
-            foreach (var childField in value.Fields)
+            /* for complex fields spawn recursive actions, for simple attach leaf nodes */
+            if (field.ValueType == DAIFieldType.DAI_Complex)
             {
-                var fieldName = childField.Descriptor.FieldName;
+                var tnode = attachComplexField(field, parentNode);
+                spawnRecursiveAction(field.GetComplexValue().Fields, tnode);
+            }
+            else if(field.ValueType == DAIFieldType.DAI_Array)
+            {
+                var tnode = attachComplexField(field, parentNode);
+                spawnRecursiveAction(field.GetArrayValue().Fields, tnode);
+            }
+            else
+            {
                 String strValue = null;
-                bool wasSimple = true;
-                
-                switch (childField.ValueType)
+
+                switch (field.ValueType)
                 {
-                    case DAIFieldType.DAI_Complex:
-                    case DAIFieldType.DAI_Array:
-                        processEbxTree(childField, treeNode);
-                        wasSimple = false;
-                        break;
                     case DAIFieldType.DAI_String:
-                        strValue = childField.GetStringValue();
+                        strValue = field.GetStringValue();
                         break;
                     case DAIFieldType.DAI_Enum:
-                        strValue = childField.GetEnumValue();
+                        strValue = field.GetEnumValue();
                         break;
                     case DAIFieldType.DAI_Int:
-                        strValue = childField.GetIntValue().ToString();
+                        strValue = field.GetIntValue().ToString();
                         break;
                     case DAIFieldType.DAI_UInt:
-                        strValue = childField.GetUIntValue().ToString();
+                        strValue = field.GetUIntValue().ToString();
                         break;
                     case DAIFieldType.DAI_Double:
                     case DAIFieldType.DAI_Float:
-                        strValue = childField.GetFloatValue().ToString();
+                        strValue = field.GetFloatValue().ToString();
                         break;
                     case DAIFieldType.DAI_Short:
-                        strValue = childField.GetShortValue().ToString();
+                        strValue = field.GetShortValue().ToString();
                         break;
                     case DAIFieldType.DAI_UShort:
-                        strValue = childField.GetUShortValue().ToString();
+                        strValue = field.GetUShortValue().ToString();
                         break;
                     case DAIFieldType.DAI_Byte:
                     case DAIFieldType.DAI_UByte:
-                        strValue = childField.GetByteValue().ToString();
+                        strValue = field.GetByteValue().ToString();
                         break;
                     case DAIFieldType.DAI_Long:
-                        strValue = childField.GetLongValue().ToString();
+                        strValue = field.GetLongValue().ToString();
                         break;
                     case DAIFieldType.DAI_LongLong:
                         // @ToDo!
@@ -116,20 +110,28 @@ namespace DAI_Tools.EBXExplorer
                         strValue = "GUID";
                         break;
                     case DAIFieldType.DAI_Bool:
-                        strValue = childField.GetBoolValue().ToString();
+                        strValue = field.GetBoolValue().ToString();
                         break;
                     default:
                         throw new ArgumentOutOfRangeException();
                 }
 
-                if (wasSimple)
-                    attachSimpleField(fieldName, strValue, treeNode);
+                attachSimpleField(fieldName, strValue, parentNode);
             }
         }
 
-        private String formatComplexField(DAIField field)
+        private void spawnRecursiveAction(List<DAIField> childFields, TreeNode parentNode)
         {
-            return field.Descriptor.FieldName + " -> " + field.GetComplexValue().Descriptor.FieldName;
+            foreach (var childField in childFields)
+                processEbxTree(childField, parentNode);
+        }
+
+        private TreeNode attachComplexField(DAIField field, TreeNode parent)
+        {
+            var str = field.Descriptor.FieldName + " -> " + field.GetComplexValue().Descriptor.FieldName;
+            var tnode = new TreeNode(str);
+            parent.Nodes.Add(tnode);
+            return tnode;
         }
 
         private void attachSimpleField(String name, String value, TreeNode parent)
