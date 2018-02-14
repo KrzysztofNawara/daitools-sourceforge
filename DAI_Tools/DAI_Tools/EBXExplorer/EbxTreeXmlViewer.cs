@@ -69,12 +69,14 @@ namespace DAI_Tools.EBXExplorer
             {
                 var fieldName = childField.Descriptor.FieldName;
                 String strValue = null;
+                bool wasSimple = true;
                 
                 switch (childField.ValueType)
                 {
                     case DAIFieldType.DAI_Complex:
                     case DAIFieldType.DAI_Array:
                         processEbxTree(childField, treeNode);
+                        wasSimple = false;
                         break;
                     case DAIFieldType.DAI_String:
                         strValue = childField.GetStringValue();
@@ -120,7 +122,8 @@ namespace DAI_Tools.EBXExplorer
                         throw new ArgumentOutOfRangeException();
                 }
 
-                attachSimpleField(fieldName, strValue, treeNode);
+                if (wasSimple)
+                    attachSimpleField(fieldName, strValue, treeNode);
             }
         }
 
