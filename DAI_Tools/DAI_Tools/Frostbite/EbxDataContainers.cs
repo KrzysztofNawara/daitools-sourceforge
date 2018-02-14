@@ -108,6 +108,11 @@ namespace DAI_Tools.Frostbite
             partialsMap.Add(typeName, partialData);
         }
 
+        public bool hasPartial(String typeName)
+        {
+            return partialsMap.ContainsKey(typeName);
+        }
+
         /* order: most specific to most generic */
         private List<String> partialsList = new List<string>();
         private Dictionary<String, AStruct> partialsMap = new Dictionary<string, AStruct>();
@@ -287,6 +292,19 @@ namespace DAI_Tools.Frostbite
         public String fileGuid { get; }
         public Dictionary<String, DataContainer> instances { get; }
         private DAIEbx correspondingEbx;
+
+        public List<DataContainer> getAllWithPartial(String typeName)
+        {
+            var result = new List<DataContainer>();
+
+            foreach (var instance in instances.Values)
+            {
+                if (instance.hasPartial(typeName))
+                    result.Add(instance);
+            }
+
+            return result;
+        }
 
         private void populatePartials()
         {
