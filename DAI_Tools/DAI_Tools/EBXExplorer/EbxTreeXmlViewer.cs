@@ -50,7 +50,7 @@ namespace DAI_Tools.EBXExplorer
                     if (instanceNodes.ContainsKey(guid))
                     {
                         var refTreeEntry = instanceNodes[guid];
-                        t.Item2.Nodes.Add(refTreeEntry.tnode);
+                        t.Item2.Nodes.Add((TreeNode) refTreeEntry.tnode.Clone());
                         refTreeEntry.refCount += 1;
                     }
                 }
@@ -76,7 +76,7 @@ namespace DAI_Tools.EBXExplorer
         private class TreeBuilderContext
         {
             public DAIEbx file;
-            public List<Tuple<String, TreeNode>> referencingNodes;
+            public List<Tuple<String, TreeNode>> referencingNodes = new List<Tuple<string, TreeNode>>();
         }
 
         private DAIField wrapWithFakeField(String fieldName, DAIComplex value)
