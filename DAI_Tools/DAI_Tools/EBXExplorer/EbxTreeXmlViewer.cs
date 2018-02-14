@@ -1,13 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using DAI_Tools.Frostbite;
 
@@ -15,6 +6,8 @@ namespace DAI_Tools.EBXExplorer
 {
     public partial class EbxTreeXmlViewer : UserControl
     {
+        private EbxDataContainers currentEbx = null;        
+
         public EbxTreeXmlViewer()
         {
             InitializeComponent();
@@ -24,169 +17,116 @@ namespace DAI_Tools.EBXExplorer
 
         public void setEbxFile(DAIEbx ebxFile)
         {
-            treeView1.Nodes.Clear();
-
             if (ebxFile != null)
             {
-                var fileGuid = DAIEbx.GuidToString(ebxFile.FileGuid);
-                var root = new TreeNode("EBX: " + fileGuid);
+                currentEbx = EbxDataContainers.fromDAIEbx(ebxFile);
+                redrawTree();
+            }
+        }
 
+        private void redrawTree()
+        {
+            treeView1.Nodes.Clear();
+
+            if (currentEbx != null)
+            {
+                var root = new TreeNode("EBX: " + currentEbx.fileGuid);
                 var tbc = new TreeBuilderContext();
-                tbc.file = ebxFile;
-
-                /* <String, ReferenceTreeEntry> */
-                OrderedDictionary instanceNodes = new OrderedDictionary();
+                tbc.containers = currentEbx;
+                tbc.intRefMaxDepth = Decimal.ToUInt32(intRefMaxDepth.Value);
 
                 /* traverse tree, cache references */
-                foreach (var instance in ebxFile.Instances)
+                foreach (var instance in currentEbx.instances)
                 {
-                    var instanceGuid = DAIEbx.GuidToString(instance.Key);
-                    var tnode = processEbxTree(wrapWithFakeField(instanceGuid, instance.Value), tbc);
-                    instanceNodes.Add(instanceGuid, new ReferenceTreeEntry(tnode));
-                }
-
-                /* process cached references */
-                foreach (Tuple<String, TreeNode> t in tbc.referencingNodes)
-                {
-                    var guid = t.Item1;
-                    if (instanceNodes.Contains(guid))
-                    {
-                        var refTreeEntry = (ReferenceTreeEntry) instanceNodes[guid];
-                        t.Item2.Nodes.Add((TreeNode) refTreeEntry.tnode.Clone());
-                        refTreeEntry.refCount += 1;
-                    }
-                }
-
-                /* attach instance TreeNodes to root */
-                foreach (var refTreeEntry in instanceNodes.Values)
-                {
-                    root.Nodes.Add(((ReferenceTreeEntry) refTreeEntry).tnode);
+                    var tnode = processField(instance.Key, instance.Value.data, 0, tbc);
+                    root.Nodes.Add(tnode);
                 }
 
                 treeView1.Nodes.Add(root);
             }
         }
 
-        private class ReferenceTreeEntry
-        {
-            public ReferenceTreeEntry(TreeNode tnode) { this.tnode = tnode; }
-
-            public TreeNode tnode;
-            public int refCount = 0;
-        }
-
         private class TreeBuilderContext
         {
-            public DAIEbx file;
-            public List<Tuple<String, TreeNode>> referencingNodes = new List<Tuple<string, TreeNode>>();
+            public EbxDataContainers containers;
+            public uint intRefMaxDepth;
         }
 
-        private DAIField wrapWithFakeField(String fieldName, DAIComplex value)
+        private TreeNode processField(String fieldName, AValue fieldValue, uint intRefDepthCounter, TreeBuilderContext tbc)
         {
-            var fakeField = new DAIField();
-            fakeField.ValueType = DAIFieldType.DAI_Complex;
-            fakeField.Descriptor = new DAIFieldDescriptor();
-            fakeField.Descriptor.FieldName = fieldName;
-            fakeField.ComplexValue = value;
-            return fakeField;
-        }
-
-        private TreeNode processEbxTree(DAIField field, TreeBuilderContext tbc)
-        {
-            var fieldName = field.Descriptor.FieldName;
-            TreeNode tnode;
-
-            /* for complex fields spawn recursive actions, for simple attach leaf nodes */
-            if (field.ValueType == DAIFieldType.DAI_Complex)
+            if (intRefDepthCounter >= tbc.intRefMaxDepth)
             {
-                tnode = complexFieldTNode(field);
-                spawnRecursiveActionAndAttach(field.GetComplexValue().Fields, tnode, tbc);
+                return new TreeNode("IntRef limit exceeded");
             }
-            else if(field.ValueType == DAIFieldType.DAI_Array)
-            {
-                tnode = complexFieldTNode(field);
-                spawnRecursiveActionAndAttach(field.GetArrayValue().Fields, tnode, tbc);
-            }
-            else if (field.ValueType == DAIFieldType.DAI_Guid)
-            {
-                var guid = tbc.file.GetDaiGuidFieldValue(field);
-                var fileGuidPrefix = guid.external ? (guid.fileGuid + " ") : "";
-                var strValue = "[" + fileGuidPrefix + guid.instanceGuid + "]";
-                tnode = simpleFieldTNode(fieldName, strValue);
+            
+            TreeNode tnode = null;
 
-                if (!guid.external)
-                    tbc.referencingNodes.Add(new Tuple<string, TreeNode>(guid.instanceGuid, tnode));
-            }
-            else
+            switch (fieldValue.Type)
             {
-                String strValue;
+                case ValueTypes.SIMPLE:
+                    tnode = simpleFieldTNode(fieldName, fieldValue.castTo<ASimpleValue>().Val);
+                    break;
+                case ValueTypes.NULL_REF:
+                    tnode = simpleFieldTNode(fieldName, "[null]");
+                    break;
+                case ValueTypes.IN_REF:
+                    var aintref = fieldValue.castTo<AIntRef>();
 
-                switch (field.ValueType)
-                {
-                    case DAIFieldType.DAI_String:
-                        strValue = field.GetStringValue();
-                        break;
-                    case DAIFieldType.DAI_Enum:
-                        strValue = field.GetEnumValue();
-                        break;
-                    case DAIFieldType.DAI_Int:
-                        strValue = field.GetIntValue().ToString();
-                        break;
-                    case DAIFieldType.DAI_UInt:
-                        strValue = field.GetUIntValue().ToString();
-                        break;
-                    case DAIFieldType.DAI_Double:
-                    case DAIFieldType.DAI_Float:
-                        strValue = field.GetFloatValue().ToString();
-                        break;
-                    case DAIFieldType.DAI_Short:
-                        strValue = field.GetShortValue().ToString();
-                        break;
-                    case DAIFieldType.DAI_UShort:
-                        strValue = field.GetUShortValue().ToString();
-                        break;
-                    case DAIFieldType.DAI_Byte:
-                    case DAIFieldType.DAI_UByte:
-                        strValue = field.GetByteValue().ToString();
-                        break;
-                    case DAIFieldType.DAI_Long:
-                        strValue = field.GetLongValue().ToString();
-                        break;
-                    case DAIFieldType.DAI_LongLong:
-                        strValue = "LL " + DAIEbx.GuidToString(field.GetLongLongValue());
-                        break;
-                    case DAIFieldType.DAI_Bool:
-                        strValue = field.GetBoolValue().ToString();
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
+                    switch (aintref.refStatus) {
+                        case RefStatus.UNRESOLVED:
+                            throw new Exception("At this point intrefs should be resolved!");
+                        case RefStatus.RESOLVED_SUCCESS:
+                            tnode = simpleFieldTNode(fieldName, "INTREF");
+                            var target = tbc.containers.instances[aintref.instanceGuid];
+                            var childTNode = processField(target.guid, target.data, intRefDepthCounter+1, tbc);
+                            tnode.Nodes.Add(childTNode);
+                            break;
+                        case RefStatus.RESOLVED_FAILURE:
+                            tnode = simpleFieldTNode(fieldName, "Unresolved INTREF: " + aintref.instanceGuid);
+                            break;
+                        default:
+                            throw new ArgumentOutOfRangeException();
+                    }
 
-                tnode = simpleFieldTNode(fieldName, strValue);
+                    break;
+                case ValueTypes.EX_REF:
+                    var aexref = fieldValue.castTo<AExRef>();
+                    tnode = simpleFieldTNode(fieldName, aexref.fileGuid + " | " + aexref.instanceGuid);
+                    break;
+                case ValueTypes.STRUCT:
+                    var astruct = fieldValue.castTo<AStruct>();
+                    var tnodeText = fieldName + " -> " + astruct.name;
+                    tnode = new TreeNode(tnodeText);
+
+                    foreach (var childField in astruct.fields)
+                    {
+                        var childTNode = processField(childField.Key, childField.Value, intRefDepthCounter, tbc);
+                        tnode.Nodes.Add(childTNode);
+                    }
+
+                    break;
+                case ValueTypes.ARRAY:
+                    tnode = new TreeNode(fieldName);
+                    var childElements = fieldValue.castTo<AArray>().elements;
+                    for(int idx = 0; idx < childElements.Count; idx++)
+                    {
+                        var childTNode = processField(idx.ToString(), childElements[idx], intRefDepthCounter, tbc);
+                        tnode.Nodes.Add(childTNode);
+                    } 
+                    break;
             }
 
-            return tnode;
-        }
-
-        private void spawnRecursiveActionAndAttach(List<DAIField> childFields, TreeNode parentNode, TreeBuilderContext tbc)
-        {
-            foreach (var childField in childFields)
-            {
-                var tnode = processEbxTree(childField, tbc);
-                parentNode.Nodes.Add(tnode);
-            }
-        }
-
-        private TreeNode complexFieldTNode(DAIField field)
-        {
-            var str = field.Descriptor.FieldName + " -> " + field.GetComplexValue().Descriptor.FieldName;
-            var tnode = new TreeNode(str);
             return tnode;
         }
 
         private TreeNode simpleFieldTNode(String name, String value)
         {
             return new TreeNode(name + ": " + value);
+        }
+
+        private void intRefMaxDepth_ValueChanged(object sender, EventArgs e)
+        {
+            redrawTree();
         }
     }
 }

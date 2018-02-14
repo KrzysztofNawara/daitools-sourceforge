@@ -21,6 +21,7 @@ namespace DAI_Tools.Frostbite
     {
         public AValue(ValueTypes type) { this.Type = type; }
         public ValueTypes Type { get; }
+        public T castTo<T>() { return (T) Convert.ChangeType(this, typeof(T)); }
     }
 
     class ASimpleValue : AValue
@@ -270,10 +271,8 @@ namespace DAI_Tools.Frostbite
             this.correspondingEbx = correspondingEbx;
         }
 
-        private String fileGuid;
-        private Dictionary<String, DataContainer> instances;
+        public String fileGuid { get; }
+        public Dictionary<String, DataContainer> instances { get; }
         private DAIEbx correspondingEbx;
-        
-        private bool intRefResolved = false;
     }
 }
