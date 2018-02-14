@@ -79,7 +79,11 @@ namespace DAI_Tools.Frostbite
 
     class AArray : AValue
     {
-        public AArray() : base(ValueTypes.ARRAY) { elements = new List<AValue>(); }
+        public AArray() : base(ValueTypes.ARRAY)
+        {
+            elements = new List<AValue>();
+            correspondingDaiFields = new List<DAIField>();
+        }
 
         public List<AValue> elements { get; }
         public List<DAIField> correspondingDaiFields { get; }
