@@ -6,8 +6,8 @@ namespace DAI_Tools.EBXExplorer
 {
     public partial class EbxTreeXmlViewer : UserControl
     {
-        public static uint MAX_INT_REF_DEPTH = 3; 
-        
+        private EbxDataContainers currentEbx = null;        
+
         public EbxTreeXmlViewer()
         {
             InitializeComponent();
@@ -17,17 +17,26 @@ namespace DAI_Tools.EBXExplorer
 
         public void setEbxFile(DAIEbx ebxFile)
         {
-            treeView1.Nodes.Clear();
-
             if (ebxFile != null)
             {
-                var ebx = EbxDataContainers.fromDAIEbx(ebxFile);
-                var root = new TreeNode("EBX: " + ebx.fileGuid);
+                currentEbx = EbxDataContainers.fromDAIEbx(ebxFile);
+                redrawTree();
+            }
+        }
+
+        private void redrawTree()
+        {
+            treeView1.Nodes.Clear();
+
+            if (currentEbx != null)
+            {
+                var root = new TreeNode("EBX: " + currentEbx.fileGuid);
                 var tbc = new TreeBuilderContext();
-                tbc.containers = ebx;
+                tbc.containers = currentEbx;
+                tbc.intRefMaxDepth = Decimal.ToUInt32(intRefMaxDepth.Value);
 
                 /* traverse tree, cache references */
-                foreach (var instance in ebx.instances)
+                foreach (var instance in currentEbx.instances)
                 {
                     var tnode = processField(instance.Key, instance.Value.data, 0, tbc);
                     root.Nodes.Add(tnode);
@@ -40,11 +49,12 @@ namespace DAI_Tools.EBXExplorer
         private class TreeBuilderContext
         {
             public EbxDataContainers containers;
+            public uint intRefMaxDepth;
         }
 
         private TreeNode processField(String fieldName, AValue fieldValue, uint intRefDepthCounter, TreeBuilderContext tbc)
         {
-            if (intRefDepthCounter >= MAX_INT_REF_DEPTH)
+            if (intRefDepthCounter >= tbc.intRefMaxDepth)
             {
                 return new TreeNode("IntRef limit exceeded");
             }
@@ -112,6 +122,11 @@ namespace DAI_Tools.EBXExplorer
         private TreeNode simpleFieldTNode(String name, String value)
         {
             return new TreeNode(name + ": " + value);
+        }
+
+        private void intRefMaxDepth_ValueChanged(object sender, EventArgs e)
+        {
+            redrawTree();
         }
     }
 }
