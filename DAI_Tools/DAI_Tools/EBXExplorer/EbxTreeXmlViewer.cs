@@ -6,6 +6,8 @@ namespace DAI_Tools.EBXExplorer
 {
     public partial class EbxTreeXmlViewer : UserControl
     {
+        public static uint MAX_INT_REF_DEPTH = 3; 
+        
         public EbxTreeXmlViewer()
         {
             InitializeComponent();
@@ -27,7 +29,7 @@ namespace DAI_Tools.EBXExplorer
                 /* traverse tree, cache references */
                 foreach (var instance in ebx.instances)
                 {
-                    var tnode = processField(instance.Key, instance.Value.data, tbc);
+                    var tnode = processField(instance.Key, instance.Value.data, 0, tbc);
                     root.Nodes.Add(tnode);
                 }
 
@@ -40,8 +42,13 @@ namespace DAI_Tools.EBXExplorer
             public EbxDataContainers containers;
         }
 
-        private TreeNode processField(String fieldName, AValue fieldValue, TreeBuilderContext tbc)
+        private TreeNode processField(String fieldName, AValue fieldValue, uint intRefDepthCounter, TreeBuilderContext tbc)
         {
+            if (intRefDepthCounter >= MAX_INT_REF_DEPTH)
+            {
+                return new TreeNode("IntRef limit exceeded");
+            }
+            
             TreeNode tnode = null;
 
             switch (fieldValue.Type)
@@ -53,7 +60,24 @@ namespace DAI_Tools.EBXExplorer
                     tnode = simpleFieldTNode(fieldName, "[null]");
                     break;
                 case ValueTypes.IN_REF:
-                    tnode = simpleFieldTNode(fieldName, fieldValue.castTo<AIntRef>().instanceGuid);
+                    var aintref = fieldValue.castTo<AIntRef>();
+
+                    switch (aintref.refStatus) {
+                        case RefStatus.UNRESOLVED:
+                            throw new Exception("At this point intrefs should be resolved!");
+                        case RefStatus.RESOLVED_SUCCESS:
+                            tnode = simpleFieldTNode(fieldName, "INTREF");
+                            var target = tbc.containers.instances[aintref.instanceGuid];
+                            var childTNode = processField(target.guid, target.data, intRefDepthCounter+1, tbc);
+                            tnode.Nodes.Add(childTNode);
+                            break;
+                        case RefStatus.RESOLVED_FAILURE:
+                            tnode = simpleFieldTNode(fieldName, "Unresolved INTREF: " + aintref.instanceGuid);
+                            break;
+                        default:
+                            throw new ArgumentOutOfRangeException();
+                    }
+
                     break;
                 case ValueTypes.EX_REF:
                     var aexref = fieldValue.castTo<AExRef>();
@@ -66,7 +90,7 @@ namespace DAI_Tools.EBXExplorer
 
                     foreach (var childField in astruct.fields)
                     {
-                        var childTNode = processField(childField.Key, childField.Value, tbc);
+                        var childTNode = processField(childField.Key, childField.Value, intRefDepthCounter, tbc);
                         tnode.Nodes.Add(childTNode);
                     }
 
@@ -76,7 +100,7 @@ namespace DAI_Tools.EBXExplorer
                     var childElements = fieldValue.castTo<AArray>().elements;
                     for(int idx = 0; idx < childElements.Count; idx++)
                     {
-                        var childTNode = processField(idx.ToString(), childElements[idx], tbc);
+                        var childTNode = processField(idx.ToString(), childElements[idx], intRefDepthCounter, tbc);
                         tnode.Nodes.Add(childTNode);
                     } 
                     break;
