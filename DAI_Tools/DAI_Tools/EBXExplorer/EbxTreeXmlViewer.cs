@@ -57,7 +57,8 @@ namespace DAI_Tools.EBXExplorer
          */
         private void processEbxTree(DAIField field, TreeNode parentNode)
         {
-            Debug.Assert(field.ValueType == DAIFieldType.DAI_Complex, "this method should be invoked only for complex fields");
+            Debug.Assert(field.ValueType == DAIFieldType.DAI_Complex || field.ValueType == DAIFieldType.DAI_Array, 
+                "this method should be invoked only for complex/array fields (invoked for: " + field.ValueType.ToString() + ")");
 
             var treeNode = new TreeNode(formatComplexField(field));
             parentNode.Nodes.Add(treeNode);
@@ -68,7 +69,7 @@ namespace DAI_Tools.EBXExplorer
             {
                 var fieldName = childField.Descriptor.FieldName;
                 String strValue = null;
-
+                
                 switch (childField.ValueType)
                 {
                     case DAIFieldType.DAI_Complex:
