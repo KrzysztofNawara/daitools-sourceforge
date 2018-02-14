@@ -13,18 +13,8 @@ namespace DAI_Tools.Frostbite
     {
         enum ValueTypes
         {
-            BYTE,
-            BOOL,
-            SHORT,
-            U_SHORT,
-            INT,
-            U_INT,
-            LONG,
-            LONGLONG,
-            FLOAT,
-            ENUM,
-            STRING,
-            GUID,
+            SIMPLE,
+            NULL_REF,
             IN_REF,
             EX_REF,
             STRUCT,
@@ -37,25 +27,15 @@ namespace DAI_Tools.Frostbite
             public ValueTypes Type { get; }
         }
 
-        abstract class ASimpleValue<T> : AValue
+        abstract class ASimpleValue : AValue
         {
-            public ASimpleValue(ValueTypes type, T value) : base(type) { this.Val = value; }
-            public T Val { get; }
+            public ASimpleValue(String value) : base(ValueTypes.SIMPLE) { this.Val = value; }
+            public String Val { get; }
         }
 
-        class AByte : ASimpleValue<byte> { public AByte(byte v) : base(ValueTypes.BYTE, v) { } }
-        class ABool : ASimpleValue<bool> { public ABool(bool v) : base(ValueTypes.BOOL, v) { } }
-        class AShort : ASimpleValue<short> { public AShort(short v) : base(ValueTypes.SHORT, v) { } }
-        class AUShort : ASimpleValue<ushort> { public AUShort(ushort v) : base(ValueTypes.U_SHORT, v) { } }
-        class AInt : ASimpleValue<int> { public AInt(int v) : base(ValueTypes.INT, v) { } }
-        class AUInt : ASimpleValue<uint> { public AUInt(uint v) : base(ValueTypes.U_INT, v) { } }
-        class ALong : ASimpleValue<long> { public ALong(uint v) : base(ValueTypes.LONG, v) { } }
-        class ALongLong : ASimpleValue<byte[]> { public ALongLong(byte[] v) : base(ValueTypes.LONGLONG, v) { } } // @todo add toString!
-        class AFloat : ASimpleValue<float> { public AFloat(float v) : base(ValueTypes.FLOAT, v) { } }
-        class AEnum : ASimpleValue<String> { public AEnum(String v) : base(ValueTypes.ENUM, v) { } }
-        class AString : ASimpleValue<String> { public AString(String v) : base(ValueTypes.STRING, v) { } }
+       
 
-        class AGuid : ASimpleValue<String> { public AGuid(String v) : base(ValueTypes.GUID, v) { } }
+        class ANullRef : AValue { public ANullRef(String v) : base(ValueTypes.NULL_REF) { } }
 
         class AIntRef : AValue
         {
