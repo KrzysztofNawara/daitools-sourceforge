@@ -90,6 +90,9 @@ namespace DAI_Tools.Frostbite
         public List<DAIField> correspondingDaiFields { get; }
     }
 
+    /**
+     * Partials are returned with original casing, but can be searched by any - they are case-insenitive
+     */
     class DataContainer
     {
         public DataContainer(String guid, AStruct data)
@@ -102,15 +105,25 @@ namespace DAI_Tools.Frostbite
         public AStruct data;
         public uint internalRefCount = 0;
 
+        public List<String> getAllPartials() { return partialsList; }
+
+        public AStruct getPartial(String typeName)
+        {
+            return partialsMap[typeName.ToLower()];
+        }
+
         public void addPartial(String typeName, AStruct partialData)
         {
+            if (hasPartial(typeName))
+                throw new Exception("Already have partial: " + typeName);
+            
             partialsList.Add(typeName);
-            partialsMap.Add(typeName, partialData);
+            partialsMap.Add(typeName.ToLower(), partialData);
         }
 
         public bool hasPartial(String typeName)
         {
-            return partialsMap.ContainsKey(typeName);
+            return partialsMap.ContainsKey(typeName.ToLower());
         }
 
         /* order: most specific to most generic */
