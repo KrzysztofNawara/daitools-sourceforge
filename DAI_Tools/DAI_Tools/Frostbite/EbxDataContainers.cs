@@ -31,14 +31,25 @@ namespace DAI_Tools.Frostbite
 
     class ANullRef : AValue { public ANullRef() : base(ValueTypes.NULL_REF) { } }
 
+    enum RefStatus
+    {
+        UNRESOLVED,
+        RESOLVED_SUCCESS,
+        RESOLVED_FAILURE,
+    }
+
     class AIntRef : AValue
     {
         public AIntRef(String instanceGuid) : base(ValueTypes.IN_REF)
         {
             this.instanceGuid = instanceGuid;
+            this.refTarget = null;
+            this.refStatus = RefStatus.UNRESOLVED;
         }
 
         public String instanceGuid { get; set; }
+        public AValue refTarget { get; set; }
+        public RefStatus refStatus { get; set; }
     }
 
     class AExRef : AValue
@@ -98,6 +109,21 @@ namespace DAI_Tools.Frostbite
                 instances.Add(instanceGuid, treeRoot);
             }
 
+            foreach (var refEntry in ctx.intReferences)
+            {
+                var targetGuid = refEntry.Item1;
+                var refObj = refEntry.Item2;
+
+                if (instances.ContainsKey(targetGuid))
+                {
+                    refObj.refTarget = instances[targetGuid];
+                    refObj.refStatus = RefStatus.RESOLVED_SUCCESS;
+                } else 
+                {
+                    refObj.refStatus = RefStatus.RESOLVED_FAILURE;
+                }
+            }
+
             var fileGuid = DAIEbx.GuidToString(file.FileGuid);
             return new EbxDataContainers(fileGuid, instances, file);
         }
@@ -105,6 +131,7 @@ namespace DAI_Tools.Frostbite
         private class ConverterContext
         {
             public DAIEbx file;
+            public List<Tuple<String, AIntRef>> intReferences = new List<Tuple<string, AIntRef>>();
         }
 
         private static DAIField wrapWithFakeField(DAIComplex value)
@@ -159,8 +186,12 @@ namespace DAI_Tools.Frostbite
                 {
                     if (guid.external)
                         result = new AExRef(guid.fileGuid, guid.instanceGuid);
-                    else 
-                        result = new AIntRef(guid.instanceGuid);
+                    else
+                    {
+                        var ainref = new AIntRef(guid.instanceGuid);
+                        ctx.intReferences.Add(new Tuple<string, AIntRef>(guid.instanceGuid, ainref));
+                        result = ainref;
+                    }
                 }
             }
             else
