@@ -23,6 +23,12 @@ namespace DAI_Tools.EBXExplorer
         public bool stop = false;
         public bool ignoreonce = false;
 
+        private String rawXmlViewerStr = "RawXML";
+        private String treeXmlViewerStr = "TreeXML";
+        private EbxRawXmlViewer rawXmlViewer;
+        private EbxTreeXmlViewer treeXmlViewer;
+        private Control currentViewer = null;
+
         public struct EBXEntry
         {
             public string path;
@@ -34,6 +40,17 @@ namespace DAI_Tools.EBXExplorer
         public EBXExplorer()
         {
             InitializeComponent();
+
+            rawXmlViewer = new EbxRawXmlViewer();
+            treeXmlViewer = new EbxTreeXmlViewer();
+            viewerSelector.Items.Add(rawXmlViewerStr);
+            viewerSelector.Items.Add(treeXmlViewerStr);
+            viewerSelector.SelectedIndex = 0;
+
+            currentViewer = rawXmlViewer;
+            splitContainer1.Panel2.Controls.Add(currentViewer);
+
+            hideViewer();
         }
 
         private void EBXExplorer_Activated(object sender, EventArgs e)
@@ -51,7 +68,7 @@ namespace DAI_Tools.EBXExplorer
                 return;
             }
             this.WindowState = FormWindowState.Maximized;
-            rtb1.Text = "Loading CAT for faster lookup...\n";
+            status.Text = "Loading CAT for faster lookup...";
             Application.DoEvents();
             string path = GlobalStuff.FindSetting("gamepath");
             path += "Data\\cas.cat";
@@ -59,7 +76,7 @@ namespace DAI_Tools.EBXExplorer
             EBXList = new List<EBXEntry>();
             SQLiteConnection con = Database.GetConnection();
             con.Open();
-            rtb1.AppendText("Querying...\n");
+            status.Text = "Querying...";
             Application.DoEvents();
             SQLiteDataReader reader = new SQLiteCommand("SELECT DISTINCT name,sha1 FROM ebx", con).ExecuteReader();
             while (reader.Read())
@@ -70,10 +87,10 @@ namespace DAI_Tools.EBXExplorer
                 EBXList.Add(e);
             }
             con.Close();
-            rtb1.AppendText("Making Tree...\n");
+            status.Text = "Making Tree...";
             Application.DoEvents();
-            MakeTree();            
-            rtb1.Text = "Done.";
+            MakeTree();
+            status.Text = "Done.";
             init = true;
         }
 
@@ -117,26 +134,35 @@ namespace DAI_Tools.EBXExplorer
 
         private void treeView1_AfterSelect(object sender, TreeViewEventArgs e)
         {
-            resetSearchComponents();
-
-            try
+            if (ignoreonce)
             {
-                if (ignoreonce)
-                {
-                    ignoreonce = false;
-                    return;
-                }
-                TreeNode t = treeView1.SelectedNode;
-                if (t == null || t.Name == "")
-                    return;
-
-                string sha1 = t.Name;
-                byte[] data = Tools.GetDataBySHA1(sha1, cat);
-                rtb1.Text = Encoding.UTF8.GetString(Tools.ExtractEbx(new MemoryStream(data)));
-                findButton.Enabled = true;
+                ignoreonce = false;
+                hideViewer();
             }
-            catch (Exception)
+            else
             {
+                try
+                {
+                    status.Text = "Loading requested EBX...";
+
+                    TreeNode t = treeView1.SelectedNode;
+                    if (t == null || t.Name == "")
+                        return;
+
+                    string sha1 = t.Name;
+                    byte[] data = Tools.GetDataBySHA1(sha1, cat);
+
+                    DAIEbx ebxFile = deserializeEbx(data);
+                    setEbxFile(ebxFile);
+
+                    status.Text = "Done.";
+                    showViewer();
+                }
+                catch (Exception ex)
+                {
+                    status.Text = ex.ToString();
+                    hideViewer();
+                }
             }
         }
 
@@ -163,16 +189,18 @@ namespace DAI_Tools.EBXExplorer
                     byte[] data = Tools.GetDataBySHA1(t.Name, cat);
                     if (data.Length != 0)
                     {
-                        string xml = Encoding.UTF8.GetString(Tools.ExtractEbx(new MemoryStream(data)));
+                        DAIEbx ebxFile = deserializeEbx(data);
+                        string xml = ebxFile.ToXml();
+
                         if (xml.Contains(search))
                         {
                             ignoreonce = true;
                             treeView1.SelectedNode = t;
-                            rtb1.Text = xml;
-                            int start = xml.IndexOf(search);
-                            rtb1.SelectionStart = start;
-                            rtb1.ScrollToCaret();
-                            rtb1.SelectionLength = search.Length;
+
+                            showViewer();
+                            setEbxFile(ebxFile);
+                            rawXmlViewer.search(search);
+
                             status.Text = "";
                             toolStripButton2.Visible = false;
                             return;
@@ -247,43 +275,47 @@ namespace DAI_Tools.EBXExplorer
             stop = true;
         }
 
-        private void findButton_Click(object sender, EventArgs e)
+        private void setEbxFile(DAIEbx ebxFile)
         {
-            if (rtb1.TextLength > 0)
+            rawXmlViewer.setEbxFile(ebxFile);
+            treeXmlViewer.setEbxFile(ebxFile);
+        }
+
+        private void hideViewer()
+        {
+            rawXmlViewer.Visible = false;
+            treeXmlViewer.Visible = false;
+        }
+
+        private void showViewer()
+        {
+            rawXmlViewer.Visible = true;
+            treeXmlViewer.Visible = true;
+        }
+
+        private void viewerSelector_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            var selection = (String) viewerSelector.SelectedItem;
+            Control newlySelectedViewer;
+
+            if (selection.Equals(treeXmlViewerStr))
+                newlySelectedViewer = treeXmlViewer;
+            else
+                newlySelectedViewer = rawXmlViewer;
+
+            if (newlySelectedViewer != this.currentViewer)
             {
-                var cursorPos = rtb1.SelectionStart;
-
-                rtb1.SelectAll();
-                rtb1.SelectionBackColor = Color.White;
-
-                int matchCount = 0;
-                var query = findTextBox.Text;
-                var lastMatchStart = 0;
-
-                while (lastMatchStart >= 0 && lastMatchStart + 1 < rtb1.TextLength)
-                {
-                    lastMatchStart = rtb1.Find(query, lastMatchStart + 1, -1, 0);
-
-                    if (lastMatchStart >= 0)
-                    {
-                        rtb1.SelectionBackColor = Color.Yellow;
-                        matchCount += 1;
-                    }
-                }
-
-                rtb1.SelectionStart = cursorPos;
-                rtb1.SelectionLength = 0;
-
-                matchesCountLabel.Visible = true;
-                matchesCountLabel.Text = "Found " + matchCount + " matches";
+                splitContainer1.Panel2.Controls.Clear();
+                splitContainer1.Panel2.Controls.Add(newlySelectedViewer);
+                this.currentViewer = newlySelectedViewer;
             }
         }
 
-        private void resetSearchComponents()
+        private DAIEbx deserializeEbx(byte[] bytes)
         {
-            matchesCountLabel.Visible = false;
-            findButton.Enabled = false;
-            findTextBox.Clear();
+            DAIEbx ebxFile = new DAIEbx();
+            ebxFile.Serialize(new MemoryStream(bytes));
+            return ebxFile;
         }
     }
 }

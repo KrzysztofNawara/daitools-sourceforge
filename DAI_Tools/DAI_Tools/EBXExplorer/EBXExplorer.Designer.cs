@@ -35,20 +35,15 @@
             this.toolStripTextBox1 = new System.Windows.Forms.ToolStripTextBox();
             this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
             this.toolStripButton2 = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.viewerSelector = new System.Windows.Forms.ToolStripComboBox();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.treeView1 = new System.Windows.Forms.TreeView();
-            this.rtb1 = new System.Windows.Forms.RichTextBox();
-            this.toolStrip2 = new System.Windows.Forms.ToolStrip();
-            this.findTextBox = new System.Windows.Forms.ToolStripTextBox();
-            this.findButton = new System.Windows.Forms.ToolStripButton();
-            this.matchesCountLabel = new System.Windows.Forms.ToolStripLabel();
             this.statusStrip1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
-            this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
-            this.toolStrip2.SuspendLayout();
             this.SuspendLayout();
             // 
             // statusStrip1
@@ -57,7 +52,7 @@
             this.status});
             this.statusStrip1.Location = new System.Drawing.Point(0, 453);
             this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(636, 22);
+            this.statusStrip1.Size = new System.Drawing.Size(704, 22);
             this.statusStrip1.TabIndex = 0;
             this.statusStrip1.Text = "statusStrip1";
             // 
@@ -71,10 +66,12 @@
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripTextBox1,
             this.toolStripButton1,
-            this.toolStripButton2});
+            this.toolStripButton2,
+            this.toolStripSeparator1,
+            this.viewerSelector});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(636, 25);
+            this.toolStrip1.Size = new System.Drawing.Size(704, 25);
             this.toolStrip1.TabIndex = 1;
             this.toolStrip1.Text = "toolStrip1";
             // 
@@ -90,8 +87,8 @@
             this.toolStripButton1.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton1.Image")));
             this.toolStripButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButton1.Name = "toolStripButton1";
-            this.toolStripButton1.Size = new System.Drawing.Size(163, 22);
-            this.toolStripButton1.Text = "Search next EBX containing...";
+            this.toolStripButton1.Size = new System.Drawing.Size(151, 22);
+            this.toolStripButton1.Text = "Find next EBX containing...";
             this.toolStripButton1.Click += new System.EventHandler(this.toolStripButton1_Click);
             // 
             // toolStripButton2
@@ -105,6 +102,18 @@
             this.toolStripButton2.Visible = false;
             this.toolStripButton2.Click += new System.EventHandler(this.toolStripButton2_Click);
             // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
+            // 
+            // viewerSelector
+            // 
+            this.viewerSelector.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.viewerSelector.Name = "viewerSelector";
+            this.viewerSelector.Size = new System.Drawing.Size(121, 25);
+            this.viewerSelector.SelectedIndexChanged += new System.EventHandler(this.viewerSelector_SelectedIndexChanged);
+            // 
             // splitContainer1
             // 
             this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -114,13 +123,8 @@
             // splitContainer1.Panel1
             // 
             this.splitContainer1.Panel1.Controls.Add(this.treeView1);
-            // 
-            // splitContainer1.Panel2
-            // 
-            this.splitContainer1.Panel2.Controls.Add(this.rtb1);
-            this.splitContainer1.Panel2.Controls.Add(this.toolStrip2);
-            this.splitContainer1.Size = new System.Drawing.Size(636, 428);
-            this.splitContainer1.SplitterDistance = 260;
+            this.splitContainer1.Size = new System.Drawing.Size(704, 428);
+            this.splitContainer1.SplitterDistance = 287;
             this.splitContainer1.TabIndex = 2;
             // 
             // treeView1
@@ -130,62 +134,15 @@
             this.treeView1.HideSelection = false;
             this.treeView1.Location = new System.Drawing.Point(0, 0);
             this.treeView1.Name = "treeView1";
-            this.treeView1.Size = new System.Drawing.Size(260, 428);
+            this.treeView1.Size = new System.Drawing.Size(287, 428);
             this.treeView1.TabIndex = 0;
             this.treeView1.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeView1_AfterSelect);
-            // 
-            // rtb1
-            // 
-            this.rtb1.DetectUrls = false;
-            this.rtb1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.rtb1.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.rtb1.HideSelection = false;
-            this.rtb1.Location = new System.Drawing.Point(0, 25);
-            this.rtb1.Name = "rtb1";
-            this.rtb1.Size = new System.Drawing.Size(372, 403);
-            this.rtb1.TabIndex = 0;
-            this.rtb1.Text = "";
-            this.rtb1.WordWrap = false;
-            // 
-            // toolStrip2
-            // 
-            this.toolStrip2.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
-            this.toolStrip2.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.findTextBox,
-            this.findButton,
-            this.matchesCountLabel});
-            this.toolStrip2.Location = new System.Drawing.Point(0, 0);
-            this.toolStrip2.Name = "toolStrip2";
-            this.toolStrip2.Size = new System.Drawing.Size(372, 25);
-            this.toolStrip2.TabIndex = 2;
-            this.toolStrip2.Text = "toolStrip2";
-            // 
-            // findTextBox
-            // 
-            this.findTextBox.Name = "findTextBox";
-            this.findTextBox.Size = new System.Drawing.Size(100, 25);
-            // 
-            // findButton
-            // 
-            this.findButton.Enabled = false;
-            this.findButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.findButton.Name = "findButton";
-            this.findButton.Size = new System.Drawing.Size(34, 22);
-            this.findButton.Text = "Find";
-            this.findButton.Click += new System.EventHandler(this.findButton_Click);
-            // 
-            // matchesCountLabel
-            // 
-            this.matchesCountLabel.Name = "matchesCountLabel";
-            this.matchesCountLabel.Size = new System.Drawing.Size(86, 22);
-            this.matchesCountLabel.Text = "toolStripLabel1";
-            this.matchesCountLabel.Visible = false;
             // 
             // EBXExplorer
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(636, 475);
+            this.ClientSize = new System.Drawing.Size(704, 475);
             this.Controls.Add(this.splitContainer1);
             this.Controls.Add(this.toolStrip1);
             this.Controls.Add(this.statusStrip1);
@@ -198,12 +155,8 @@
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();
             this.splitContainer1.Panel1.ResumeLayout(false);
-            this.splitContainer1.Panel2.ResumeLayout(false);
-            this.splitContainer1.Panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
-            this.toolStrip2.ResumeLayout(false);
-            this.toolStrip2.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -216,13 +169,10 @@
         private System.Windows.Forms.SplitContainer splitContainer1;
         private System.Windows.Forms.ToolStripStatusLabel status;
         private System.Windows.Forms.TreeView treeView1;
-        private System.Windows.Forms.RichTextBox rtb1;
         private System.Windows.Forms.ToolStripTextBox toolStripTextBox1;
         private System.Windows.Forms.ToolStripButton toolStripButton1;
         private System.Windows.Forms.ToolStripButton toolStripButton2;
-        private System.Windows.Forms.ToolStrip toolStrip2;
-        private System.Windows.Forms.ToolStripTextBox findTextBox;
-        private System.Windows.Forms.ToolStripButton findButton;
-        private System.Windows.Forms.ToolStripLabel matchesCountLabel;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
+        private System.Windows.Forms.ToolStripComboBox viewerSelector;
     }
 }
