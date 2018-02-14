@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -142,6 +143,13 @@ namespace DAI_Tools.Frostbite
         DAI_Guid,
         DAI_Double,
         DAI_Bool
+    }
+
+    public class DAIGuid
+    {
+        public bool external = false;
+        public String fileGuid = "";
+        public String instanceGuid = "";
     }
 
     public class DAIField
@@ -755,6 +763,35 @@ namespace DAI_Tools.Frostbite
             for (int i = 0; i < 16; i++)
                 sb.Append(guid[i].ToString("X2"));
             return sb.ToString();
+        }
+
+        public DAIGuid GetDaiGuidFieldValue(DAIField field)
+        {
+            Debug.Assert(field.ValueType == DAIFieldType.DAI_Guid, "this method can only be applied to GUID fields");
+
+            var guid = new DAIGuid();
+            uint UIntValue = field.GetUIntValue();
+            if ((UIntValue >> 31) == 1)
+            {
+                /* External Guid */
+                DAIExternalGuid Guid = this.ExternalGuids.ElementAt((int)(UIntValue & 0x7fffffff));
+                guid.external = true;
+                guid.fileGuid = GuidToString(Guid.FileGuid);
+                guid.instanceGuid = GuidToString(Guid.InstanceGuid);
+            }
+            else if (UIntValue == 0)
+            {
+                /* NULL Guid */
+                guid.instanceGuid = "null";
+            }
+            else
+            {
+                /* Internal Guid */
+                byte[] Guid = this.InternalGuids[(int)(UIntValue - 1)];
+                guid.instanceGuid = GuidToString(Guid);
+            }
+
+            return guid;
         }
     }
 }

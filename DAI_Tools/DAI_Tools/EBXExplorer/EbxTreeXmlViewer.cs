@@ -33,7 +33,7 @@ namespace DAI_Tools.EBXExplorer
                 foreach (var instance in ebxFile.Instances)
                 {
                     var instanceGuid = DAIEbx.GuidToString(instance.Key);
-                    processEbxTree(wrapWithFakeField(instanceGuid, instance.Value), root);
+                    processEbxTree(wrapWithFakeField(instanceGuid, instance.Value), root, ebxFile);
                 }
 
                 treeView1.Nodes.Add(root);
@@ -50,7 +50,7 @@ namespace DAI_Tools.EBXExplorer
             return fakeField;
         }
 
-        private void processEbxTree(DAIField field, TreeNode parentNode)
+        private void processEbxTree(DAIField field, TreeNode parentNode, DAIEbx file)
         {
             var fieldName = field.Descriptor.FieldName;
             
@@ -59,12 +59,12 @@ namespace DAI_Tools.EBXExplorer
             if (field.ValueType == DAIFieldType.DAI_Complex)
             {
                 var tnode = attachComplexField(field, parentNode);
-                spawnRecursiveAction(field.GetComplexValue().Fields, tnode);
+                spawnRecursiveAction(field.GetComplexValue().Fields, tnode, file);
             }
             else if(field.ValueType == DAIFieldType.DAI_Array)
             {
                 var tnode = attachComplexField(field, parentNode);
-                spawnRecursiveAction(field.GetArrayValue().Fields, tnode);
+                spawnRecursiveAction(field.GetArrayValue().Fields, tnode, file);
             }
             else
             {
@@ -102,12 +102,12 @@ namespace DAI_Tools.EBXExplorer
                         strValue = field.GetLongValue().ToString();
                         break;
                     case DAIFieldType.DAI_LongLong:
-                        // @ToDo!
-                        strValue = "some long long byte[]...";
+                        strValue = "LL " + DAIEbx.GuidToString(field.GetLongLongValue());
                         break;
                     case DAIFieldType.DAI_Guid:
-                        // @ToDo!
-                        strValue = "GUID";
+                        var guid = file.GetDaiGuidFieldValue(field);
+                        var fileGuidPrefix = (guid.external) ? (guid.fileGuid + " ") : "";
+                        strValue = "[" + fileGuidPrefix + guid.instanceGuid + "]";
                         break;
                     case DAIFieldType.DAI_Bool:
                         strValue = field.GetBoolValue().ToString();
@@ -120,10 +120,10 @@ namespace DAI_Tools.EBXExplorer
             }
         }
 
-        private void spawnRecursiveAction(List<DAIField> childFields, TreeNode parentNode)
+        private void spawnRecursiveAction(List<DAIField> childFields, TreeNode parentNode, DAIEbx ebxFile)
         {
             foreach (var childField in childFields)
-                processEbxTree(childField, parentNode);
+                processEbxTree(childField, parentNode, ebxFile);
         }
 
         private TreeNode attachComplexField(DAIField field, TreeNode parent)
