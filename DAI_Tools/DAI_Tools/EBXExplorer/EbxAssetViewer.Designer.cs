@@ -48,6 +48,7 @@
             this.assetList.Name = "assetList";
             this.assetList.RowHeadersVisible = false;
             this.assetList.RowTemplate.ReadOnly = true;
+            this.assetList.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.assetList.Size = new System.Drawing.Size(300, 150);
             this.assetList.TabIndex = 0;
             // 
