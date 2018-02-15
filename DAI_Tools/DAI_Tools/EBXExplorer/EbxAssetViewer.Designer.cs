@@ -33,6 +33,7 @@
             this.partialsLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.assetType = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.assetName = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.assetGuid = new System.Windows.Forms.DataGridViewTextBoxColumn();
             ((System.ComponentModel.ISupportInitialize)(this.assetList)).BeginInit();
             this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -42,7 +43,8 @@
             this.assetList.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.assetList.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.assetType,
-            this.assetName});
+            this.assetName,
+            this.assetGuid});
             this.assetList.Dock = System.Windows.Forms.DockStyle.Fill;
             this.assetList.Location = new System.Drawing.Point(0, 0);
             this.assetList.Name = "assetList";
@@ -51,6 +53,8 @@
             this.assetList.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.assetList.Size = new System.Drawing.Size(300, 150);
             this.assetList.TabIndex = 0;
+            this.assetList.RowEnter += new System.Windows.Forms.DataGridViewCellEventHandler(this.assetList_RowEnter);
+            this.assetList.RowLeave += new System.Windows.Forms.DataGridViewCellEventHandler(this.assetList_RowLeave);
             // 
             // statusStrip1
             // 
@@ -82,6 +86,13 @@
             this.assetName.Name = "assetName";
             this.assetName.ReadOnly = true;
             // 
+            // assetGuid
+            // 
+            this.assetGuid.HeaderText = "";
+            this.assetGuid.Name = "assetGuid";
+            this.assetGuid.ReadOnly = true;
+            this.assetGuid.Visible = false;
+            // 
             // EbxAssetViewer
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -105,5 +116,6 @@
         private System.Windows.Forms.ToolStripStatusLabel partialsLabel;
         private System.Windows.Forms.DataGridViewTextBoxColumn assetType;
         private System.Windows.Forms.DataGridViewTextBoxColumn assetName;
+        private System.Windows.Forms.DataGridViewTextBoxColumn assetGuid;
     }
 }
