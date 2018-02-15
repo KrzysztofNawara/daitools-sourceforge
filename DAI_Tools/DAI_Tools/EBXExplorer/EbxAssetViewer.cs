@@ -22,12 +22,21 @@ namespace DAI_Tools.EBXExplorer
 
         public void setEbxFile(DAIEbx ebxFile)
         {
+            assetList.Rows.Clear();
+            
+            if (ebxFile != null)
+            {
+                var ebxDataContainers = EbxDataContainers.fromDAIEbx(ebxFile);
+                var assets = ebxDataContainers.getAllWithPartial("Asset");
 
-        }
+                foreach (var asset in assets)
+                {
+                    var assetType = asset.data.name;
+                    var assetName = asset.getPartial("Asset").fields["Name"].castTo<ASimpleValue>().Val;
 
-        private void assetList_CellContentClick(object sender, DataGridViewCellEventArgs e)
-        {
-
+                    assetList.Rows.Add(new string[]{assetType, assetName});
+                }
+            }
         }
     }
 }

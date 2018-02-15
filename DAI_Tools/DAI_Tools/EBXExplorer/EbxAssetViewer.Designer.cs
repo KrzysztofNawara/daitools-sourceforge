@@ -50,7 +50,6 @@
             this.assetList.RowTemplate.ReadOnly = true;
             this.assetList.Size = new System.Drawing.Size(300, 150);
             this.assetList.TabIndex = 0;
-            this.assetList.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.assetList_CellContentClick);
             // 
             // statusStrip1
             // 
