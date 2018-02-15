@@ -69,8 +69,10 @@
             // partialsLabel
             // 
             this.partialsLabel.Name = "partialsLabel";
-            this.partialsLabel.Size = new System.Drawing.Size(10, 17);
+            this.partialsLabel.Size = new System.Drawing.Size(254, 17);
+            this.partialsLabel.Spring = true;
             this.partialsLabel.Text = ".";
+            this.partialsLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // assetType
             // 
