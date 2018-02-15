@@ -20,6 +20,7 @@ namespace DAI_Tools.EBXExplorer
             InitializeComponent();
 
             this.Dock = DockStyle.Fill;
+            assetList.AllowUserToAddRows = false;
         }
 
         public void setEbxFile(DAIEbx ebxFile)
