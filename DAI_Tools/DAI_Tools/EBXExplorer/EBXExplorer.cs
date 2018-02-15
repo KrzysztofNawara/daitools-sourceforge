@@ -25,8 +25,10 @@ namespace DAI_Tools.EBXExplorer
 
         private String rawXmlViewerStr = "RawXML";
         private String treeXmlViewerStr = "TreeXML";
+        private String assetViewerStr = "Assets";
         private EbxRawXmlViewer rawXmlViewer;
         private EbxTreeXmlViewer treeXmlViewer;
+        private EbxAssetViewer assetViewer;
         private Control currentViewer = null;
 
         public struct EBXEntry
@@ -43,8 +45,10 @@ namespace DAI_Tools.EBXExplorer
 
             rawXmlViewer = new EbxRawXmlViewer();
             treeXmlViewer = new EbxTreeXmlViewer();
+            assetViewer = new EbxAssetViewer();
             viewerSelector.Items.Add(rawXmlViewerStr);
             viewerSelector.Items.Add(treeXmlViewerStr);
+            viewerSelector.Items.Add(assetViewerStr);
             viewerSelector.SelectedIndex = 0;
 
             currentViewer = rawXmlViewer;
@@ -279,18 +283,21 @@ namespace DAI_Tools.EBXExplorer
         {
             rawXmlViewer.setEbxFile(ebxFile);
             treeXmlViewer.setEbxFile(ebxFile);
+            assetViewer.setEbxFile(ebxFile);
         }
 
         private void hideViewer()
         {
             rawXmlViewer.Visible = false;
             treeXmlViewer.Visible = false;
+            assetViewer.Visible = false;
         }
 
         private void showViewer()
         {
             rawXmlViewer.Visible = true;
             treeXmlViewer.Visible = true;
+            assetViewer.Visible = true;
         }
 
         private void viewerSelector_SelectedIndexChanged(object sender, EventArgs e)
@@ -300,6 +307,8 @@ namespace DAI_Tools.EBXExplorer
 
             if (selection.Equals(treeXmlViewerStr))
                 newlySelectedViewer = treeXmlViewer;
+            else if (selection.Equals(assetViewerStr))
+                newlySelectedViewer = assetViewer;
             else
                 newlySelectedViewer = rawXmlViewer;
 
