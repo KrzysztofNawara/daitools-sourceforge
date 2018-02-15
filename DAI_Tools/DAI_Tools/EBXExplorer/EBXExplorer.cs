@@ -138,14 +138,13 @@ namespace DAI_Tools.EBXExplorer
 
         private void treeView1_AfterSelect(object sender, TreeViewEventArgs e)
         {
-            if (ignoreonce)
-            {
-                ignoreonce = false;
-                hideViewer();
-            }
-            else
-            {
-                try
+            try {
+                if (ignoreonce)
+                {
+                    ignoreonce = false;
+                    hideViewer();
+                }
+                else
                 {
                     status.Text = "Loading requested EBX...";
 
@@ -161,12 +160,10 @@ namespace DAI_Tools.EBXExplorer
 
                     status.Text = "Done.";
                     showViewer();
-                }
-                catch (Exception ex)
-                {
-                    status.Text = ex.ToString();
-                    hideViewer();
-                }
+            }
+            } catch (Exception ex)
+            {
+                messageBoxOnException(ex);
             }
         }
 
@@ -211,8 +208,9 @@ namespace DAI_Tools.EBXExplorer
                         }
                     }
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
+                    messageBoxOnException(ex);
                 }
             }
             toolStripButton2.Visible = false;
@@ -325,6 +323,11 @@ namespace DAI_Tools.EBXExplorer
             DAIEbx ebxFile = new DAIEbx();
             ebxFile.Serialize(new MemoryStream(bytes));
             return ebxFile;
+        }
+
+        private void messageBoxOnException(Exception ex)
+        {
+            MessageBox.Show("ERROR!\n" + ex.Message + "\n" + ex.StackTrace);
         }
     }
 }
