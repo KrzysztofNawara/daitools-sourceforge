@@ -124,6 +124,12 @@
     <Compile Include="EBXExplorer\EbxTreeXmlViewer.Designer.cs">
       <DependentUpon>EbxTreeXmlViewer.cs</DependentUpon>
     </Compile>
+    <Compile Include="EBXExplorer\UIGraphAssetViz.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="EBXExplorer\UIGraphAssetViz.Designer.cs">
+      <DependentUpon>UIGraphAssetViz.cs</DependentUpon>
+    </Compile>
     <Compile Include="Frontend.cs">
       <SubType>Form</SubType>
     </Compile>

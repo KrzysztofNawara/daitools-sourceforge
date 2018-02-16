@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace DAI_Tools.Frostbite
 {
-    enum ValueTypes
+    public enum ValueTypes
     {
         SIMPLE,
         NULL_REF,
@@ -17,29 +17,29 @@ namespace DAI_Tools.Frostbite
         ARRAY,
     }
 
-    abstract class AValue
+    public abstract class AValue
     {
         public AValue(ValueTypes type) { this.Type = type; }
         public ValueTypes Type { get; }
         public T castTo<T>() { return (T) Convert.ChangeType(this, typeof(T)); }
     }
 
-    class ASimpleValue : AValue
+    public class ASimpleValue : AValue
     {
         public ASimpleValue(String value) : base(ValueTypes.SIMPLE) { this.Val = value; }
         public String Val { get; }
     }
 
-    class ANullRef : AValue { public ANullRef() : base(ValueTypes.NULL_REF) { } }
+    public class ANullRef : AValue { public ANullRef() : base(ValueTypes.NULL_REF) { } }
 
-    enum RefStatus
+    public enum RefStatus
     {
         UNRESOLVED,
         RESOLVED_SUCCESS,
         RESOLVED_FAILURE,
     }
 
-    class AIntRef : AValue
+    public class AIntRef : AValue
     {
         public AIntRef(String instanceGuid) : base(ValueTypes.IN_REF)
         {
@@ -53,7 +53,7 @@ namespace DAI_Tools.Frostbite
         public RefStatus refStatus { get; set; }
     }
 
-    class AExRef : AValue
+    public class AExRef : AValue
     {
         public AExRef(String fileGuid, String instanceGuid) : base(ValueTypes.EX_REF)
         {
@@ -65,7 +65,7 @@ namespace DAI_Tools.Frostbite
         public String instanceGuid { get; set; }
     }
 
-    class AStruct : AValue
+    public class AStruct : AValue
     {
         public AStruct() : base(ValueTypes.STRUCT)
         {
@@ -93,7 +93,7 @@ namespace DAI_Tools.Frostbite
     /**
      * Partials are returned with original casing, but can be searched by any - they are case-insenitive
      */
-    class DataContainer
+    public class DataContainer
     {
         public DataContainer(String guid, AStruct data)
         {

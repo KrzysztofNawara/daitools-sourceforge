@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Data;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,6 +15,7 @@ namespace DAI_Tools.EBXExplorer
     public partial class EbxAssetViewer : UserControl
     {
         private EbxDataContainers currentContainers = null;
+        private DataContainer currentlySelectedAsset = null;
         
         public EbxAssetViewer()
         {
@@ -27,6 +29,8 @@ namespace DAI_Tools.EBXExplorer
         {
             assetList.Rows.Clear();
             currentContainers = null;
+            currentlySelectedAsset = null;
+            graphVizButton.Enabled = false;
             
             if (ebxFile != null)
             {
@@ -53,6 +57,10 @@ namespace DAI_Tools.EBXExplorer
                 {
                     var selectedAsset = currentContainers.instances[selectedAssetGuid];
                     partialsLabel.Text = String.Join(" -> ", selectedAsset.getAllPartials());
+                    currentlySelectedAsset = selectedAsset;
+
+                    if (currentlySelectedAsset.hasPartial("UIGraphAsset"))
+                        graphVizButton.Enabled = true;
                 }
             }
         }
@@ -60,6 +68,16 @@ namespace DAI_Tools.EBXExplorer
         private void assetList_RowLeave(object sender, DataGridViewCellEventArgs e)
         {
             partialsLabel.Text = "";
+            currentlySelectedAsset = null;
+            graphVizButton.Enabled = false;
+        }
+
+        private void graphVizButton_Click(object sender, EventArgs e)
+        {
+            Debug.Assert(currentlySelectedAsset != null);
+            Debug.Assert(currentlySelectedAsset.hasPartial("UIGraphAsset"));
+
+            new UIGraphAssetViz(currentlySelectedAsset).Show();
         }
     }
 }
