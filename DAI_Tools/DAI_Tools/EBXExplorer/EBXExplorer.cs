@@ -46,9 +46,9 @@ namespace DAI_Tools.EBXExplorer
             rawXmlViewer = new EbxRawXmlViewer();
             treeXmlViewer = new EbxTreeXmlViewer();
             assetViewer = new EbxAssetViewer();
+            viewerSelector.Items.Add(assetViewerStr);
             viewerSelector.Items.Add(rawXmlViewerStr);
             viewerSelector.Items.Add(treeXmlViewerStr);
-            viewerSelector.Items.Add(assetViewerStr);
             viewerSelector.SelectedIndex = 0;
 
             currentViewer = rawXmlViewer;
