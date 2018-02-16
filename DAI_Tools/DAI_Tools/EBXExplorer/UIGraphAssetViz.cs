@@ -16,8 +16,11 @@ namespace DAI_Tools.EBXExplorer
     {
         public UIGraphAssetViz(DataContainer uiGraphAsset)
         {
+            this.uiGraphAsset = uiGraphAsset;
             InitializeComponent();
         }
+
+        private DataContainer uiGraphAsset;
 
         private void UIGraphAssetViz_Load(object sender, EventArgs e)
         {
@@ -42,6 +45,16 @@ namespace DAI_Tools.EBXExplorer
 
         private void configureGraph(Graph graph)
         {
+            AArray nodes = uiGraphAsset.data.get("Nodes").castTo<AArray>();
+
+            foreach (var nodeRef in nodes.elements)
+            {
+                var node = nodeRef.castTo<AIntRef>().refTarget.castTo<AStruct>();
+                var nodeName = node.get("Name").castTo<ASimpleValue>().Val;
+                graph.AddNode(nodeName);
+            }
+            
+            /*
             graph.AddEdge("A", "B");
             graph.AddEdge("B", "C");
             graph.AddEdge("A", "C").Attr.Color = Microsoft.Msagl.Drawing.Color.Green;
@@ -50,6 +63,7 @@ namespace DAI_Tools.EBXExplorer
             Microsoft.Msagl.Drawing.Node c = graph.FindNode("C");
             c.Attr.FillColor = Microsoft.Msagl.Drawing.Color.PaleGreen;
             c.Attr.Shape = Microsoft.Msagl.Drawing.Shape.Diamond;
+            */
         }
     }
 }
