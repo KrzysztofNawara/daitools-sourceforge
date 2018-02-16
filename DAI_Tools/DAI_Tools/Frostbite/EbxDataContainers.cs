@@ -76,6 +76,23 @@ namespace DAI_Tools.Frostbite
         public String name { get; set; }
         public SortedDictionary<String, AValue> fields { get; }
         public Dictionary<String, DAIField> correspondingDaiFields { get; }
+
+        public AValue get(string fieldName, bool searchAncestors = true)
+        {
+            bool shouldStop = false;
+            AStruct toSearch = this;
+            while(!shouldStop)
+            {
+                if (toSearch.fields.ContainsKey(fieldName))
+                    return toSearch.fields[fieldName];
+                else if (toSearch.fields.ContainsKey("$"))
+                    toSearch = toSearch.fields["$"].castTo<AStruct>();
+                else
+                    shouldStop = true;
+            }
+
+            return null;
+        }
     }
 
     class AArray : AValue
@@ -126,23 +143,6 @@ namespace DAI_Tools.Frostbite
             return partialsMap.ContainsKey(typeName.ToLower());
         }
 
-        public AValue get(string fieldName, bool searchAncestors = true)
-        {
-            bool shouldStop = false;
-            AStruct toSearch = data;
-            while(!shouldStop)
-            {
-                if (toSearch.fields.ContainsKey(fieldName))
-                    return toSearch.fields[fieldName];
-                else if (toSearch.fields.ContainsKey("$"))
-                    toSearch = toSearch.fields["$"].castTo<AStruct>();
-                else
-                    shouldStop = true;
-            }
-
-            return null;
-        }
-
         /* order: most specific to most generic */
         private List<String> partialsList = new List<string>();
         private Dictionary<String, AStruct> partialsMap = new Dictionary<string, AStruct>();
@@ -151,7 +151,7 @@ namespace DAI_Tools.Frostbite
     /**
      * Offers higher-level view on EBX files - as an asset container. 
      */
-    class EbxDataContainers
+    public class EbxDataContainers
     {
         public static EbxDataContainers fromDAIEbx(DAIEbx file)
         {
