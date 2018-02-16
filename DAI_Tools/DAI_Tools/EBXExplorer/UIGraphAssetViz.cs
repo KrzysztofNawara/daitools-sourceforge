@@ -50,11 +50,26 @@ namespace DAI_Tools.EBXExplorer
             }
         }
 
+        private class PortDesc
+        {
+            public PortDesc(int portIdx, string portName, string nodeLabel)
+            {
+                this.portIdx = portIdx;
+                this.portName = portName;
+                this.nodeLabel = nodeLabel;
+            }
+
+            public int refCount = 0;
+            public int portIdx;
+            public string portName;
+            public string nodeLabel;
+        }
+
         private void configureGraph(Graph graph)
         {
             var uiGraphAsset = ebxDataContainers.instances[assetGuid];
             AArray nodes = uiGraphAsset.data.get("Nodes").castTo<AArray>();
-            var portsGuidToPortsNode = new Dictionary<string, Node>();
+            var portsGuidToPortDesc = new Dictionary<string, PortDesc>();
 
             int nodeNextIdx = 0;
             int portNextIdx = 0;
@@ -72,12 +87,10 @@ namespace DAI_Tools.EBXExplorer
                 foreach (var dataContainer in ports)
                 {
                     var portName = dataContainer.data.get("Name").castTo<ASimpleValue>().Val;
-                    var portLabel = "P" + portNextIdx + ": " + portName;
+                    var portDesc = new PortDesc(portNextIdx, portName, nodeLabel);
                     portNextIdx += 1;
-                    var portNode = graph.AddNode(portLabel);
-                    graph.AddEdge(nodeLabel, portLabel);
 
-                    portsGuidToPortsNode.Add(dataContainer.guid, portNode);
+                    portsGuidToPortDesc.Add(dataContainer.guid, portDesc);
                 }
             }
 
@@ -88,11 +101,20 @@ namespace DAI_Tools.EBXExplorer
                 var conn = connRef.castTo<AIntRef>().refTarget.castTo<AStruct>();
                 var srcGuid = conn.get("SourcePort").castTo<AIntRef>().instanceGuid;
                 var targetGuid = conn.get("TargetPort").castTo<AIntRef>().instanceGuid;
-                var srcNode = portsGuidToPortsNode[srcGuid];
-                var targetNode = portsGuidToPortsNode[targetGuid];
+                var srcPortDesc = portsGuidToPortDesc[srcGuid];
+                var targetPortDesc = portsGuidToPortDesc[targetGuid];
 
-                srcNode.AddOutEdge(new Edge(srcNode, targetNode, ConnectionToGraph.Connected));
+                var connLabel = "";
+                if (srcPortDesc.portName.Length > 0 || targetPortDesc.portName.Length > 0)
+                    connLabel = srcPortDesc.portName + " -> " + targetPortDesc.portName;
+
+                graph.AddEdge(srcPortDesc.nodeLabel, connLabel, targetPortDesc.nodeLabel);
+
+                srcPortDesc.refCount += 1;
+                targetPortDesc.refCount += 1;
             }
+
+            /* @todo draw ports with refcount 0 */
             
             /*
             graph.AddEdge("A", "B");
