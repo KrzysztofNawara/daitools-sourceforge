@@ -14,13 +14,15 @@ namespace DAI_Tools.EBXExplorer
 {
     public partial class UIGraphAssetViz : Form
     {
-        public UIGraphAssetViz(DataContainer uiGraphAsset)
+        public UIGraphAssetViz(EbxDataContainers ebxDataContainers, string assetGuid)
         {
-            this.uiGraphAsset = uiGraphAsset;
+            this.ebxDataContainers = ebxDataContainers;
+            this.assetGuid = assetGuid;
             InitializeComponent();
         }
 
-        private DataContainer uiGraphAsset;
+        private EbxDataContainers ebxDataContainers;
+        private string assetGuid;
 
         private void UIGraphAssetViz_Load(object sender, EventArgs e)
         {
@@ -45,6 +47,7 @@ namespace DAI_Tools.EBXExplorer
 
         private void configureGraph(Graph graph)
         {
+            var uiGraphAsset = ebxDataContainers.instances[assetGuid];
             AArray nodes = uiGraphAsset.data.get("Nodes").castTo<AArray>();
 
             foreach (var nodeRef in nodes.elements)

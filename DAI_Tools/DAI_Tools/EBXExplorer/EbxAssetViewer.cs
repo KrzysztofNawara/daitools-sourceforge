@@ -77,7 +77,7 @@ namespace DAI_Tools.EBXExplorer
             Debug.Assert(currentlySelectedAsset != null);
             Debug.Assert(currentlySelectedAsset.hasPartial("UIGraphAsset"));
 
-            new UIGraphAssetViz(currentlySelectedAsset).Show();
+            new UIGraphAssetViz(currentContainers, currentlySelectedAsset.guid).Show();
         }
     }
 }
