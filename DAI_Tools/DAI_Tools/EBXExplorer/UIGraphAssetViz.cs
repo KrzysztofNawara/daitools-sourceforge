@@ -56,21 +56,26 @@ namespace DAI_Tools.EBXExplorer
             AArray nodes = uiGraphAsset.data.get("Nodes").castTo<AArray>();
             var portsGuidToPortsNode = new Dictionary<string, Node>();
 
+            int nodeNextIdx = 0;
+            int portNextIdx = 0;
+
             foreach (var nodeRef in nodes.elements)
             {
                 var nodeInRef = nodeRef.castTo<AIntRef>();
-                var node = nodeInRef.refTarget.castTo<AStruct>();
-                var nodeName = node.get("Name").castTo<ASimpleValue>().Val;
-                graph.AddNode(nodeName);
+                var nodeName = nodeInRef.refTarget.castTo<AStruct>().get("Name").castTo<ASimpleValue>().Val;
+                var nodeLabel = "N" + nodeNextIdx.ToString() + ": " + nodeName;
+                nodeNextIdx += 1;
+                graph.AddNode(nodeLabel);
 
                 var ports = ebxDataContainers.getIntRefedObjsByTypeFor(nodeInRef.instanceGuid, "UINodePort");
 
                 foreach (var dataContainer in ports)
                 {
                     var portName = dataContainer.data.get("Name").castTo<ASimpleValue>().Val;
-                    var portLabel = "P: " + portName;
+                    var portLabel = "P" + portNextIdx + ": " + portName;
+                    portNextIdx += 1;
                     var portNode = graph.AddNode(portLabel);
-                    graph.AddEdge(nodeName, portLabel);
+                    graph.AddEdge(nodeLabel, portLabel);
 
                     portsGuidToPortsNode.Add(dataContainer.guid, portNode);
                 }
