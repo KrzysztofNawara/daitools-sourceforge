@@ -26,35 +26,54 @@ namespace DAI_Tools.EBXExplorer
 
         private void UIGraphAssetViz_Load(object sender, EventArgs e)
         {
-            //create a viewer object 
-            Microsoft.Msagl.GraphViewerGdi.GViewer viewer = new Microsoft.Msagl.GraphViewerGdi.GViewer();
+            try {
+                //create a viewer object 
+                Microsoft.Msagl.GraphViewerGdi.GViewer viewer = new Microsoft.Msagl.GraphViewerGdi.GViewer();
 
-            //create a graph object 
-            Microsoft.Msagl.Drawing.Graph graph = new Microsoft.Msagl.Drawing.Graph("graph");
+                //create a graph object 
+                Microsoft.Msagl.Drawing.Graph graph = new Microsoft.Msagl.Drawing.Graph("graph");
 
-            //create the graph content 
-            configureGraph(graph);
+                //create the graph content 
+                configureGraph(graph);
 
-            //bind the graph to the viewer 
-            viewer.Graph = graph;
+                //bind the graph to the viewer 
+                viewer.Graph = graph;
 
-            //associate the viewer with the form 
-            this.SuspendLayout();
-            viewer.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.Controls.Add(viewer);
-            this.ResumeLayout();
+                //associate the viewer with the form 
+                this.SuspendLayout();
+                viewer.Dock = System.Windows.Forms.DockStyle.Fill;
+                this.Controls.Add(viewer);
+                this.ResumeLayout();
+            } catch (Exception ex)
+            {
+                MessageBox.Show("Exception:\n" + ex.Message + "\n" + ex.StackTrace);
+            }
         }
 
         private void configureGraph(Graph graph)
         {
             var uiGraphAsset = ebxDataContainers.instances[assetGuid];
             AArray nodes = uiGraphAsset.data.get("Nodes").castTo<AArray>();
+            var portsGuidToPortsNode = new Dictionary<string, Node>();
 
             foreach (var nodeRef in nodes.elements)
             {
-                var node = nodeRef.castTo<AIntRef>().refTarget.castTo<AStruct>();
+                var nodeInRef = nodeRef.castTo<AIntRef>();
+                var node = nodeInRef.refTarget.castTo<AStruct>();
                 var nodeName = node.get("Name").castTo<ASimpleValue>().Val;
                 graph.AddNode(nodeName);
+
+                var ports = ebxDataContainers.getIntRefedObjsByTypeFor(nodeInRef.instanceGuid, "UINodePort");
+
+                foreach (var dataContainer in ports)
+                {
+                    var portName = dataContainer.data.get("Name").castTo<ASimpleValue>().Val;
+                    var portLabel = "P: " + portName;
+                    var portNode = graph.AddNode(portLabel);
+                    graph.AddEdge(nodeName, portLabel);
+
+                    portsGuidToPortsNode.Add(dataContainer.guid, portNode);
+                }
             }
             
             /*
