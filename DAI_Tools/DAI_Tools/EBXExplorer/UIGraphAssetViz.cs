@@ -9,6 +9,8 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using DAI_Tools.Frostbite;
 using Microsoft.Msagl.Drawing;
+using Microsoft.Msagl.Layout.MDS;
+using Color = Microsoft.Msagl.Drawing.Color;
 
 namespace DAI_Tools.EBXExplorer
 {
@@ -50,11 +52,26 @@ namespace DAI_Tools.EBXExplorer
             }
         }
 
+        private class PortDesc
+        {
+            public PortDesc(int portIdx, string portName, string nodeLabel)
+            {
+                this.portIdx = portIdx;
+                this.portName = portName;
+                this.nodeLabel = nodeLabel;
+            }
+
+            public int refCount = 0;
+            public int portIdx;
+            public string portName;
+            public string nodeLabel;
+        }
+
         private void configureGraph(Graph graph)
         {
             var uiGraphAsset = ebxDataContainers.instances[assetGuid];
             AArray nodes = uiGraphAsset.data.get("Nodes").castTo<AArray>();
-            var portsGuidToPortsNode = new Dictionary<string, Node>();
+            var portsGuidToPortDesc = new Dictionary<string, PortDesc>();
 
             int nodeNextIdx = 0;
             int portNextIdx = 0;
@@ -63,22 +80,27 @@ namespace DAI_Tools.EBXExplorer
             {
                 var nodeInRef = nodeRef.castTo<AIntRef>();
                 var nodeName = nodeInRef.refTarget.castTo<AStruct>().get("Name").castTo<ASimpleValue>().Val;
-                var nodeLabel = "N" + nodeNextIdx.ToString() + ": " + nodeName;
+                var nodeType = ebxDataContainers.instances[nodeInRef.instanceGuid].data.name;
+                var nodeLabel = "N" + nodeNextIdx.ToString() + ": " + nodeName + "\n[" + nodeType + "]";
                 nodeNextIdx += 1;
-                graph.AddNode(nodeLabel);
-
+                var nodeNode = graph.AddNode(nodeLabel);
+                
                 var ports = ebxDataContainers.getIntRefedObjsByTypeFor(nodeInRef.instanceGuid, "UINodePort");
 
                 foreach (var dataContainer in ports)
                 {
                     var portName = dataContainer.data.get("Name").castTo<ASimpleValue>().Val;
-                    var portLabel = "P" + portNextIdx + ": " + portName;
+                    var portDesc = new PortDesc(portNextIdx, portName, nodeLabel);
                     portNextIdx += 1;
-                    var portNode = graph.AddNode(portLabel);
-                    graph.AddEdge(nodeLabel, portLabel);
 
-                    portsGuidToPortsNode.Add(dataContainer.guid, portNode);
+                    portsGuidToPortDesc.Add(dataContainer.guid, portDesc);
                 }
+
+                /* some visual formatting */
+                nodeNode.Attr.LabelMargin = 3;
+                nodeNode.Attr.Padding = 2;
+                nodeNode.Attr.FillColor = Color.LightGreen;
+                nodeNode.Attr.Shape = Shape.Ellipse;
             }
 
             var connections = uiGraphAsset.data.get("Connections").castTo<AArray>();
@@ -88,22 +110,39 @@ namespace DAI_Tools.EBXExplorer
                 var conn = connRef.castTo<AIntRef>().refTarget.castTo<AStruct>();
                 var srcGuid = conn.get("SourcePort").castTo<AIntRef>().instanceGuid;
                 var targetGuid = conn.get("TargetPort").castTo<AIntRef>().instanceGuid;
-                var srcNode = portsGuidToPortsNode[srcGuid];
-                var targetNode = portsGuidToPortsNode[targetGuid];
+                var srcPortDesc = portsGuidToPortDesc[srcGuid];
+                var targetPortDesc = portsGuidToPortDesc[targetGuid];
 
-                srcNode.AddOutEdge(new Edge(srcNode, targetNode, ConnectionToGraph.Connected));
+                var connLabel = "";
+                if (srcPortDesc.portName.Length > 0 || targetPortDesc.portName.Length > 0)
+                    connLabel = srcPortDesc.portName + " -> " + targetPortDesc.portName;
+
+                graph.AddEdge(srcPortDesc.nodeLabel, connLabel, targetPortDesc.nodeLabel);
+
+                srcPortDesc.refCount += 1;
+                targetPortDesc.refCount += 1;
+            }
+
+            foreach (var portDesc in portsGuidToPortDesc.Values)
+            {
+                if (portDesc.refCount < 1)
+                {
+                    var portLabel = "P" + portDesc.portIdx + ": " + portDesc.portName;
+                    var portNode = graph.AddNode(portLabel);
+
+                    var portEdge = graph.AddEdge(portDesc.nodeLabel, "", portLabel);
+
+                    /* visual formatting */
+                    portNode.Attr.FillColor = Color.Orange;
+                    portNode.Attr.Shape = Shape.Box;
+                    portEdge.Attr.ArrowheadAtSource = ArrowStyle.None;
+                    portEdge.Attr.ArrowheadAtTarget = ArrowStyle.None;
+                }
             }
             
-            /*
-            graph.AddEdge("A", "B");
-            graph.AddEdge("B", "C");
-            graph.AddEdge("A", "C").Attr.Color = Microsoft.Msagl.Drawing.Color.Green;
-            graph.FindNode("A").Attr.FillColor = Microsoft.Msagl.Drawing.Color.Magenta;
-            graph.FindNode("B").Attr.FillColor = Microsoft.Msagl.Drawing.Color.MistyRose;
-            Microsoft.Msagl.Drawing.Node c = graph.FindNode("C");
-            c.Attr.FillColor = Microsoft.Msagl.Drawing.Color.PaleGreen;
-            c.Attr.Shape = Microsoft.Msagl.Drawing.Shape.Diamond;
-            */
+            /* some visual formatting */
+            var layoutSettings = new MdsLayoutSettings();
+            graph.LayoutAlgorithmSettings = layoutSettings;
         }
     }
 }
