@@ -65,6 +65,15 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>dlls\Microsoft.DirectX.Direct3DX.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.Msagl, Version=3.0.0.0, Culture=neutral, PublicKeyToken=640c57aa40e7ae7d, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Msagl.1.0.2\lib\net40\Microsoft.Msagl.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Msagl.Drawing, Version=3.0.0.0, Culture=neutral, PublicKeyToken=8a3d7c21d5fa1306, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Msagl.Drawing.1.0.2\lib\net40\Microsoft.Msagl.Drawing.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Msagl.GraphViewerGdi, Version=3.0.0.0, Culture=neutral, PublicKeyToken=fffc27ea4058b3a1, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Msagl.GraphViewerGDI.1.0.2\lib\net40\Microsoft.Msagl.GraphViewerGdi.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.VisualBasic" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -217,6 +226,9 @@
     <EmbeddedResource Include="EBXExplorer\EbxTreeXmlViewer.resx">
       <DependentUpon>EbxTreeXmlViewer.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="EBXExplorer\UIGraphAssetViz.resx">
+      <DependentUpon>UIGraphAssetViz.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Frontend.resx">
       <DependentUpon>Frontend.cs</DependentUpon>
     </EmbeddedResource>
@@ -248,6 +260,7 @@
     <EmbeddedResource Include="TextureExplorer\TextureExplorer.resx">
       <DependentUpon>TextureExplorer.cs</DependentUpon>
     </EmbeddedResource>
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
