@@ -13,6 +13,7 @@ namespace DAI_Tools.EBXExplorer
             InitializeComponent();
 
             this.Dock = DockStyle.Fill;
+            this.Visible = false;
         }
 
         public void setEbxFile(DAIEbx ebxFile)
@@ -27,6 +28,9 @@ namespace DAI_Tools.EBXExplorer
         private void redrawTree()
         {
             treeView1.Nodes.Clear();
+
+            if (!Visible)
+                return;
 
             if (currentEbx != null)
             {
@@ -125,6 +129,11 @@ namespace DAI_Tools.EBXExplorer
         }
 
         private void intRefMaxDepth_ValueChanged(object sender, EventArgs e)
+        {
+            redrawTree();
+        }
+
+        private void EbxTreeXmlViewer_VisibleChanged(object sender, EventArgs e)
         {
             redrawTree();
         }

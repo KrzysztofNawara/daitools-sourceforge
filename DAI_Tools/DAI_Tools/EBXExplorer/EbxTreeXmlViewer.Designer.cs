@@ -81,6 +81,7 @@
             this.Controls.Add(this.treeView1);
             this.Controls.Add(this.toolStrip1);
             this.Name = "EbxTreeXmlViewer";
+            this.VisibleChanged += new System.EventHandler(this.EbxTreeXmlViewer_VisibleChanged);
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.intRefMaxDepth)).EndInit();

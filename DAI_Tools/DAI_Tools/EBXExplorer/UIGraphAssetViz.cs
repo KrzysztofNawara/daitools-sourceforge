@@ -93,14 +93,15 @@ namespace DAI_Tools.EBXExplorer
                     var portDesc = new PortDesc(portNextIdx, portName, nodeLabel);
                     portNextIdx += 1;
 
-                    portsGuidToPortDesc.Add(dataContainer.guid, portDesc);
+                    if (!portsGuidToPortDesc.ContainsKey(dataContainer.guid))
+                        portsGuidToPortDesc.Add(dataContainer.guid, portDesc);
                 }
 
                 /* some visual formatting */
                 nodeNode.Attr.LabelMargin = 3;
                 nodeNode.Attr.Padding = 2;
                 nodeNode.Attr.FillColor = Color.LightGreen;
-                nodeNode.Attr.Shape = Shape.Ellipse;
+                nodeNode.Attr.Shape = Shape.Box;
             }
 
             var connections = uiGraphAsset.data.get("Connections").castTo<AArray>();
