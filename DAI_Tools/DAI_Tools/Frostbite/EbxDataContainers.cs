@@ -116,11 +116,13 @@ namespace DAI_Tools.Frostbite
         {
             this.guid = guid;
             this.data = data;
+            this.intRefs = new List<string>();
         }
         
         public String guid;
         public AStruct data;
         public uint internalRefCount = 0;
+        public List<string> intRefs { get; }
 
         public List<String> getAllPartials() { return partialsList; }
 
@@ -143,6 +145,11 @@ namespace DAI_Tools.Frostbite
             return partialsMap.ContainsKey(typeName.ToLower());
         }
 
+        public void addIntRef(String guid)
+        {
+            intRefs.Add(guid);
+        }
+
         /* order: most specific to most generic */
         private List<String> partialsList = new List<string>();
         private Dictionary<String, AStruct> partialsMap = new Dictionary<string, AStruct>();
@@ -163,6 +170,7 @@ namespace DAI_Tools.Frostbite
             foreach (var instance in file.Instances)
             {
                 var instanceGuid = DAIEbx.GuidToString(instance.Key);
+                ctx.instanceGuid = instanceGuid;
                 var rootFakeField = wrapWithFakeField(instance.Value);
                 AValue convertedTreeRoot = convert(rootFakeField, ctx);
 
@@ -173,8 +181,8 @@ namespace DAI_Tools.Frostbite
 
             foreach (var refEntry in ctx.intReferences)
             {
-                var targetGuid = refEntry.Item1;
-                var refObj = refEntry.Item2;
+                var refObj = refEntry.Item1;
+                var targetGuid = refObj.instanceGuid;
 
                 if (instances.ContainsKey(targetGuid))
                 {
@@ -186,6 +194,9 @@ namespace DAI_Tools.Frostbite
                 {
                     refObj.refStatus = RefStatus.RESOLVED_FAILURE;
                 }
+
+                var refObjTreeRootGuid = refEntry.Item2; 
+                instances[refObjTreeRootGuid].addIntRef(targetGuid);
             }
 
             var fileGuid = DAIEbx.GuidToString(file.FileGuid);
@@ -198,7 +209,9 @@ namespace DAI_Tools.Frostbite
         private class ConverterContext
         {
             public DAIEbx file;
-            public List<Tuple<String, AIntRef>> intReferences = new List<Tuple<string, AIntRef>>();
+            public string instanceGuid;
+            /* inref to resolve, whom it belongs to */
+            public List<Tuple<AIntRef, string>> intReferences = new List<Tuple<AIntRef, string>>();
         }
 
         private static DAIField wrapWithFakeField(DAIComplex value)
@@ -256,7 +269,7 @@ namespace DAI_Tools.Frostbite
                     else
                     {
                         var ainref = new AIntRef(guid.instanceGuid);
-                        ctx.intReferences.Add(new Tuple<string, AIntRef>(guid.instanceGuid, ainref));
+                        ctx.intReferences.Add(new Tuple<AIntRef, string>(ainref, ctx.instanceGuid));
                         result = ainref;
                     }
                 }
@@ -312,7 +325,7 @@ namespace DAI_Tools.Frostbite
             return result;
         }
 
-        EbxDataContainers(String fileGuid, Dictionary<String, DataContainer> instances, DAIEbx correspondingEbx)
+        private EbxDataContainers(String fileGuid, Dictionary<String, DataContainer> instances, DAIEbx correspondingEbx)
         {
             this.fileGuid = fileGuid;
             this.instances = instances;
@@ -333,6 +346,18 @@ namespace DAI_Tools.Frostbite
                     result.Add(instance);
             }
 
+            return result;
+        }
+
+        public List<DataContainer> getIntRefedObjsByTypeFor(String containerGuid, string type)
+        {
+            var result = new List<DataContainer>();
+            foreach(var intGuid in instances[containerGuid].intRefs)
+            {
+                var refedContainer = instances[intGuid];
+                if (refedContainer.hasPartial(type))
+                    result.Add(refedContainer);
+            }
             return result;
         }
 
