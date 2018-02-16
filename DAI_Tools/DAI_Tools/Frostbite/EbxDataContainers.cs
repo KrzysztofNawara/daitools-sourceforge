@@ -126,6 +126,23 @@ namespace DAI_Tools.Frostbite
             return partialsMap.ContainsKey(typeName.ToLower());
         }
 
+        public AValue get(string fieldName, bool searchAncestors = true)
+        {
+            bool shouldStop = false;
+            AStruct toSearch = data;
+            while(!shouldStop)
+            {
+                if (toSearch.fields.ContainsKey(fieldName))
+                    return toSearch.fields[fieldName];
+                else if (toSearch.fields.ContainsKey("$"))
+                    toSearch = toSearch.fields["$"].castTo<AStruct>();
+                else
+                    shouldStop = true;
+            }
+
+            return null;
+        }
+
         /* order: most specific to most generic */
         private List<String> partialsList = new List<string>();
         private Dictionary<String, AStruct> partialsMap = new Dictionary<string, AStruct>();
