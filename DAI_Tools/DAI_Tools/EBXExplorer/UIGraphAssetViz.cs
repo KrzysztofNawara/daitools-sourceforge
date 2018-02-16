@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using DAI_Tools.Frostbite;
 using Microsoft.Msagl.Drawing;
+using Microsoft.Msagl.Layout.Layered;
 using Microsoft.Msagl.Layout.MDS;
 using Color = Microsoft.Msagl.Drawing.Color;
 
@@ -148,7 +149,7 @@ namespace DAI_Tools.EBXExplorer
             }
             
             /* some visual formatting */
-            var layoutSettings = new MdsLayoutSettings();
+            var layoutSettings = new SugiyamaLayoutSettings();
             graph.LayoutAlgorithmSettings = layoutSettings;
         }
     }
