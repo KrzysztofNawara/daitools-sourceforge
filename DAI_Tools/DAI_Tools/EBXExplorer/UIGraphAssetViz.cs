@@ -100,6 +100,7 @@ namespace DAI_Tools.EBXExplorer
                 nodeNode.Attr.LabelMargin = 3;
                 nodeNode.Attr.Padding = 2;
                 nodeNode.Attr.FillColor = Color.LightGreen;
+                nodeNode.Attr.Shape = Shape.Ellipse;
             }
 
             var connections = uiGraphAsset.data.get("Connections").castTo<AArray>();
@@ -122,7 +123,22 @@ namespace DAI_Tools.EBXExplorer
                 targetPortDesc.refCount += 1;
             }
 
-            /* @todo draw ports with refcount 0 */
+            foreach (var portDesc in portsGuidToPortDesc.Values)
+            {
+                if (portDesc.refCount < 1)
+                {
+                    var portLabel = "P" + portDesc.portIdx + ": " + portDesc.portName;
+                    var portNode = graph.AddNode(portLabel);
+
+                    var portEdge = graph.AddEdge(portDesc.nodeLabel, "", portLabel);
+
+                    /* visual formatting */
+                    portNode.Attr.FillColor = Color.Orange;
+                    portNode.Attr.Shape = Shape.Box;
+                    portEdge.Attr.ArrowheadAtSource = ArrowStyle.None;
+                    portEdge.Attr.ArrowheadAtTarget = ArrowStyle.None;
+                }
+            }
             
             /* some visual formatting */
             var layoutSettings = new MdsLayoutSettings();
