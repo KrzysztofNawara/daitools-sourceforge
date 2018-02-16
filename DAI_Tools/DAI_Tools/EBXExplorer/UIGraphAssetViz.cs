@@ -79,7 +79,9 @@ namespace DAI_Tools.EBXExplorer
             foreach (var nodeRef in nodes.elements)
             {
                 var nodeInRef = nodeRef.castTo<AIntRef>();
-                var nodeName = nodeInRef.refTarget.castTo<AStruct>().get("Name").castTo<ASimpleValue>().Val;
+                var nodeAStruct = nodeInRef.refTarget.castTo<AStruct>();
+                var nodeName = nodeAStruct.get("Name").castTo<ASimpleValue>().Val;
+                bool isRoot = Convert.ToBoolean(nodeAStruct.get("IsRootNode").castTo<ASimpleValue>().Val);
                 var nodeType = ebxDataContainers.instances[nodeInRef.instanceGuid].data.name;
                 var nodeLabel = "N" + nodeNextIdx.ToString() + ": " + nodeName + "\n[" + nodeType + "]";
                 nodeNextIdx += 1;
@@ -100,8 +102,12 @@ namespace DAI_Tools.EBXExplorer
                 /* some visual formatting */
                 nodeNode.Attr.LabelMargin = 3;
                 nodeNode.Attr.Padding = 2;
-                nodeNode.Attr.FillColor = Color.LightGreen;
                 nodeNode.Attr.Shape = Shape.Box;
+
+                if (!isRoot)
+                    nodeNode.Attr.FillColor = Color.LightGreen;
+                else
+                    nodeNode.Attr.FillColor = Color.PaleVioletRed;
             }
 
             var connections = uiGraphAsset.data.get("Connections").castTo<AArray>();
