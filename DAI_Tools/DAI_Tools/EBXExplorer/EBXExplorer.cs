@@ -49,10 +49,13 @@ namespace DAI_Tools.EBXExplorer
             viewerSelector.Items.Add(assetViewerStr);
             viewerSelector.Items.Add(rawXmlViewerStr);
             viewerSelector.Items.Add(treeXmlViewerStr);
-            viewerSelector.SelectedIndex = 0;
 
-            currentViewer = rawXmlViewer;
+            currentViewer = assetViewer;
             splitContainer1.Panel2.Controls.Add(currentViewer);
+            treeXmlViewer.Visible = false;
+            rawXmlViewer.Visible = false;
+            
+            viewerSelector.SelectedIndex = 0;
 
             hideViewer();
         }
@@ -286,16 +289,12 @@ namespace DAI_Tools.EBXExplorer
 
         private void hideViewer()
         {
-            rawXmlViewer.Visible = false;
-            treeXmlViewer.Visible = false;
-            assetViewer.Visible = false;
+            currentViewer.Visible = false;
         }
 
         private void showViewer()
         {
-            rawXmlViewer.Visible = true;
-            treeXmlViewer.Visible = true;
-            assetViewer.Visible = true;
+            currentViewer.Visible = true;
         }
 
         private void viewerSelector_SelectedIndexChanged(object sender, EventArgs e)
@@ -312,6 +311,9 @@ namespace DAI_Tools.EBXExplorer
 
             if (newlySelectedViewer != this.currentViewer)
             {
+                newlySelectedViewer.Visible = currentViewer.Visible;
+                currentViewer.Visible = false;
+
                 splitContainer1.Panel2.Controls.Clear();
                 splitContainer1.Panel2.Controls.Add(newlySelectedViewer);
                 this.currentViewer = newlySelectedViewer;
