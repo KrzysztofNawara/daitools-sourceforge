@@ -93,7 +93,8 @@ namespace DAI_Tools.EBXExplorer
                     var portDesc = new PortDesc(portNextIdx, portName, nodeLabel);
                     portNextIdx += 1;
 
-                    portsGuidToPortDesc.Add(dataContainer.guid, portDesc);
+                    if (!portsGuidToPortDesc.ContainsKey(dataContainer.guid))
+                        portsGuidToPortDesc.Add(dataContainer.guid, portDesc);
                 }
 
                 /* some visual formatting */
