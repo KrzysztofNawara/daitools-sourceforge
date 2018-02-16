@@ -9,6 +9,8 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using DAI_Tools.Frostbite;
 using Microsoft.Msagl.Drawing;
+using Microsoft.Msagl.Layout.MDS;
+using Color = Microsoft.Msagl.Drawing.Color;
 
 namespace DAI_Tools.EBXExplorer
 {
@@ -78,10 +80,11 @@ namespace DAI_Tools.EBXExplorer
             {
                 var nodeInRef = nodeRef.castTo<AIntRef>();
                 var nodeName = nodeInRef.refTarget.castTo<AStruct>().get("Name").castTo<ASimpleValue>().Val;
-                var nodeLabel = "N" + nodeNextIdx.ToString() + ": " + nodeName;
+                var nodeType = ebxDataContainers.instances[nodeInRef.instanceGuid].data.name;
+                var nodeLabel = "N" + nodeNextIdx.ToString() + ": " + nodeName + "\n[" + nodeType + "]";
                 nodeNextIdx += 1;
-                graph.AddNode(nodeLabel);
-
+                var nodeNode = graph.AddNode(nodeLabel);
+                
                 var ports = ebxDataContainers.getIntRefedObjsByTypeFor(nodeInRef.instanceGuid, "UINodePort");
 
                 foreach (var dataContainer in ports)
@@ -92,6 +95,11 @@ namespace DAI_Tools.EBXExplorer
 
                     portsGuidToPortDesc.Add(dataContainer.guid, portDesc);
                 }
+
+                /* some visual formatting */
+                nodeNode.Attr.LabelMargin = 3;
+                nodeNode.Attr.Padding = 2;
+                nodeNode.Attr.FillColor = Color.LightGreen;
             }
 
             var connections = uiGraphAsset.data.get("Connections").castTo<AArray>();
@@ -116,16 +124,9 @@ namespace DAI_Tools.EBXExplorer
 
             /* @todo draw ports with refcount 0 */
             
-            /*
-            graph.AddEdge("A", "B");
-            graph.AddEdge("B", "C");
-            graph.AddEdge("A", "C").Attr.Color = Microsoft.Msagl.Drawing.Color.Green;
-            graph.FindNode("A").Attr.FillColor = Microsoft.Msagl.Drawing.Color.Magenta;
-            graph.FindNode("B").Attr.FillColor = Microsoft.Msagl.Drawing.Color.MistyRose;
-            Microsoft.Msagl.Drawing.Node c = graph.FindNode("C");
-            c.Attr.FillColor = Microsoft.Msagl.Drawing.Color.PaleGreen;
-            c.Attr.Shape = Microsoft.Msagl.Drawing.Shape.Diamond;
-            */
+            /* some visual formatting */
+            var layoutSettings = new MdsLayoutSettings();
+            graph.LayoutAlgorithmSettings = layoutSettings;
         }
     }
 }
