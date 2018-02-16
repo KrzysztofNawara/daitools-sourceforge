@@ -101,7 +101,7 @@ namespace DAI_Tools.EBXExplorer
                 nodeNode.Attr.LabelMargin = 3;
                 nodeNode.Attr.Padding = 2;
                 nodeNode.Attr.FillColor = Color.LightGreen;
-                nodeNode.Attr.Shape = Shape.Ellipse;
+                nodeNode.Attr.Shape = Shape.Box;
             }
 
             var connections = uiGraphAsset.data.get("Connections").castTo<AArray>();
