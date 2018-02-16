@@ -80,6 +80,19 @@ namespace DAI_Tools.EBXExplorer
                     portsGuidToPortsNode.Add(dataContainer.guid, portNode);
                 }
             }
+
+            var connections = uiGraphAsset.data.get("Connections").castTo<AArray>();
+
+            foreach (var connRef in connections.elements)
+            {
+                var conn = connRef.castTo<AIntRef>().refTarget.castTo<AStruct>();
+                var srcGuid = conn.get("SourcePort").castTo<AIntRef>().instanceGuid;
+                var targetGuid = conn.get("TargetPort").castTo<AIntRef>().instanceGuid;
+                var srcNode = portsGuidToPortsNode[srcGuid];
+                var targetNode = portsGuidToPortsNode[targetGuid];
+
+                srcNode.AddOutEdge(new Edge(srcNode, targetNode, ConnectionToGraph.Connected));
+            }
             
             /*
             graph.AddEdge("A", "B");
