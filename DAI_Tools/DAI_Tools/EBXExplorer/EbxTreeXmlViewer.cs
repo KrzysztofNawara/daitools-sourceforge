@@ -35,14 +35,11 @@ namespace DAI_Tools.EBXExplorer
             if (currentEbx != null)
             {
                 var root = new TreeNode("EBX: " + currentEbx.fileGuid);
-                var tbc = new TreeBuilderContext();
-                tbc.containers = currentEbx;
-                tbc.intRefMaxDepth = Decimal.ToUInt32(intRefMaxDepth.Value);
 
                 /* traverse tree, cache references */
                 foreach (var instance in currentEbx.instances)
                 {
-                    var tnode = processField(instance.Key, instance.Value.data, 0, tbc);
+                    var tnode = processField(instance.Key, instance.Value.data, currentEbx);
                     root.Nodes.Add(tnode);
                 }
 
@@ -50,19 +47,74 @@ namespace DAI_Tools.EBXExplorer
             }
         }
 
-        private class TreeBuilderContext
+        private void treeView1_BeforeExpand(object sender, TreeViewCancelEventArgs e)
         {
-            public EbxDataContainers containers;
-            public uint intRefMaxDepth;
+            foreach (var childNodeObj in e.Node.Nodes)
+            {
+                var childNode = (TreeNode) childNodeObj;
+                var childTag = (TreeNodeTag) childNode.Tag;
+
+                if (childTag != null)
+                    childTag.expand(childNode, currentEbx);
+            }
         }
 
-        private TreeNode processField(String fieldName, AValue fieldValue, uint intRefDepthCounter, TreeBuilderContext tbc)
+        private abstract class TreeNodeTag
         {
-            if (intRefDepthCounter >= tbc.intRefMaxDepth)
+            public void expand(TreeNode myNode, EbxDataContainers ebx)
             {
-                return new TreeNode("IntRef limit exceeded");
+                doExpand(myNode, ebx);
+                myNode.Tag = null; // deactivate expansion logic
             }
-            
+
+            internal abstract void doExpand(TreeNode myNode, EbxDataContainers ebx);
+        }
+
+        private class TNStructTag : TreeNodeTag
+        {
+            private AStruct astruct;
+
+            public TNStructTag(AStruct astruct) { this.astruct = astruct; }
+
+            internal override void doExpand(TreeNode myNode, EbxDataContainers ebx)
+            {
+                foreach (var childField in astruct.fields)
+                    myNode.Nodes.Add(processField(childField.Key, childField.Value, ebx));
+            }
+        }
+        private class TNArrayTag : TreeNodeTag
+        {
+            private AArray aarray;
+
+            public TNArrayTag(AArray aarray) { this.aarray = aarray; }
+
+            internal override void doExpand(TreeNode myNode, EbxDataContainers ebx)
+            {
+                var elements = aarray.elements;
+                for(int idx = 0; idx < elements.Count; idx++)
+                    myNode.Nodes.Add(processField(idx.ToString(), elements[idx], ebx));
+            }
+        }
+
+        private class TNDataRootTag : TreeNodeTag
+        {
+            private string fieldName;
+            private AStruct astruct;
+
+            public TNDataRootTag(string fieldName, AStruct astruct)
+            {
+                this.fieldName = fieldName;
+                this.astruct = astruct;
+            }
+
+            internal override void doExpand(TreeNode myNode, EbxDataContainers ebx)
+            {
+                myNode.Nodes.Add(processField(fieldName, astruct, ebx));
+            }
+        }
+
+        private static TreeNode processField(String fieldName, AValue fieldValue, EbxDataContainers containers)
+        {
             TreeNode tnode = null;
 
             switch (fieldValue.Type)
@@ -81,9 +133,7 @@ namespace DAI_Tools.EBXExplorer
                             throw new Exception("At this point intrefs should be resolved!");
                         case RefStatus.RESOLVED_SUCCESS:
                             tnode = simpleFieldTNode(fieldName, "INTREF");
-                            var target = tbc.containers.instances[aintref.instanceGuid];
-                            var childTNode = processField(target.guid, target.data, intRefDepthCounter+1, tbc);
-                            tnode.Nodes.Add(childTNode);
+                            tnode.Tag = new TNDataRootTag(aintref.instanceGuid, containers.instances[aintref.instanceGuid].data);
                             break;
                         case RefStatus.RESOLVED_FAILURE:
                             tnode = simpleFieldTNode(fieldName, "Unresolved INTREF: " + aintref.instanceGuid);
@@ -101,36 +151,20 @@ namespace DAI_Tools.EBXExplorer
                     var astruct = fieldValue.castTo<AStruct>();
                     var tnodeText = fieldName + " -> " + astruct.name;
                     tnode = new TreeNode(tnodeText);
-
-                    foreach (var childField in astruct.fields)
-                    {
-                        var childTNode = processField(childField.Key, childField.Value, intRefDepthCounter, tbc);
-                        tnode.Nodes.Add(childTNode);
-                    }
-
+                    tnode.Tag = new TNStructTag(astruct);
                     break;
                 case ValueTypes.ARRAY:
                     tnode = new TreeNode(fieldName);
-                    var childElements = fieldValue.castTo<AArray>().elements;
-                    for(int idx = 0; idx < childElements.Count; idx++)
-                    {
-                        var childTNode = processField(idx.ToString(), childElements[idx], intRefDepthCounter, tbc);
-                        tnode.Nodes.Add(childTNode);
-                    } 
+                    tnode.Tag = new TNArrayTag(fieldValue.castTo<AArray>());
                     break;
             }
 
             return tnode;
         }
 
-        private TreeNode simpleFieldTNode(String name, String value)
+        private static TreeNode simpleFieldTNode(String name, String value)
         {
             return new TreeNode(name + ": " + value);
-        }
-
-        private void intRefMaxDepth_ValueChanged(object sender, EventArgs e)
-        {
-            redrawTree();
         }
 
         private void EbxTreeXmlViewer_VisibleChanged(object sender, EventArgs e)
