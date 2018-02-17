@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using DAI_Tools.Frostbite;
 using Microsoft.Msagl.Drawing;
 using Microsoft.Msagl.GraphViewerGdi;
+using Color = System.Drawing.Color;
 
 namespace DAI_Tools.EBXExplorer
 {
@@ -39,7 +40,7 @@ namespace DAI_Tools.EBXExplorer
 
             //associate the viewer with the form 
             viewer.Dock = DockStyle.Fill;
-            this.Controls.Add(viewer);
+            contentContainer.Panel1.Controls.Add(viewer);
             this.ResumeLayout();
         }
 
@@ -151,6 +152,7 @@ namespace DAI_Tools.EBXExplorer
             processConnections(metadata, "LinkConnections", getDirectExtractor("SourceFieldId"), getDirectExtractor("TargetFieldId"), Type.LINK);
             processConnections(metadata, "EventConnections", getEventExtractor("SourceEvent"), getEventExtractor("TargetEvent"), Type.EVENT);
 
+            /* graph data processed, start drawing and formatting */
             foreach (var t in metadata.nodeGuidToNodeDesc)
             {
                 graph.AddNode(t.Value.labelName);
@@ -160,10 +162,54 @@ namespace DAI_Tools.EBXExplorer
             {
                 var srcNodeLabel = metadata.nodeGuidToNodeDesc[edge.startNodeGuid].labelName;
                 var tgNodeLabel = metadata.nodeGuidToNodeDesc[edge.endNodeGuid].labelName;
-                graph.AddEdge(srcNodeLabel, tgNodeLabel);
+
+                var correspondingCheckBox = getEdgeTypeCheckbox(edge, metadata);
+                Color edgeColor = correspondingCheckBox.BackColor;
+                bool show = correspondingCheckBox.Checked;
+
+                if (show)
+                {
+                    var graphEdge = graph.AddEdge(srcNodeLabel, tgNodeLabel);
+                    graphEdge.Attr.Color = new Microsoft.Msagl.Drawing.Color(edgeColor.R, edgeColor.G, edgeColor.B);
+                }
             }
 
             viewer.Graph = graph;
+        }
+
+        private CheckBox getEdgeTypeCheckbox(Edge e, Metadata mdata)
+        {
+            CheckBox correspondingCheckBox;
+            switch (determineEdgeType(e, mdata))
+            {
+                case Type.PROPERTY:
+                    correspondingCheckBox = showPropertyConnsCheckbox;
+                    break;
+                case Type.LINK:
+                    correspondingCheckBox = showLinkConnsCheckbox;
+                    break;
+                case Type.EVENT:
+                    correspondingCheckBox = showEventConnsCheckbox;
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+
+            return correspondingCheckBox;
+        }
+
+        private Type determineEdgeType(Edge e, Metadata mdata)
+        {
+            var srcPortDesc = mdata.nodeGuidToNodeDesc[e.startNodeGuid].ownedPortIdToPortDesc[e.startId];
+            var tgPortDesc = mdata.nodeGuidToNodeDesc[e.endNodeGuid].ownedPortIdToPortDesc[e.endId];
+
+            if (srcPortDesc.type == tgPortDesc.type)
+                return srcPortDesc.type;
+            else
+            {
+                MessageBox.Show("Edges of mixed type. Src: " + srcPortDesc + ", Tg: " + tgPortDesc);
+                return srcPortDesc.type;
+            } 
         }
 
         private void processObjects(Metadata mdata)
@@ -288,6 +334,21 @@ namespace DAI_Tools.EBXExplorer
         private string extractInRef(AValue value)
         {
             return value.castTo<AIntRef>().instanceGuid;
+        }
+
+        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        {
+            drawGraphSafely();
+        }
+
+        private void showPropertyConnsCheckbox_CheckedChanged(object sender, EventArgs e)
+        {
+            drawGraphSafely();
+        }
+
+        private void showLinkConnsCheckbox_CheckedChanged(object sender, EventArgs e)
+        {
+            drawGraphSafely();
         }
     }
 }
