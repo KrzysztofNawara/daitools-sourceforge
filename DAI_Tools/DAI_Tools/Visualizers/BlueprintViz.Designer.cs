@@ -29,13 +29,17 @@
         private void InitializeComponent()
         {
             this.contentContainer = new System.Windows.Forms.SplitContainer();
-            this.showEventConnsCheckbox = new System.Windows.Forms.CheckBox();
-            this.showPropertyConnsCheckbox = new System.Windows.Forms.CheckBox();
-            this.showLinkConnsCheckbox = new System.Windows.Forms.CheckBox();
             this.showUnconnPortsCbkb = new System.Windows.Forms.CheckBox();
+            this.showLinkConnsCheckbox = new System.Windows.Forms.CheckBox();
+            this.showEventConnsCheckbox = new System.Windows.Forms.CheckBox();
+            this.toolsSplitContainer = new System.Windows.Forms.SplitContainer();
+            this.showPropertyConnsCheckbox = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.contentContainer)).BeginInit();
             this.contentContainer.Panel2.SuspendLayout();
             this.contentContainer.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.toolsSplitContainer)).BeginInit();
+            this.toolsSplitContainer.Panel1.SuspendLayout();
+            this.toolsSplitContainer.SuspendLayout();
             this.SuspendLayout();
             // 
             // contentContainer
@@ -46,41 +50,22 @@
             // 
             // contentContainer.Panel2
             // 
-            this.contentContainer.Panel2.Controls.Add(this.showUnconnPortsCbkb);
-            this.contentContainer.Panel2.Controls.Add(this.showLinkConnsCheckbox);
-            this.contentContainer.Panel2.Controls.Add(this.showPropertyConnsCheckbox);
-            this.contentContainer.Panel2.Controls.Add(this.showEventConnsCheckbox);
+            this.contentContainer.Panel2.Controls.Add(this.toolsSplitContainer);
             this.contentContainer.Size = new System.Drawing.Size(1264, 682);
             this.contentContainer.SplitterDistance = 1007;
             this.contentContainer.TabIndex = 0;
             // 
-            // showEventConnsCheckbox
+            // showUnconnPortsCbkb
             // 
-            this.showEventConnsCheckbox.AutoSize = true;
-            this.showEventConnsCheckbox.BackColor = System.Drawing.Color.Blue;
-            this.showEventConnsCheckbox.Checked = true;
-            this.showEventConnsCheckbox.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.showEventConnsCheckbox.Location = new System.Drawing.Point(16, 12);
-            this.showEventConnsCheckbox.Name = "showEventConnsCheckbox";
-            this.showEventConnsCheckbox.Size = new System.Drawing.Size(120, 17);
-            this.showEventConnsCheckbox.TabIndex = 0;
-            this.showEventConnsCheckbox.Text = "Show EventConns?";
-            this.showEventConnsCheckbox.UseVisualStyleBackColor = false;
-            this.showEventConnsCheckbox.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
-            // 
-            // showPropertyConnsCheckbox
-            // 
-            this.showPropertyConnsCheckbox.AutoSize = true;
-            this.showPropertyConnsCheckbox.BackColor = System.Drawing.Color.Green;
-            this.showPropertyConnsCheckbox.Checked = true;
-            this.showPropertyConnsCheckbox.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.showPropertyConnsCheckbox.Location = new System.Drawing.Point(16, 35);
-            this.showPropertyConnsCheckbox.Name = "showPropertyConnsCheckbox";
-            this.showPropertyConnsCheckbox.Size = new System.Drawing.Size(131, 17);
-            this.showPropertyConnsCheckbox.TabIndex = 1;
-            this.showPropertyConnsCheckbox.Text = "Show PropertyConns?";
-            this.showPropertyConnsCheckbox.UseVisualStyleBackColor = false;
-            this.showPropertyConnsCheckbox.CheckedChanged += new System.EventHandler(this.showPropertyConnsCheckbox_CheckedChanged);
+            this.showUnconnPortsCbkb.AutoSize = true;
+            this.showUnconnPortsCbkb.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(0)))));
+            this.showUnconnPortsCbkb.Location = new System.Drawing.Point(19, 88);
+            this.showUnconnPortsCbkb.Name = "showUnconnPortsCbkb";
+            this.showUnconnPortsCbkb.Size = new System.Drawing.Size(124, 17);
+            this.showUnconnPortsCbkb.TabIndex = 3;
+            this.showUnconnPortsCbkb.Text = "Show unconn ports?";
+            this.showUnconnPortsCbkb.UseVisualStyleBackColor = false;
+            this.showUnconnPortsCbkb.CheckedChanged += new System.EventHandler(this.showUnconnPortsCbkb_CheckedChanged);
             // 
             // showLinkConnsCheckbox
             // 
@@ -88,7 +73,7 @@
             this.showLinkConnsCheckbox.BackColor = System.Drawing.Color.Red;
             this.showLinkConnsCheckbox.Checked = true;
             this.showLinkConnsCheckbox.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.showLinkConnsCheckbox.Location = new System.Drawing.Point(16, 58);
+            this.showLinkConnsCheckbox.Location = new System.Drawing.Point(19, 65);
             this.showLinkConnsCheckbox.Name = "showLinkConnsCheckbox";
             this.showLinkConnsCheckbox.Size = new System.Drawing.Size(112, 17);
             this.showLinkConnsCheckbox.TabIndex = 2;
@@ -96,17 +81,50 @@
             this.showLinkConnsCheckbox.UseVisualStyleBackColor = false;
             this.showLinkConnsCheckbox.CheckedChanged += new System.EventHandler(this.showLinkConnsCheckbox_CheckedChanged);
             // 
-            // showUnconnPortsCbkb
+            // showEventConnsCheckbox
             // 
-            this.showUnconnPortsCbkb.AutoSize = true;
-            this.showUnconnPortsCbkb.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(0)))));
-            this.showUnconnPortsCbkb.Location = new System.Drawing.Point(16, 82);
-            this.showUnconnPortsCbkb.Name = "showUnconnPortsCbkb";
-            this.showUnconnPortsCbkb.Size = new System.Drawing.Size(124, 17);
-            this.showUnconnPortsCbkb.TabIndex = 3;
-            this.showUnconnPortsCbkb.Text = "Show unconn ports?";
-            this.showUnconnPortsCbkb.UseVisualStyleBackColor = false;
-            this.showUnconnPortsCbkb.CheckedChanged += new System.EventHandler(this.showUnconnPortsCbkb_CheckedChanged);
+            this.showEventConnsCheckbox.AutoSize = true;
+            this.showEventConnsCheckbox.BackColor = System.Drawing.Color.Blue;
+            this.showEventConnsCheckbox.Checked = true;
+            this.showEventConnsCheckbox.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.showEventConnsCheckbox.Location = new System.Drawing.Point(19, 19);
+            this.showEventConnsCheckbox.Name = "showEventConnsCheckbox";
+            this.showEventConnsCheckbox.Size = new System.Drawing.Size(120, 17);
+            this.showEventConnsCheckbox.TabIndex = 0;
+            this.showEventConnsCheckbox.Text = "Show EventConns?";
+            this.showEventConnsCheckbox.UseVisualStyleBackColor = false;
+            this.showEventConnsCheckbox.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
+            // 
+            // toolsSplitContainer
+            // 
+            this.toolsSplitContainer.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.toolsSplitContainer.Location = new System.Drawing.Point(0, 0);
+            this.toolsSplitContainer.Name = "toolsSplitContainer";
+            this.toolsSplitContainer.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            // 
+            // toolsSplitContainer.Panel1
+            // 
+            this.toolsSplitContainer.Panel1.Controls.Add(this.showPropertyConnsCheckbox);
+            this.toolsSplitContainer.Panel1.Controls.Add(this.showUnconnPortsCbkb);
+            this.toolsSplitContainer.Panel1.Controls.Add(this.showEventConnsCheckbox);
+            this.toolsSplitContainer.Panel1.Controls.Add(this.showLinkConnsCheckbox);
+            this.toolsSplitContainer.Size = new System.Drawing.Size(253, 682);
+            this.toolsSplitContainer.SplitterDistance = 128;
+            this.toolsSplitContainer.TabIndex = 4;
+            // 
+            // showPropertyConnsCheckbox
+            // 
+            this.showPropertyConnsCheckbox.AutoSize = true;
+            this.showPropertyConnsCheckbox.BackColor = System.Drawing.Color.Green;
+            this.showPropertyConnsCheckbox.Checked = true;
+            this.showPropertyConnsCheckbox.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.showPropertyConnsCheckbox.Location = new System.Drawing.Point(19, 42);
+            this.showPropertyConnsCheckbox.Name = "showPropertyConnsCheckbox";
+            this.showPropertyConnsCheckbox.Size = new System.Drawing.Size(131, 17);
+            this.showPropertyConnsCheckbox.TabIndex = 1;
+            this.showPropertyConnsCheckbox.Text = "Show PropertyConns?";
+            this.showPropertyConnsCheckbox.UseVisualStyleBackColor = false;
+            this.showPropertyConnsCheckbox.CheckedChanged += new System.EventHandler(this.showPropertyConnsCheckbox_CheckedChanged);
             // 
             // BlueprintViz
             // 
@@ -118,9 +136,12 @@
             this.Text = "BlueprintViz";
             this.Load += new System.EventHandler(this.BlueprintViz_Load);
             this.contentContainer.Panel2.ResumeLayout(false);
-            this.contentContainer.Panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.contentContainer)).EndInit();
             this.contentContainer.ResumeLayout(false);
+            this.toolsSplitContainer.Panel1.ResumeLayout(false);
+            this.toolsSplitContainer.Panel1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.toolsSplitContainer)).EndInit();
+            this.toolsSplitContainer.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -130,7 +151,8 @@
         private System.Windows.Forms.SplitContainer contentContainer;
         private System.Windows.Forms.CheckBox showEventConnsCheckbox;
         private System.Windows.Forms.CheckBox showLinkConnsCheckbox;
-        private System.Windows.Forms.CheckBox showPropertyConnsCheckbox;
         private System.Windows.Forms.CheckBox showUnconnPortsCbkb;
+        private System.Windows.Forms.SplitContainer toolsSplitContainer;
+        private System.Windows.Forms.CheckBox showPropertyConnsCheckbox;
     }
 }

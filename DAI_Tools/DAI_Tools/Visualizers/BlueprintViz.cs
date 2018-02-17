@@ -19,6 +19,7 @@ namespace DAI_Tools.EBXExplorer
         private EbxDataContainers ebxDataContainers;
         private string assetGuid;
         private GViewer viewer;
+        private EbxTreeXmlViewer ebxTreeViewer;
 
         public BlueprintViz(EbxDataContainers ebxContainers, string assetGuid)
         {
@@ -26,6 +27,11 @@ namespace DAI_Tools.EBXExplorer
             this.assetGuid = assetGuid;
             
             InitializeComponent();
+
+            ebxTreeViewer = new EbxTreeXmlViewer();
+            toolsSplitContainer.Panel2.Controls.Add(ebxTreeViewer);
+            ebxTreeViewer.Visible = true;
+            ebxTreeViewer.setData(ebxContainers);
         }
 
         private void BlueprintViz_Load(object sender, EventArgs e)
@@ -52,10 +58,7 @@ namespace DAI_Tools.EBXExplorer
             if (viewer.SelectedObject != null && viewer.SelectedObject is Node)
             {
                 Node node = viewer.SelectedObject as Node;
-
-                MessageBox.Show("Selected node: " + node.Id);
-            } else
-                MessageBox.Show("Unselected node");
+            }
         }
 
         private void drawGraphSafely()

@@ -21,12 +21,16 @@ namespace DAI_Tools.EBXExplorer
         public void setEbxFile(DAIEbx ebxFile)
         {
             if (ebxFile != null)
-            {
-                currentEbx = EbxDataContainers.fromDAIEbx(ebxFile);
-                redrawTree();
-            }
+                setData(EbxDataContainers.fromDAIEbx(ebxFile));
         }
 
+        public void setData(EbxDataContainers ebxData)
+        {
+            currentEbx = ebxData;
+            redrawTree();
+        }
+
+        //  @todo map guid -> treenode and select it after selecting and either replace root or simply focus it...
         private void redrawTree()
         {
             treeView1.Nodes.Clear();
