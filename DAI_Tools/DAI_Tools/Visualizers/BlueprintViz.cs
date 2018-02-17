@@ -91,6 +91,7 @@ namespace DAI_Tools.EBXExplorer
         {
             public string name;
             public string labelName;
+            public bool isInterface = false;
             public Dictionary<string, PortDesc> ownedPortIdToPortDesc = new Dictionary<string, PortDesc>();
 
             public override string ToString()
@@ -134,6 +135,7 @@ namespace DAI_Tools.EBXExplorer
             metadata.dataRoot = uiGraphAsset.data;
             
             processObjects(metadata);
+            processInterface(metadata);
             processPropertyConnections(metadata);
 
             foreach (var t in metadata.nodeGuidToNodeDesc)
@@ -180,6 +182,25 @@ namespace DAI_Tools.EBXExplorer
             }
         }
 
+        private void processInterface(Metadata mdata)
+        {
+            var inref = mdata.dataRoot.get("Interface").castTo<AIntRef>();
+            var ifaceAstruct = inref.refTarget.castTo<AStruct>();
+            
+            var ifaceNodeDesc = new NodeDesc();
+            ifaceNodeDesc.name = "Interface";
+            ifaceNodeDesc.labelName = "Interface";
+            ifaceNodeDesc.isInterface = true;
+
+            addAsPorts(ifaceNodeDesc, extractIdsFromArray(ifaceAstruct.get("Fields")), Type.PROPERTY, Dir.UNKNOWN);
+            addAsPorts(ifaceNodeDesc, extractIdsFromArray(ifaceAstruct.get("InputEvents")), Type.EVENT, Dir.IN);
+            addAsPorts(ifaceNodeDesc, extractIdsFromArray(ifaceAstruct.get("OutputEvents")), Type.EVENT, Dir.OUT);
+            addAsPorts(ifaceNodeDesc, extractIdsFromArray(ifaceAstruct.get("InputLinks")), Type.LINK, Dir.IN);
+            addAsPorts(ifaceNodeDesc, extractIdsFromArray(ifaceAstruct.get("OutputLinks")), Type.LINK, Dir.OUT);
+
+            mdata.nodeGuidToNodeDesc.Add(inref.instanceGuid, ifaceNodeDesc);
+        }
+
         private void processPropertyConnections(Metadata mdata)
         {
             var propertyArray = mdata.dataRoot.get("PropertyConnections").castTo<AArray>();
@@ -195,8 +216,8 @@ namespace DAI_Tools.EBXExplorer
                 /* add ports to nodes */
                 var srcNodeDesc = mdata.nodeGuidToNodeDesc[srcNodeGuid];
                 var targetNodeDesc = mdata.nodeGuidToNodeDesc[targetNodeGuid];
-                var srcPortDesc = ensurePortAdded(srcNodeDesc, new PortDesc(srcPort, Type.PROPERTY, Dir.OUT), mdata);
-                var tgPortDesc = ensurePortAdded(targetNodeDesc, new PortDesc(targetPort, Type.PROPERTY, Dir.IN), mdata);
+                var srcPortDesc = ensurePortAdded(srcNodeDesc, new PortDesc(srcPort, Type.PROPERTY, Dir.OUT));
+                var tgPortDesc = ensurePortAdded(targetNodeDesc, new PortDesc(targetPort, Type.PROPERTY, Dir.IN));
 
                 srcPortDesc.refCount += 1;
                 tgPortDesc.refCount += 1;
@@ -206,7 +227,7 @@ namespace DAI_Tools.EBXExplorer
             }
         }
 
-        private PortDesc ensurePortAdded(NodeDesc ndesc, PortDesc pdesc, Metadata mdata)
+        private PortDesc ensurePortAdded(NodeDesc ndesc, PortDesc pdesc)
         {
             if (ndesc.ownedPortIdToPortDesc.ContainsKey(pdesc.id))
             {
@@ -224,6 +245,23 @@ namespace DAI_Tools.EBXExplorer
                 ndesc.ownedPortIdToPortDesc.Add(pdesc.id, pdesc);
                 return pdesc;
             }
+        }
+
+        private void addAsPorts(NodeDesc node, List<string> ids, Type type, Dir direction)
+        {
+            foreach (var id in ids)
+                ensurePortAdded(node, new PortDesc(id, type, direction));
+        }
+
+        private List<string> extractIdsFromArray(AValue array)
+        {
+            var ids = new List<string>();
+            foreach (var el in array.castTo<AArray>().elements)
+            {
+                var value = el.castTo<AStruct>().get("Id").castTo<ASimpleValue>().Val;
+                ids.Add(value);
+            }
+            return ids;
         }
 
         private string extractId(AValue value)
