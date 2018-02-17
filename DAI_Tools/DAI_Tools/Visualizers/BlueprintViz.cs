@@ -200,11 +200,12 @@ namespace DAI_Tools.EBXExplorer
                     foreach (var pdesc in ndesc.ownedPortIdToPortDesc.Values)
                         if (pdesc.refCount == 0)
                         {
-                            var plabel = "P" + pidx + "[" + pdesc.type + "," + pdesc.direction + "] " + pdesc.id;
-                            var pnode = graph.AddNode(plabel);
-                            var pedge = graph.AddEdge(ndesc.nodeGuid, "", plabel);
+                            var pnodeId = pdesc.id + "_" + pidx;
+                            var pnode = graph.AddNode(pnodeId);
+                            var pedge = graph.AddEdge(ndesc.nodeGuid, "", pnodeId);
                             pidx += 1;
 
+                            pnode.Label.Text = "P" + pidx + "[" + pdesc.type + "," + pdesc.direction + "] " + pdesc.id;
                             pnode.Attr.Color = color;
                             pedge.Attr.Color = color;
                         }
