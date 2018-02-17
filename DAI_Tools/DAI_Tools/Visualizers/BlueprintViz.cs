@@ -136,7 +136,8 @@ namespace DAI_Tools.EBXExplorer
             
             processObjects(metadata);
             processInterface(metadata);
-            processPropertyConnections(metadata);
+            processConnections(metadata, "PropertyConnections", "SourceFieldId", "TargetFieldId", Type.PROPERTY);
+            processConnections(metadata, "LinkConnections", "SourceFieldId", "TargetFieldId", Type.LINK);
 
             foreach (var t in metadata.nodeGuidToNodeDesc)
             {
@@ -201,23 +202,23 @@ namespace DAI_Tools.EBXExplorer
             mdata.nodeGuidToNodeDesc.Add(inref.instanceGuid, ifaceNodeDesc);
         }
 
-        private void processPropertyConnections(Metadata mdata)
+        private void processConnections(Metadata mdata, string holdingFieldName, string sourcePortFieldName, string targetPortFieldName, Type type)
         {
-            var propertyArray = mdata.dataRoot.get("PropertyConnections").castTo<AArray>();
+            var propertyArray = mdata.dataRoot.get(holdingFieldName).castTo<AArray>();
 
             foreach (var propConnection in propertyArray.elements)
             {
                 var astruct = propConnection.castTo<AStruct>();
                 var srcNodeGuid = extractInRef(astruct.get("Source"));
                 var targetNodeGuid = extractInRef(astruct.get("Target"));
-                var srcPort = extractId(astruct.get("SourceFieldId"));
-                var targetPort = extractId(astruct.get("TargetFieldId"));
+                var srcPort = extractId(astruct.get(sourcePortFieldName));
+                var targetPort = extractId(astruct.get(targetPortFieldName));
 
                 /* add ports to nodes */
                 var srcNodeDesc = mdata.nodeGuidToNodeDesc[srcNodeGuid];
                 var targetNodeDesc = mdata.nodeGuidToNodeDesc[targetNodeGuid];
-                var srcPortDesc = ensurePortAdded(srcNodeDesc, new PortDesc(srcPort, Type.PROPERTY, Dir.OUT));
-                var tgPortDesc = ensurePortAdded(targetNodeDesc, new PortDesc(targetPort, Type.PROPERTY, Dir.IN));
+                var srcPortDesc = ensurePortAdded(srcNodeDesc, new PortDesc(srcPort, type, Dir.OUT));
+                var tgPortDesc = ensurePortAdded(targetNodeDesc, new PortDesc(targetPort, type, Dir.IN));
 
                 srcPortDesc.refCount += 1;
                 tgPortDesc.refCount += 1;
