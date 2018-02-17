@@ -73,6 +73,8 @@ namespace DAI_Tools.EBXExplorer
             var uiGraphAsset = ebxDataContainers.instances[assetGuid];
             AArray nodes = uiGraphAsset.data.get("Nodes").castTo<AArray>();
             var portsGuidToPortDesc = new Dictionary<string, PortDesc>();
+            /* target port guid, source vertex name */
+            var jumpNodeEdges = new List<Tuple<string, string>>();
 
             int nodeNextIdx = 0;
             int portNextIdx = 0;
@@ -83,7 +85,8 @@ namespace DAI_Tools.EBXExplorer
                 var nodeAStruct = nodeInRef.refTarget.castTo<AStruct>();
                 var nodeName = nodeAStruct.get("Name").castTo<ASimpleValue>().Val;
                 bool isRoot = Convert.ToBoolean(nodeAStruct.get("IsRootNode").castTo<ASimpleValue>().Val);
-                var nodeType = ebxDataContainers.instances[nodeInRef.instanceGuid].data.name;
+                var nodeContainer = ebxDataContainers.instances[nodeInRef.instanceGuid];
+                var nodeType = nodeContainer.data.name;
                 var nodeLabel = "N" + nodeNextIdx.ToString() + ": " + nodeName + "\n[" + nodeType + "]";
                 nodeNextIdx += 1;
                 var nodeNode = graph.AddNode(nodeLabel);
@@ -100,6 +103,13 @@ namespace DAI_Tools.EBXExplorer
                         portsGuidToPortDesc.Add(dataContainer.guid, portDesc);
                 }
 
+                /* handling special nodes */
+                if (nodeContainer.hasPartial("JumpNode"))
+                {
+                    var targetPortGuid = nodeAStruct.get("TargetPort").castTo<AIntRef>().instanceGuid;
+                    jumpNodeEdges.Add(new Tuple<string, string>(targetPortGuid, nodeLabel));
+                }
+
                 /* some visual formatting */
                 nodeNode.Attr.LabelMargin = 3;
                 nodeNode.Attr.Padding = 2;
@@ -111,6 +121,7 @@ namespace DAI_Tools.EBXExplorer
                     nodeNode.Attr.FillColor = Color.PaleVioletRed;
             }
 
+            /* draw ordinary edges */
             var connections = uiGraphAsset.data.get("Connections").castTo<AArray>();
 
             foreach (var connRef in connections.elements)
@@ -125,10 +136,27 @@ namespace DAI_Tools.EBXExplorer
                 if (srcPortDesc.portName.Length > 0 || targetPortDesc.portName.Length > 0)
                     connLabel = srcPortDesc.portName + " -> " + targetPortDesc.portName;
 
-                graph.AddEdge(srcPortDesc.nodeLabel, connLabel, targetPortDesc.nodeLabel);
+                var edge = graph.AddEdge(srcPortDesc.nodeLabel, connLabel, targetPortDesc.nodeLabel);
+                edge.Attr.Weight = 10;
 
                 srcPortDesc.refCount += 1;
                 targetPortDesc.refCount += 1;
+            }
+
+            /* draw special edges */
+            foreach (var jumpEdge in jumpNodeEdges)
+            {
+                var sourceNode = jumpEdge.Item2;
+                var targetPortGuid = jumpEdge.Item1;
+
+                var targetPortDesc = portsGuidToPortDesc[targetPortGuid];
+                var edge = graph.AddEdge(sourceNode, "", targetPortDesc.nodeLabel);
+                targetPortDesc.refCount += 1;
+
+                /* visual formatting */
+                edge.Attr.Weight = 1;
+                edge.Attr.AddStyle(Style.Dotted);
+                edge.Attr.Color = Color.OrangeRed;
             }
 
             foreach (var portDesc in portsGuidToPortDesc.Values)
