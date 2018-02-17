@@ -17,6 +17,8 @@ namespace DAI_Tools.EBXExplorer
 {
     public partial class UIGraphAssetViz : Form
     {
+        public static bool HIDE_SPLIT_NODES = true;
+
         public UIGraphAssetViz(EbxDataContainers ebxDataContainers, string assetGuid)
         {
             this.ebxDataContainers = ebxDataContainers;
@@ -72,6 +74,7 @@ namespace DAI_Tools.EBXExplorer
         {
             var uiGraphAsset = ebxDataContainers.instances[assetGuid];
             AArray nodes = uiGraphAsset.data.get("Nodes").castTo<AArray>();
+            var splitNodes = new HashSet<string>();
             var portsGuidToPortDesc = new Dictionary<string, PortDesc>();
             /* target port guid, source vertex name */
             var jumpNodeEdges = new List<Tuple<string, string>>();
@@ -109,6 +112,8 @@ namespace DAI_Tools.EBXExplorer
                     var targetPortGuid = nodeAStruct.get("TargetPort").castTo<AIntRef>().instanceGuid;
                     jumpNodeEdges.Add(new Tuple<string, string>(targetPortGuid, nodeLabel));
                 }
+                else if (nodeContainer.hasPartial("SplitterNode"))
+                    splitNodes.Add(nodeLabel);
 
                 /* some visual formatting */
                 nodeNode.Attr.LabelMargin = 3;
@@ -180,6 +185,34 @@ namespace DAI_Tools.EBXExplorer
                 }
             }
             
+            /* remove split nodes */
+            if (HIDE_SPLIT_NODES)
+            {
+                foreach (var splitNode in splitNodes)
+                {
+                    var node = graph.FindNode(splitNode);
+
+                    foreach (var inEdge in node.InEdges)
+                    {
+                        var inNode = inEdge.SourceNode;
+
+                        foreach (var outEdge in node.OutEdges)
+                        {
+                            var newEdge = graph.AddEdge(inNode.Id, outEdge.LabelText, outEdge.TargetNode.Id);
+                            foreach (var style in outEdge.Attr.Styles)
+                                newEdge.Attr.AddStyle(style);
+                            newEdge.Attr.Color = outEdge.Attr.Color;
+
+                            graph.RemoveEdge(outEdge);
+                        }
+
+                        graph.RemoveEdge(inEdge);
+                    }
+
+                    graph.RemoveNode(node);
+                }
+            }
+
             /* some visual formatting */
             var layoutSettings = new SugiyamaLayoutSettings();
             graph.LayoutAlgorithmSettings = layoutSettings;
