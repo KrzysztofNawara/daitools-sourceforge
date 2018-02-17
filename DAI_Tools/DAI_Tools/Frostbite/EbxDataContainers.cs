@@ -229,18 +229,24 @@ namespace DAI_Tools.Frostbite
             if (field.ValueType == DAIFieldType.DAI_Complex)
             {
                 var value = field.GetComplexValue();
-                var astruct = new AStruct();
-                astruct.name = value.GetName();
-
-                foreach (var childField in value.Fields)
+                
+                if (value == null) 
+                    result = new ASimpleValue("{null}");
+                else
                 {
-                    AValue convertedChild = convert(childField, ctx);
-                    var childFieldName = childField.Descriptor.FieldName;
-                    astruct.fields.Add(childFieldName, convertedChild);
-                    astruct.correspondingDaiFields.Add(childFieldName, childField);
-                }
+                    var astruct = new AStruct();
+                    astruct.name = value.GetName();
 
-                result = astruct;
+                    foreach (var childField in value.Fields)
+                    {
+                        AValue convertedChild = convert(childField, ctx);
+                        var childFieldName = childField.Descriptor.FieldName;
+                        astruct.fields.Add(childFieldName, convertedChild);
+                        astruct.correspondingDaiFields.Add(childFieldName, childField);
+                    }
+
+                    result = astruct;
+                }
             }
             else if(field.ValueType == DAIFieldType.DAI_Array)
             {
