@@ -188,6 +188,10 @@ namespace DAI_Tools.EBXExplorer
                 }
             }
             
+            this.SuspendLayout();
+            /* bind graph to viewer; must be bound for RemoveNode/Edge to work */
+            viewer.Graph = graph;
+
             /* remove split nodes */
             if (hideSplittersCheckbox.Checked)
             {
@@ -218,15 +222,16 @@ namespace DAI_Tools.EBXExplorer
                     nodesToRemove.Add(node);
                 }
 
-                foreach (var node in nodesToRemove) graph.RemoveNode(node);
-                foreach (var edge in edgesToRemove) graph.RemoveEdge(edge);
+                foreach (var node in nodesToRemove)
+                    graph.RemoveNode(node);
             }
 
             /* some visual formatting */
             var layoutSettings = new SugiyamaLayoutSettings();
             graph.LayoutAlgorithmSettings = layoutSettings;
 
-            /* bind graph to viewer */
+            this.ResumeLayout();
+            /* assign it once again... */
             viewer.Graph = graph;
         }
 
