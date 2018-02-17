@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using DAI_Tools.Frostbite;
 using Microsoft.Msagl.Drawing;
+using Microsoft.Msagl.GraphViewerGdi;
 using Microsoft.Msagl.Layout.Layered;
 using Microsoft.Msagl.Layout.MDS;
 using Color = Microsoft.Msagl.Drawing.Color;
@@ -17,8 +18,6 @@ namespace DAI_Tools.EBXExplorer
 {
     public partial class UIGraphAssetViz : Form
     {
-        public static bool HIDE_SPLIT_NODES = true;
-
         public UIGraphAssetViz(EbxDataContainers ebxDataContainers, string assetGuid)
         {
             this.ebxDataContainers = ebxDataContainers;
@@ -28,26 +27,21 @@ namespace DAI_Tools.EBXExplorer
 
         private EbxDataContainers ebxDataContainers;
         private string assetGuid;
+        private GViewer viewer;
 
         private void UIGraphAssetViz_Load(object sender, EventArgs e)
         {
             try {
                 //create a viewer object 
-                Microsoft.Msagl.GraphViewerGdi.GViewer viewer = new Microsoft.Msagl.GraphViewerGdi.GViewer();
-
-                //create a graph object 
-                Microsoft.Msagl.Drawing.Graph graph = new Microsoft.Msagl.Drawing.Graph("graph");
-
+                viewer = new GViewer();
+                
                 //create the graph content 
-                configureGraph(graph);
-
-                //bind the graph to the viewer 
-                viewer.Graph = graph;
+                drawGraph();
 
                 //associate the viewer with the form 
                 this.SuspendLayout();
-                viewer.Dock = System.Windows.Forms.DockStyle.Fill;
-                this.Controls.Add(viewer);
+                viewer.Dock = DockStyle.Fill;
+                this.graphVizPanel.Controls.Add(viewer);
                 this.ResumeLayout();
             } catch (Exception ex)
             {
@@ -70,9 +64,13 @@ namespace DAI_Tools.EBXExplorer
             public string nodeLabel;
         }
 
-        private void configureGraph(Graph graph)
+        private void drawGraph()
         {
             var uiGraphAsset = ebxDataContainers.instances[assetGuid];
+            var assetName = uiGraphAsset.data.get("Name").castTo<ASimpleValue>().Val;
+            
+            Graph graph = new Graph(assetName);
+            
             AArray nodes = uiGraphAsset.data.get("Nodes").castTo<AArray>();
             var splitNodes = new HashSet<string>();
             var portsGuidToPortDesc = new Dictionary<string, PortDesc>();
@@ -186,7 +184,7 @@ namespace DAI_Tools.EBXExplorer
             }
             
             /* remove split nodes */
-            if (HIDE_SPLIT_NODES)
+            if (hideSplittersCheckbox.Checked)
             {
                 foreach (var splitNode in splitNodes)
                 {
@@ -216,6 +214,15 @@ namespace DAI_Tools.EBXExplorer
             /* some visual formatting */
             var layoutSettings = new SugiyamaLayoutSettings();
             graph.LayoutAlgorithmSettings = layoutSettings;
+
+            /* bind graph to viewer */
+            viewer.Graph = graph;
+        }
+
+        private void hideSplittersCheckbox_CheckedChanged(object sender, EventArgs e)
+        {
+            if (viewer != null)
+                drawGraph();
         }
     }
 }
