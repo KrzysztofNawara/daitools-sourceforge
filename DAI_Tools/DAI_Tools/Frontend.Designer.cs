@@ -46,6 +46,8 @@
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.testToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.blueprintVizToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.popUpEventToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.damageLogicToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.uiGraphVizButton = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip.SuspendLayout();
             this.menuStrip1.SuspendLayout();
@@ -178,10 +180,26 @@
             // 
             // blueprintVizToolStripMenuItem
             // 
+            this.blueprintVizToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.popUpEventToolStripMenuItem,
+            this.damageLogicToolStripMenuItem});
             this.blueprintVizToolStripMenuItem.Name = "blueprintVizToolStripMenuItem";
             this.blueprintVizToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.blueprintVizToolStripMenuItem.Text = "BlueprintViz";
-            this.blueprintVizToolStripMenuItem.Click += new System.EventHandler(this.blueprintVizToolStripMenuItem_Click);
+            // 
+            // popUpEventToolStripMenuItem
+            // 
+            this.popUpEventToolStripMenuItem.Name = "popUpEventToolStripMenuItem";
+            this.popUpEventToolStripMenuItem.Size = new System.Drawing.Size(177, 22);
+            this.popUpEventToolStripMenuItem.Text = "PopUpEvent";
+            this.popUpEventToolStripMenuItem.Click += new System.EventHandler(this.popUpEventToolStripMenuItem_Click);
+            // 
+            // damageLogicToolStripMenuItem
+            // 
+            this.damageLogicToolStripMenuItem.Name = "damageLogicToolStripMenuItem";
+            this.damageLogicToolStripMenuItem.Size = new System.Drawing.Size(177, 22);
+            this.damageLogicToolStripMenuItem.Text = "DamageEffectLogic";
+            this.damageLogicToolStripMenuItem.Click += new System.EventHandler(this.damageLogicToolStripMenuItem_Click);
             // 
             // uiGraphVizButton
             // 
@@ -231,6 +249,8 @@
         private System.Windows.Forms.ToolStripMenuItem testToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem blueprintVizToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem uiGraphVizButton;
+        private System.Windows.Forms.ToolStripMenuItem popUpEventToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem damageLogicToolStripMenuItem;
     }
 }
 

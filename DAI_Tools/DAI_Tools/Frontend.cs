@@ -140,13 +140,8 @@ namespace DAI_Tools
 
         private static string hudCombinedHUDGuid = "919EA7A5E1FA3911DB5137B4482C0D7BC42851F7";
         private static string popUpEventsPrefabGuid = "6E712022A2DE2A7C71A9EAC55D585547E10BEAF6";
+        private static string damageEffectPrefabGuid = "E78139132A608C0339BC7F04F121420E4BF117FA";
 
-        private void blueprintVizToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            var containers = loadEbx(popUpEventsPrefabGuid);
-            var assetGuid = findAsset(containers, "LogicPrefabBlueprint");
-            new BlueprintViz(containers, assetGuid).Show();
-        }
         private void uiGraphVizButton_Click(object sender, EventArgs e)
         {
             var containers = loadEbx(hudCombinedHUDGuid);
@@ -176,6 +171,20 @@ namespace DAI_Tools
                     return instance.Key;
 
             return null;
+        }
+
+        private void popUpEventToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var containers = loadEbx(popUpEventsPrefabGuid);
+            var assetGuid = findAsset(containers, "LogicPrefabBlueprint");
+            new BlueprintViz(containers, assetGuid).Show();
+        }
+
+        private void damageLogicToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var containers = loadEbx(damageEffectPrefabGuid);
+            var assetGuid = findAsset(containers, "LogicPrefabBlueprint");
+            new BlueprintViz(containers, assetGuid).Show();
         }
     }
 }
