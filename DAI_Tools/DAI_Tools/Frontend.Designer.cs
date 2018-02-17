@@ -42,8 +42,14 @@
             this.eBXExplorerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.modScriptToolToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.talktableExplorerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.shaderExplorerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.testToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.blueprintVizToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.popUpEventToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.damageLogicToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.uiGraphVizButton = new System.Windows.Forms.ToolStripMenuItem();
+            this.uiGameLogicToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -68,7 +74,8 @@
             // 
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolsToolStripMenuItem,
-            this.aboutToolStripMenuItem});
+            this.aboutToolStripMenuItem,
+            this.testToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Size = new System.Drawing.Size(813, 24);
@@ -148,6 +155,13 @@
             this.talktableExplorerToolStripMenuItem.Text = "Talktable Explorer";
             this.talktableExplorerToolStripMenuItem.Click += new System.EventHandler(this.talktableExplorerToolStripMenuItem_Click);
             // 
+            // shaderExplorerToolStripMenuItem
+            // 
+            this.shaderExplorerToolStripMenuItem.Name = "shaderExplorerToolStripMenuItem";
+            this.shaderExplorerToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
+            this.shaderExplorerToolStripMenuItem.Text = "Shader Explorer";
+            this.shaderExplorerToolStripMenuItem.Click += new System.EventHandler(this.shaderExplorerToolStripMenuItem_Click);
+            // 
             // aboutToolStripMenuItem
             // 
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
@@ -156,12 +170,52 @@
             this.aboutToolStripMenuItem.Text = "About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
-            // shaderExplorerToolStripMenuItem
+            // testToolStripMenuItem
             // 
-            this.shaderExplorerToolStripMenuItem.Name = "shaderExplorerToolStripMenuItem";
-            this.shaderExplorerToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
-            this.shaderExplorerToolStripMenuItem.Text = "Shader Explorer";
-            this.shaderExplorerToolStripMenuItem.Click += new System.EventHandler(this.shaderExplorerToolStripMenuItem_Click);
+            this.testToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.blueprintVizToolStripMenuItem,
+            this.uiGraphVizButton});
+            this.testToolStripMenuItem.Name = "testToolStripMenuItem";
+            this.testToolStripMenuItem.Size = new System.Drawing.Size(41, 20);
+            this.testToolStripMenuItem.Text = "Test";
+            // 
+            // blueprintVizToolStripMenuItem
+            // 
+            this.blueprintVizToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.popUpEventToolStripMenuItem,
+            this.damageLogicToolStripMenuItem,
+            this.uiGameLogicToolStripMenuItem});
+            this.blueprintVizToolStripMenuItem.Name = "blueprintVizToolStripMenuItem";
+            this.blueprintVizToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.blueprintVizToolStripMenuItem.Text = "BlueprintViz";
+            // 
+            // popUpEventToolStripMenuItem
+            // 
+            this.popUpEventToolStripMenuItem.Name = "popUpEventToolStripMenuItem";
+            this.popUpEventToolStripMenuItem.Size = new System.Drawing.Size(177, 22);
+            this.popUpEventToolStripMenuItem.Text = "PopUpEvent";
+            this.popUpEventToolStripMenuItem.Click += new System.EventHandler(this.popUpEventToolStripMenuItem_Click);
+            // 
+            // damageLogicToolStripMenuItem
+            // 
+            this.damageLogicToolStripMenuItem.Name = "damageLogicToolStripMenuItem";
+            this.damageLogicToolStripMenuItem.Size = new System.Drawing.Size(177, 22);
+            this.damageLogicToolStripMenuItem.Text = "DamageEffectLogic";
+            this.damageLogicToolStripMenuItem.Click += new System.EventHandler(this.damageLogicToolStripMenuItem_Click);
+            // 
+            // uiGraphVizButton
+            // 
+            this.uiGraphVizButton.Name = "uiGraphVizButton";
+            this.uiGraphVizButton.Size = new System.Drawing.Size(152, 22);
+            this.uiGraphVizButton.Text = "UIGraphViz";
+            this.uiGraphVizButton.Click += new System.EventHandler(this.uiGraphVizButton_Click);
+            // 
+            // uiGameLogicToolStripMenuItem
+            // 
+            this.uiGameLogicToolStripMenuItem.Name = "uiGameLogicToolStripMenuItem";
+            this.uiGameLogicToolStripMenuItem.Size = new System.Drawing.Size(177, 22);
+            this.uiGameLogicToolStripMenuItem.Text = "UiGameLogic";
+            this.uiGameLogicToolStripMenuItem.Click += new System.EventHandler(this.uiGameLogicToolStripMenuItem_Click);
             // 
             // Frontend
             // 
@@ -201,6 +255,12 @@
         private System.Windows.Forms.ToolStripMenuItem modScriptToolToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem talktableExplorerToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem shaderExplorerToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem testToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem blueprintVizToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem uiGraphVizButton;
+        private System.Windows.Forms.ToolStripMenuItem popUpEventToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem damageLogicToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem uiGameLogicToolStripMenuItem;
     }
 }
 

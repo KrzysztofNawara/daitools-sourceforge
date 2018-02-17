@@ -61,6 +61,8 @@ namespace DAI_Tools.EBXExplorer
 
                     if (currentlySelectedAsset.hasPartial("UIGraphAsset"))
                         graphVizButton.Enabled = true;
+                    else if (currentlySelectedAsset.hasPartial("LogicPrefabBlueprint"))
+                        blueprintVizButton.Enabled = true;
                 }
             }
         }
@@ -70,14 +72,25 @@ namespace DAI_Tools.EBXExplorer
             partialsLabel.Text = "";
             currentlySelectedAsset = null;
             graphVizButton.Enabled = false;
+            blueprintVizButton.Enabled = false;
         }
 
         private void graphVizButton_Click(object sender, EventArgs e)
         {
+            Debug.Assert(currentContainers != null);
             Debug.Assert(currentlySelectedAsset != null);
             Debug.Assert(currentlySelectedAsset.hasPartial("UIGraphAsset"));
 
             new UIGraphAssetViz(currentContainers, currentlySelectedAsset.guid).Show();
+        }
+
+        private void blueprintVizButton_Click(object sender, EventArgs e)
+        {
+            Debug.Assert(currentContainers != null);
+            Debug.Assert(currentlySelectedAsset != null);
+            Debug.Assert(currentlySelectedAsset.hasPartial("LogicPrefabBlueprint"));
+
+            new BlueprintViz(currentContainers, currentlySelectedAsset.guid).Show();
         }
     }
 }

@@ -36,6 +36,7 @@
             this.partialsLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.graphVizButton = new System.Windows.Forms.ToolStripButton();
+            this.blueprintVizButton = new System.Windows.Forms.ToolStripButton();
             ((System.ComponentModel.ISupportInitialize)(this.assetList)).BeginInit();
             this.statusStrip1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
@@ -101,7 +102,8 @@
             // toolStrip1
             // 
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.graphVizButton});
+            this.graphVizButton,
+            this.blueprintVizButton});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.Size = new System.Drawing.Size(300, 25);
@@ -117,6 +119,16 @@
             this.graphVizButton.Size = new System.Drawing.Size(58, 22);
             this.graphVizButton.Text = "GraphViz";
             this.graphVizButton.Click += new System.EventHandler(this.graphVizButton_Click);
+            // 
+            // blueprintVizButton
+            // 
+            this.blueprintVizButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.blueprintVizButton.Enabled = false;
+            this.blueprintVizButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.blueprintVizButton.Name = "blueprintVizButton";
+            this.blueprintVizButton.Size = new System.Drawing.Size(74, 22);
+            this.blueprintVizButton.Text = "BlueprintViz";
+            this.blueprintVizButton.Click += new System.EventHandler(this.blueprintVizButton_Click);
             // 
             // EbxAssetViewer
             // 
@@ -147,5 +159,6 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn assetGuid;
         private System.Windows.Forms.ToolStrip toolStrip1;
         private System.Windows.Forms.ToolStripButton graphVizButton;
+        private System.Windows.Forms.ToolStripButton blueprintVizButton;
     }
 }
