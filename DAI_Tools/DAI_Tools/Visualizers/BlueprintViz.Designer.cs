@@ -55,7 +55,7 @@
             // showEventConnsCheckbox
             // 
             this.showEventConnsCheckbox.AutoSize = true;
-            this.showEventConnsCheckbox.BackColor = System.Drawing.Color.Yellow;
+            this.showEventConnsCheckbox.BackColor = System.Drawing.Color.Blue;
             this.showEventConnsCheckbox.Checked = true;
             this.showEventConnsCheckbox.CheckState = System.Windows.Forms.CheckState.Checked;
             this.showEventConnsCheckbox.Location = new System.Drawing.Point(16, 12);
@@ -69,7 +69,7 @@
             // showPropertyConnsCheckbox
             // 
             this.showPropertyConnsCheckbox.AutoSize = true;
-            this.showPropertyConnsCheckbox.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(0)))));
+            this.showPropertyConnsCheckbox.BackColor = System.Drawing.Color.Green;
             this.showPropertyConnsCheckbox.Checked = true;
             this.showPropertyConnsCheckbox.CheckState = System.Windows.Forms.CheckState.Checked;
             this.showPropertyConnsCheckbox.Location = new System.Drawing.Point(16, 35);
