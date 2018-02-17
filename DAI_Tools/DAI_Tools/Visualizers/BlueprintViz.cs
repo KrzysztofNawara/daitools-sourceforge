@@ -101,13 +101,17 @@ namespace DAI_Tools.EBXExplorer
 
         private class Edge
         {
-            public Edge(string startId, string endId)
+            public Edge(string startNodeGuid, string startId, string endNodeGuid, string endId)
             {
                 this.startId = startId;
                 this.endId = endId;
+                this.startNodeGuid = startNodeGuid;
+                this.endNodeGuid = endNodeGuid;
             }
-            
+             
+            public string startNodeGuid;
             public string startId;
+            public string endNodeGuid;
             public string endId;
         }
 
@@ -116,7 +120,6 @@ namespace DAI_Tools.EBXExplorer
             public AStruct dataRoot;
             public Dictionary<string, NodeDesc> nodeGuidToNodeDesc = new Dictionary<string, NodeDesc>();
             public List<Edge> edges = new List<Edge>();
-            public Dictionary<string, NodeDesc> portIdToOwningNode = new Dictionary<string, NodeDesc>();
         }
 
         private void drawGraph()
@@ -136,6 +139,13 @@ namespace DAI_Tools.EBXExplorer
             foreach (var t in metadata.nodeGuidToNodeDesc)
             {
                 graph.AddNode(t.Value.labelName);
+            }
+
+            foreach (var edge in metadata.edges)
+            {
+                var srcNodeLabel = metadata.nodeGuidToNodeDesc[edge.startNodeGuid].labelName;
+                var tgNodeLabel = metadata.nodeGuidToNodeDesc[edge.endNodeGuid].labelName;
+                graph.AddEdge(srcNodeLabel, tgNodeLabel);
             }
 
             viewer.Graph = graph;
@@ -192,7 +202,7 @@ namespace DAI_Tools.EBXExplorer
                 tgPortDesc.refCount += 1;
 
                 /* add edge */
-                mdata.edges.Add(new Edge(srcPort, targetPort));
+                mdata.edges.Add(new Edge(srcNodeGuid, srcPort, targetNodeGuid, targetPort));
             }
         }
 
@@ -212,16 +222,6 @@ namespace DAI_Tools.EBXExplorer
             else
             {
                 ndesc.ownedPortIdToPortDesc.Add(pdesc.id, pdesc);
-
-                if (mdata.portIdToOwningNode.ContainsKey(pdesc.id))
-                {
-                    var endesc = mdata.portIdToOwningNode[pdesc.id];
-                    if (endesc != ndesc)
-                        throw new Exception("PortID  " + pdesc.id + "conflict. Originally mapped to " + endesc + ", trying to map to " + ndesc);
-                } 
-                else
-                    mdata.portIdToOwningNode.Add(pdesc.id, ndesc);
-
                 return pdesc;
             }
         }
