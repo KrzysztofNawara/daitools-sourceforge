@@ -11,12 +11,12 @@ using DAI_Tools.Frostbite;
 
 namespace DAI_Tools.EBXExplorer
 {
-    public partial class PrefabViz : Form
+    public partial class BlueprintViz : Form
     {
         private EbxDataContainers ebxContainers;
         private string assetGuid;
         
-        public PrefabViz(EbxDataContainers ebxContainers, string assetGuid)
+        public BlueprintViz(EbxDataContainers ebxContainers, string assetGuid)
         {
             this.ebxContainers = ebxContainers;
             this.assetGuid = assetGuid;

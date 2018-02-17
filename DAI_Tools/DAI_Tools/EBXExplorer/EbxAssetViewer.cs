@@ -90,7 +90,7 @@ namespace DAI_Tools.EBXExplorer
             Debug.Assert(currentlySelectedAsset != null);
             Debug.Assert(currentlySelectedAsset.hasPartial("LogicPrefabBlueprint"));
 
-            new PrefabViz(currentContainers, currentlySelectedAsset.guid).Show();
+            new BlueprintViz(currentContainers, currentlySelectedAsset.guid).Show();
         }
     }
 }

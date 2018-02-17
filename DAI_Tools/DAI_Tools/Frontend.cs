@@ -10,6 +10,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using DAI_Tools.EBXExplorer;
+using DAI_Tools.Frostbite;
 
 namespace DAI_Tools
 {
@@ -134,6 +136,46 @@ namespace DAI_Tools
         private void shaderExplorerToolStripMenuItem_Click(object sender, EventArgs e)
         {
             OpenMaximized(new ShaderExplorer.ShaderExplorer());
+        }
+
+        private static string hudCombinedHUDGuid = "919EA7A5E1FA3911DB5137B4482C0D7BC42851F7";
+        private static string popUpEventsPrefabGuid = "6E712022A2DE2A7C71A9EAC55D585547E10BEAF6";
+
+        private void blueprintVizToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var containers = loadEbx(popUpEventsPrefabGuid);
+            var assetGuid = findAsset(containers, "PrefabLogicBlueprint");
+            new BlueprintViz(containers, assetGuid).Show();
+        }
+        private void uiGraphVizButton_Click(object sender, EventArgs e)
+        {
+            var containers = loadEbx(hudCombinedHUDGuid);
+            var assetGuid = findAsset(containers, "UIGraphAsset");
+            new UIGraphAssetViz(containers, assetGuid).Show();
+        }
+
+        private EbxDataContainers loadEbx(string ebxGuid)
+        {
+            string path = GlobalStuff.FindSetting("gamepath");
+            path += "Data\\cas.cat";
+            var cat = new CATFile(path);
+            
+            byte[] data = Tools.GetDataBySHA1(ebxGuid, cat);
+
+            DAIEbx ebxFile = new DAIEbx();
+            ebxFile.Serialize(new MemoryStream(data));
+            var containers = EbxDataContainers.fromDAIEbx(ebxFile);
+
+            return containers;
+        }
+
+        private string findAsset(EbxDataContainers containers, string type)
+        {
+            foreach (var instance in containers.instances)
+                if (instance.Value.hasPartial(type))
+                    return instance.Key;
+
+            return null;
         }
     }
 }

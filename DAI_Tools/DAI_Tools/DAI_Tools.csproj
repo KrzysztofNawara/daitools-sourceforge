@@ -133,11 +133,11 @@
     <Compile Include="EBXExplorer\EbxTreeXmlViewer.Designer.cs">
       <DependentUpon>EbxTreeXmlViewer.cs</DependentUpon>
     </Compile>
-    <Compile Include="EBXExplorer\PrefabViz.cs">
+    <Compile Include="EBXExplorer\BlueprintViz.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="EBXExplorer\PrefabViz.Designer.cs">
-      <DependentUpon>PrefabViz.cs</DependentUpon>
+    <Compile Include="EBXExplorer\BlueprintViz.Designer.cs">
+      <DependentUpon>BlueprintViz.cs</DependentUpon>
     </Compile>
     <Compile Include="EBXExplorer\UIGraphAssetViz.cs">
       <SubType>Form</SubType>
@@ -219,6 +219,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="DBManager\DBManager.resx">
       <DependentUpon>DBManager.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="EBXExplorer\BlueprintViz.resx">
+      <DependentUpon>BlueprintViz.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="EBXExplorer\EbxAssetViewer.resx">
       <DependentUpon>EbxAssetViewer.cs</DependentUpon>
