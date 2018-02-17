@@ -31,22 +31,17 @@ namespace DAI_Tools.EBXExplorer
 
         private void UIGraphAssetViz_Load(object sender, EventArgs e)
         {
-            try {
-                //create a viewer object 
-                viewer = new GViewer();
+            //create a viewer object 
+            viewer = new GViewer();
                 
-                //create the graph content 
-                drawGraph();
+            //create the graph content 
+            drawGraphSafely();
 
-                //associate the viewer with the form 
-                this.SuspendLayout();
-                viewer.Dock = DockStyle.Fill;
-                this.graphVizPanel.Controls.Add(viewer);
-                this.ResumeLayout();
-            } catch (Exception ex)
-            {
-                MessageBox.Show("Exception:\n" + ex.Message + "\n" + ex.StackTrace);
-            }
+            //associate the viewer with the form 
+            this.SuspendLayout();
+            viewer.Dock = DockStyle.Fill;
+            this.graphVizPanel.Controls.Add(viewer);
+            this.ResumeLayout();
         }
 
         private class PortDesc
@@ -62,6 +57,16 @@ namespace DAI_Tools.EBXExplorer
             public int portIdx;
             public string portName;
             public string nodeLabel;
+        }
+
+        private void drawGraphSafely()
+        {
+            try {
+                drawGraph();
+            } catch (Exception ex)
+            {
+                MessageBox.Show("Exception:\n" + ex.Message + "\n" + ex.StackTrace);
+            }
         }
 
         private void drawGraph()
@@ -186,6 +191,9 @@ namespace DAI_Tools.EBXExplorer
             /* remove split nodes */
             if (hideSplittersCheckbox.Checked)
             {
+                var nodesToRemove = new List<Node>();
+                var edgesToRemove = new List<Edge>();
+                
                 foreach (var splitNode in splitNodes)
                 {
                     var node = graph.FindNode(splitNode);
@@ -201,14 +209,17 @@ namespace DAI_Tools.EBXExplorer
                                 newEdge.Attr.AddStyle(style);
                             newEdge.Attr.Color = outEdge.Attr.Color;
 
-                            graph.RemoveEdge(outEdge);
+                            edgesToRemove.Add(outEdge);
                         }
 
-                        graph.RemoveEdge(inEdge);
+                        edgesToRemove.Add(inEdge);
                     }
 
-                    graph.RemoveNode(node);
+                    nodesToRemove.Add(node);
                 }
+
+                foreach (var node in nodesToRemove) graph.RemoveNode(node);
+                foreach (var edge in edgesToRemove) graph.RemoveEdge(edge);
             }
 
             /* some visual formatting */
@@ -222,7 +233,7 @@ namespace DAI_Tools.EBXExplorer
         private void hideSplittersCheckbox_CheckedChanged(object sender, EventArgs e)
         {
             if (viewer != null)
-                drawGraph();
+                drawGraphSafely();
         }
     }
 }
