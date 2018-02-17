@@ -53,6 +53,12 @@ namespace DAI_Tools.EBXExplorer
             }
         }
 
+        private class NodeDesc
+        {
+            public string name;
+            public string labelName;
+        }
+
         private void drawGraph()
         {
             var uiGraphAsset = ebxDataContainers.instances[assetGuid];
@@ -61,8 +67,46 @@ namespace DAI_Tools.EBXExplorer
             Graph graph = new Graph(assetName);
 
             /* draw graph */
+            var nodes = buildNodeDescritorMap(uiGraphAsset.data);
+
+            foreach (var t in nodes)
+            {
+                graph.AddNode(t.Value.labelName);
+            }
 
             viewer.Graph = graph;
+        }
+
+        private Dictionary<string, NodeDesc> buildNodeDescritorMap(AStruct dataRoot)
+        {
+            var objectRefsArray = dataRoot.get("Objects").castTo<AArray>();
+            var objects = new List<Tuple<string, AStruct>>(objectRefsArray.elements.Count);
+
+            foreach (var possiblyRef in objectRefsArray.elements)
+            {
+                if (possiblyRef.Type == ValueTypes.IN_REF)
+                {
+                    var inRef = possiblyRef.castTo<AIntRef>();
+                    objects.Add(new Tuple<string, AStruct>(inRef.instanceGuid, inRef.refTarget.castTo<AStruct>()));
+                }
+                else 
+                    throw new Exception("Incorret type found in array: " + possiblyRef.Type);
+            }
+
+            var guidToNodeDesc = new Dictionary<string, NodeDesc>();
+            var nextNodeId = 0;
+
+            foreach (var t in objects)
+            {
+                var nodeDesc = new NodeDesc();
+                nodeDesc.name = t.Item2.name;
+                nodeDesc.labelName = "N" + nextNodeId + ": " + nodeDesc.name;
+                nextNodeId += 1;
+
+                guidToNodeDesc.Add(t.Item1, nodeDesc);
+            }
+
+            return guidToNodeDesc;
         }
     }
 }
