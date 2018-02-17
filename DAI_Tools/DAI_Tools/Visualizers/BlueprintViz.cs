@@ -171,12 +171,35 @@ namespace DAI_Tools.EBXExplorer
                 {
                     var label = getLabel(edge, metadata);
                     var graphEdge = graph.AddEdge(srcNodeLabel, label, tgNodeLabel);
-                    graphEdge.Attr.Color = new Microsoft.Msagl.Drawing.Color(edgeColor.R, edgeColor.G, edgeColor.B);
+                    graphEdge.Attr.Color = colorConv(edgeColor);
                     graphEdge.Label.FontColor = graphEdge.Attr.Color;
                 }
             }
 
+            if (showUnconnPortsCbkb.Checked)
+            {
+                var color = colorConv(showUnconnPortsCbkb.BackColor);
+                int pidx = 0;
+                foreach (var ndesc in metadata.nodeGuidToNodeDesc.Values)
+                    foreach (var pdesc in ndesc.ownedPortIdToPortDesc.Values)
+                        if (pdesc.refCount == 0)
+                        {
+                            var plabel = "P" + pidx + "[" + pdesc.type + "," + pdesc.direction + "] " + pdesc.id;
+                            var pnode = graph.AddNode(plabel);
+                            var pedge = graph.AddEdge(ndesc.labelName, "", plabel);
+                            pidx += 1;
+
+                            pnode.Attr.Color = color;
+                            pedge.Attr.Color = color;
+                        }
+            }
+
             viewer.Graph = graph;
+        }
+
+        private Microsoft.Msagl.Drawing.Color colorConv(Color c)
+        {
+            return new Microsoft.Msagl.Drawing.Color(c.R, c.G, c.B);
         }
 
         private string getLabel(Edge e, Metadata mdata)
@@ -367,6 +390,11 @@ namespace DAI_Tools.EBXExplorer
         }
 
         private void showLinkConnsCheckbox_CheckedChanged(object sender, EventArgs e)
+        {
+            drawGraphSafely();
+        }
+
+        private void showUnconnPortsCbkb_CheckedChanged(object sender, EventArgs e)
         {
             drawGraphSafely();
         }

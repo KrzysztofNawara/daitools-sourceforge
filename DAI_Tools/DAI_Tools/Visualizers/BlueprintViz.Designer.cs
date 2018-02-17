@@ -32,6 +32,7 @@
             this.showEventConnsCheckbox = new System.Windows.Forms.CheckBox();
             this.showPropertyConnsCheckbox = new System.Windows.Forms.CheckBox();
             this.showLinkConnsCheckbox = new System.Windows.Forms.CheckBox();
+            this.showUnconnPortsCbkb = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.contentContainer)).BeginInit();
             this.contentContainer.Panel2.SuspendLayout();
             this.contentContainer.SuspendLayout();
@@ -45,6 +46,7 @@
             // 
             // contentContainer.Panel2
             // 
+            this.contentContainer.Panel2.Controls.Add(this.showUnconnPortsCbkb);
             this.contentContainer.Panel2.Controls.Add(this.showLinkConnsCheckbox);
             this.contentContainer.Panel2.Controls.Add(this.showPropertyConnsCheckbox);
             this.contentContainer.Panel2.Controls.Add(this.showEventConnsCheckbox);
@@ -94,6 +96,18 @@
             this.showLinkConnsCheckbox.UseVisualStyleBackColor = false;
             this.showLinkConnsCheckbox.CheckedChanged += new System.EventHandler(this.showLinkConnsCheckbox_CheckedChanged);
             // 
+            // showUnconnPortsCbkb
+            // 
+            this.showUnconnPortsCbkb.AutoSize = true;
+            this.showUnconnPortsCbkb.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(0)))));
+            this.showUnconnPortsCbkb.Location = new System.Drawing.Point(16, 82);
+            this.showUnconnPortsCbkb.Name = "showUnconnPortsCbkb";
+            this.showUnconnPortsCbkb.Size = new System.Drawing.Size(124, 17);
+            this.showUnconnPortsCbkb.TabIndex = 3;
+            this.showUnconnPortsCbkb.Text = "Show unconn ports?";
+            this.showUnconnPortsCbkb.UseVisualStyleBackColor = false;
+            this.showUnconnPortsCbkb.CheckedChanged += new System.EventHandler(this.showUnconnPortsCbkb_CheckedChanged);
+            // 
             // BlueprintViz
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -117,5 +131,6 @@
         private System.Windows.Forms.CheckBox showEventConnsCheckbox;
         private System.Windows.Forms.CheckBox showLinkConnsCheckbox;
         private System.Windows.Forms.CheckBox showPropertyConnsCheckbox;
+        private System.Windows.Forms.CheckBox showUnconnPortsCbkb;
     }
 }
