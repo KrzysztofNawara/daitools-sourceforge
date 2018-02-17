@@ -169,12 +169,25 @@ namespace DAI_Tools.EBXExplorer
 
                 if (show)
                 {
-                    var graphEdge = graph.AddEdge(srcNodeLabel, tgNodeLabel);
+                    var label = getLabel(edge, metadata);
+                    var graphEdge = graph.AddEdge(srcNodeLabel, label, tgNodeLabel);
                     graphEdge.Attr.Color = new Microsoft.Msagl.Drawing.Color(edgeColor.R, edgeColor.G, edgeColor.B);
+                    graphEdge.Label.FontColor = graphEdge.Attr.Color;
                 }
             }
 
             viewer.Graph = graph;
+        }
+
+        private string getLabel(Edge e, Metadata mdata)
+        {
+            var srcPortDesc = getEdgePortDesc(e, true, mdata);
+            var tgPortDesc = getEdgePortDesc(e, false, mdata);
+
+            if (srcPortDesc.id.Length == 0 && tgPortDesc.id.Length == 0)
+                return "";
+            else 
+                return srcPortDesc.id + " > " + tgPortDesc.id;
         }
 
         private CheckBox getEdgeTypeCheckbox(Edge e, Metadata mdata)
@@ -200,8 +213,8 @@ namespace DAI_Tools.EBXExplorer
 
         private Type determineEdgeType(Edge e, Metadata mdata)
         {
-            var srcPortDesc = mdata.nodeGuidToNodeDesc[e.startNodeGuid].ownedPortIdToPortDesc[e.startId];
-            var tgPortDesc = mdata.nodeGuidToNodeDesc[e.endNodeGuid].ownedPortIdToPortDesc[e.endId];
+            var srcPortDesc = getEdgePortDesc(e, true, mdata);
+            var tgPortDesc = getEdgePortDesc(e, false, mdata);
 
             if (srcPortDesc.type == tgPortDesc.type)
                 return srcPortDesc.type;
@@ -210,6 +223,13 @@ namespace DAI_Tools.EBXExplorer
                 MessageBox.Show("Edges of mixed type. Src: " + srcPortDesc + ", Tg: " + tgPortDesc);
                 return srcPortDesc.type;
             } 
+        }
+
+        private PortDesc getEdgePortDesc(Edge e, bool start, Metadata mdata)
+        {
+            var nguid = start ? e.startNodeGuid : e.endNodeGuid;
+            var pid = start ? e.startId : e.endId;
+            return mdata.nodeGuidToNodeDesc[nguid].ownedPortIdToPortDesc[pid];
         }
 
         private void processObjects(Metadata mdata)
