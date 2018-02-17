@@ -144,7 +144,7 @@ namespace DAI_Tools
         private void blueprintVizToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var containers = loadEbx(popUpEventsPrefabGuid);
-            var assetGuid = findAsset(containers, "PrefabLogicBlueprint");
+            var assetGuid = findAsset(containers, "LogicPrefabBlueprint");
             new BlueprintViz(containers, assetGuid).Show();
         }
         private void uiGraphVizButton_Click(object sender, EventArgs e)
