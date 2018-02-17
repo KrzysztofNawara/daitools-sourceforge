@@ -49,6 +49,7 @@
             this.popUpEventToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.damageLogicToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.uiGraphVizButton = new System.Windows.Forms.ToolStripMenuItem();
+            this.uiGameLogicToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -182,7 +183,8 @@
             // 
             this.blueprintVizToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.popUpEventToolStripMenuItem,
-            this.damageLogicToolStripMenuItem});
+            this.damageLogicToolStripMenuItem,
+            this.uiGameLogicToolStripMenuItem});
             this.blueprintVizToolStripMenuItem.Name = "blueprintVizToolStripMenuItem";
             this.blueprintVizToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.blueprintVizToolStripMenuItem.Text = "BlueprintViz";
@@ -207,6 +209,13 @@
             this.uiGraphVizButton.Size = new System.Drawing.Size(152, 22);
             this.uiGraphVizButton.Text = "UIGraphViz";
             this.uiGraphVizButton.Click += new System.EventHandler(this.uiGraphVizButton_Click);
+            // 
+            // uiGameLogicToolStripMenuItem
+            // 
+            this.uiGameLogicToolStripMenuItem.Name = "uiGameLogicToolStripMenuItem";
+            this.uiGameLogicToolStripMenuItem.Size = new System.Drawing.Size(177, 22);
+            this.uiGameLogicToolStripMenuItem.Text = "UiGameLogic";
+            this.uiGameLogicToolStripMenuItem.Click += new System.EventHandler(this.uiGameLogicToolStripMenuItem_Click);
             // 
             // Frontend
             // 
@@ -251,6 +260,7 @@
         private System.Windows.Forms.ToolStripMenuItem uiGraphVizButton;
         private System.Windows.Forms.ToolStripMenuItem popUpEventToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem damageLogicToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem uiGameLogicToolStripMenuItem;
     }
 }
 
