@@ -124,6 +124,16 @@ namespace DAI_Tools.EBXExplorer
             public List<Edge> edges = new List<Edge>();
         }
 
+        private Func<AStruct, string> getDirectExtractor(string fieldname)
+        {
+            return astruct => extractId(astruct.get(fieldname));
+        }
+
+        private Func<AStruct, string> getEventExtractor(string fieldname)
+        {
+            return astruct => extractId(astruct.get(fieldname).castTo<AStruct>().get("Id"));
+        }
+
         private void drawGraph()
         {
             var uiGraphAsset = ebxDataContainers.instances[assetGuid];
@@ -137,8 +147,9 @@ namespace DAI_Tools.EBXExplorer
             
             processObjects(metadata);
             processInterface(metadata);
-            processConnections(metadata, "PropertyConnections", "SourceFieldId", "TargetFieldId", Type.PROPERTY);
-            processConnections(metadata, "LinkConnections", "SourceFieldId", "TargetFieldId", Type.LINK);
+            processConnections(metadata, "PropertyConnections", getDirectExtractor("SourceFieldId"), getDirectExtractor("TargetFieldId"), Type.PROPERTY);
+            processConnections(metadata, "LinkConnections", getDirectExtractor("SourceFieldId"), getDirectExtractor("TargetFieldId"), Type.LINK);
+            processConnections(metadata, "EventConnections", getEventExtractor("SourceEvent"), getEventExtractor("TargetEvent"), Type.EVENT);
 
             foreach (var t in metadata.nodeGuidToNodeDesc)
             {
@@ -203,7 +214,7 @@ namespace DAI_Tools.EBXExplorer
             mdata.nodeGuidToNodeDesc.Add(inref.instanceGuid, ifaceNodeDesc);
         }
 
-        private void processConnections(Metadata mdata, string holdingFieldName, string sourcePortFieldName, string targetPortFieldName, Type type)
+        private void processConnections(Metadata mdata, string holdingFieldName, Func<AStruct, string> srcPortIdExtractor, Func<AStruct, string> tgPortIdExtractor, Type type)
         {
             var propertyArray = mdata.dataRoot.get(holdingFieldName).castTo<AArray>();
 
@@ -212,8 +223,8 @@ namespace DAI_Tools.EBXExplorer
                 var astruct = propConnection.castTo<AStruct>();
                 var srcNodeGuid = extractInRef(astruct.get("Source"));
                 var targetNodeGuid = extractInRef(astruct.get("Target"));
-                var srcPort = extractId(astruct.get(sourcePortFieldName));
-                var targetPort = extractId(astruct.get(targetPortFieldName));
+                var srcPort = srcPortIdExtractor(astruct);
+                var targetPort = tgPortIdExtractor(astruct);
 
                 /* add ports to nodes */
                 var srcNodeDesc = mdata.nodeGuidToNodeDesc[srcNodeGuid];
