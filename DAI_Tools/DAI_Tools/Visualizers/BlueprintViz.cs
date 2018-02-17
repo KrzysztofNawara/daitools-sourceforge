@@ -65,6 +65,7 @@ namespace DAI_Tools.EBXExplorer
             UNKNOWN,
             IN,
             OUT,
+            BIDIR,
         }
 
         private class PortDesc
@@ -236,7 +237,10 @@ namespace DAI_Tools.EBXExplorer
                 if (epd.direction == Dir.UNKNOWN)
                     epd.direction = pdesc.direction;
 
-                if (epd.direction != pdesc.direction || epd.type != pdesc.type)
+                if (epd.direction != pdesc.direction)
+                    epd.direction = Dir.BIDIR;
+
+                if (epd.type != pdesc.type)
                     throw new Exception("Port conflict. Tried to merge: " + pdesc.ToString() + " with existing " + epd.ToString());
 
                 return epd;
