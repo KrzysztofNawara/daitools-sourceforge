@@ -115,10 +115,14 @@ namespace DAI_Tools.EBXExplorer
                 nodeNode.Attr.Padding = 2;
                 nodeNode.Attr.Shape = Shape.Box;
 
-                if (!isRoot)
-                    nodeNode.Attr.FillColor = Color.LightGreen;
-                else
+                if (isRoot)
                     nodeNode.Attr.FillColor = Color.PaleVioletRed;
+                else if (nodeContainer.hasPartial("InstanceOutputNode"))
+                    nodeNode.Attr.FillColor = Color.LightBlue;
+                else if (nodeContainer.hasPartial("InstanceInputNode"))
+                    nodeNode.Attr.FillColor = Color.MediumPurple;
+                else
+                    nodeNode.Attr.FillColor = Color.LightGreen;
             }
 
             /* draw ordinary edges */
