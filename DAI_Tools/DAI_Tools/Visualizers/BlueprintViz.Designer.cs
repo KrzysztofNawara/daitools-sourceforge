@@ -37,6 +37,7 @@
             this.ClientSize = new System.Drawing.Size(284, 262);
             this.Name = "BlueprintViz";
             this.Text = "BlueprintViz";
+            this.Load += new System.EventHandler(this.BlueprintViz_Load);
             this.ResumeLayout(false);
 
         }
