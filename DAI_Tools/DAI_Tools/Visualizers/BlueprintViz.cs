@@ -176,9 +176,6 @@ namespace DAI_Tools.EBXExplorer
 
             foreach (var edge in metadata.edges)
             {
-                var srcNodeLabel = metadata.nodeGuidToNodeDesc[edge.startNodeGuid].nodeGuid;
-                var tgNodeLabel = metadata.nodeGuidToNodeDesc[edge.endNodeGuid].nodeGuid;
-
                 var correspondingCheckBox = getEdgeTypeCheckbox(edge, metadata);
                 Color edgeColor = correspondingCheckBox.BackColor;
                 bool show = correspondingCheckBox.Checked;
@@ -186,7 +183,7 @@ namespace DAI_Tools.EBXExplorer
                 if (show)
                 {
                     var label = getLabel(edge, metadata);
-                    var graphEdge = graph.AddEdge(srcNodeLabel, label, tgNodeLabel);
+                    var graphEdge = graph.AddEdge(edge.startNodeGuid, label, edge.endNodeGuid);
                     graphEdge.Attr.Color = colorConv(edgeColor);
                     graphEdge.Label.FontColor = graphEdge.Attr.Color;
                 }
