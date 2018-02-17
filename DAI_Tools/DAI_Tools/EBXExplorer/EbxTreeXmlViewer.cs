@@ -51,9 +51,11 @@ namespace DAI_Tools.EBXExplorer
         {
             foreach (var childNodeObj in e.Node.Nodes)
             {
-                var childNode = (TreeNode) childNodeObj; 
+                var childNode = (TreeNode) childNodeObj;
                 var childTag = (TreeNodeTag) childNode.Tag;
-                childTag.expand(childNode, currentEbx);
+
+                if (childTag != null)
+                    childTag.expand(childNode, currentEbx);
             }
         }
 
