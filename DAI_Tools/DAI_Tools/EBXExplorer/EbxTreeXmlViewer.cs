@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Forms;
 using DAI_Tools.Frostbite;
 
@@ -35,13 +37,9 @@ namespace DAI_Tools.EBXExplorer
             if (currentEbx != null)
             {
                 var root = new TreeNode("EBX: " + currentEbx.fileGuid);
-
-                /* traverse tree, cache references */
-                foreach (var instance in currentEbx.instances)
-                {
-                    var tnode = processField(instance.Key, instance.Value.data, currentEbx);
-                    root.Nodes.Add(tnode);
-                }
+                var rootTag = new TNDataRootTag(currentEbx.instances.Values.ToList());
+                root.Tag = rootTag;
+                rootTag.expand(root, currentEbx);
 
                 treeView1.Nodes.Add(root);
             }
@@ -98,18 +96,14 @@ namespace DAI_Tools.EBXExplorer
 
         private class TNDataRootTag : TreeNodeTag
         {
-            private string fieldName;
-            private AStruct astruct;
+            private List<DataContainer> containers;
 
-            public TNDataRootTag(string fieldName, AStruct astruct)
-            {
-                this.fieldName = fieldName;
-                this.astruct = astruct;
-            }
+            public TNDataRootTag(List<DataContainer> containers) { this.containers = containers; }
 
             internal override void doExpand(TreeNode myNode, EbxDataContainers ebx)
             {
-                myNode.Nodes.Add(processField(fieldName, astruct, ebx));
+                foreach (var container in containers)
+                    myNode.Nodes.Add(processField(container.guid, container.data, ebx));
             }
         }
 
@@ -133,7 +127,9 @@ namespace DAI_Tools.EBXExplorer
                             throw new Exception("At this point intrefs should be resolved!");
                         case RefStatus.RESOLVED_SUCCESS:
                             tnode = simpleFieldTNode(fieldName, "INTREF");
-                            tnode.Tag = new TNDataRootTag(aintref.instanceGuid, containers.instances[aintref.instanceGuid].data);
+                            var singletonContainerList = new List<DataContainer>();
+                            singletonContainerList.Add(containers.instances[aintref.instanceGuid]);
+                            tnode.Tag = new TNDataRootTag(singletonContainerList);
                             break;
                         case RefStatus.RESOLVED_FAILURE:
                             tnode = simpleFieldTNode(fieldName, "Unresolved INTREF: " + aintref.instanceGuid);
