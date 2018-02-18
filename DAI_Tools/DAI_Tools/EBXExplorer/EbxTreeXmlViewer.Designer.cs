@@ -40,6 +40,7 @@
             this.treeView1.Size = new System.Drawing.Size(150, 125);
             this.treeView1.TabIndex = 0;
             this.treeView1.BeforeExpand += new System.Windows.Forms.TreeViewCancelEventHandler(this.treeView1_BeforeExpand);
+            this.treeView1.BeforeSelect += new System.Windows.Forms.TreeViewCancelEventHandler(this.treeView1_BeforeSelect);
             // 
             // toolStrip1
             // 

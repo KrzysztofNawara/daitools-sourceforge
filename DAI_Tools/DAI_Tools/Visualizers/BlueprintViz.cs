@@ -19,6 +19,7 @@ namespace DAI_Tools.EBXExplorer
         private EbxDataContainers ebxDataContainers;
         private string assetGuid;
         private GViewer viewer;
+        private EbxTreeXmlViewer ebxTreeViewer;
 
         public BlueprintViz(EbxDataContainers ebxContainers, string assetGuid)
         {
@@ -26,6 +27,11 @@ namespace DAI_Tools.EBXExplorer
             this.assetGuid = assetGuid;
             
             InitializeComponent();
+
+            ebxTreeViewer = new EbxTreeXmlViewer();
+            toolsSplitContainer.Panel2.Controls.Add(ebxTreeViewer);
+            ebxTreeViewer.Visible = true;
+            ebxTreeViewer.setData(ebxContainers);
         }
 
         private void BlueprintViz_Load(object sender, EventArgs e)
@@ -42,6 +48,18 @@ namespace DAI_Tools.EBXExplorer
             viewer.Dock = DockStyle.Fill;
             contentContainer.Panel1.Controls.Add(viewer);
             this.ResumeLayout();
+
+            viewer.Click += nodeSelected;
+        }
+
+        private void nodeSelected(object sender, EventArgs e)
+        {
+            GViewer viewer = sender as GViewer;
+            if (viewer.SelectedObject != null && viewer.SelectedObject is Node)
+            {
+                Node node = viewer.SelectedObject as Node;
+                ebxTreeViewer.selectByGuid(node.Id);
+            }
         }
 
         private void drawGraphSafely()
@@ -92,13 +110,13 @@ namespace DAI_Tools.EBXExplorer
         private class NodeDesc
         {
             public string name;
-            public string labelName;
+            public string nodeGuid;
             public bool isInterface = false;
             public Dictionary<string, PortDesc> ownedPortIdToPortDesc = new Dictionary<string, PortDesc>();
 
             public override string ToString()
             {
-                return "NODE[" + name + "," + labelName + "]";
+                return "NODE[" + name + "," + nodeGuid + "]";
             }
         }
 
@@ -155,14 +173,13 @@ namespace DAI_Tools.EBXExplorer
             /* graph data processed, start drawing and formatting */
             foreach (var t in metadata.nodeGuidToNodeDesc)
             {
-                graph.AddNode(t.Value.labelName);
+                var node = graph.AddNode(t.Value.nodeGuid);
+                node.Label.Text = t.Value.name;
+                /* use guids when creating nodes, and set them labels... no need for field label, needs guid! */
             }
 
             foreach (var edge in metadata.edges)
             {
-                var srcNodeLabel = metadata.nodeGuidToNodeDesc[edge.startNodeGuid].labelName;
-                var tgNodeLabel = metadata.nodeGuidToNodeDesc[edge.endNodeGuid].labelName;
-
                 var correspondingCheckBox = getEdgeTypeCheckbox(edge, metadata);
                 Color edgeColor = correspondingCheckBox.BackColor;
                 bool show = correspondingCheckBox.Checked;
@@ -170,7 +187,7 @@ namespace DAI_Tools.EBXExplorer
                 if (show)
                 {
                     var label = getLabel(edge, metadata);
-                    var graphEdge = graph.AddEdge(srcNodeLabel, label, tgNodeLabel);
+                    var graphEdge = graph.AddEdge(edge.startNodeGuid, label, edge.endNodeGuid);
                     graphEdge.Attr.Color = colorConv(edgeColor);
                     graphEdge.Label.FontColor = graphEdge.Attr.Color;
                 }
@@ -184,11 +201,12 @@ namespace DAI_Tools.EBXExplorer
                     foreach (var pdesc in ndesc.ownedPortIdToPortDesc.Values)
                         if (pdesc.refCount == 0)
                         {
-                            var plabel = "P" + pidx + "[" + pdesc.type + "," + pdesc.direction + "] " + pdesc.id;
-                            var pnode = graph.AddNode(plabel);
-                            var pedge = graph.AddEdge(ndesc.labelName, "", plabel);
+                            var pnodeId = pdesc.id + "_" + pidx;
+                            var pnode = graph.AddNode(pnodeId);
+                            var pedge = graph.AddEdge(ndesc.nodeGuid, "", pnodeId);
                             pidx += 1;
 
+                            pnode.Label.Text = "P" + pidx + "[" + pdesc.type + "," + pdesc.direction + "] " + pdesc.id;
                             pnode.Attr.Color = color;
                             pedge.Attr.Color = color;
                         }
@@ -271,14 +289,11 @@ namespace DAI_Tools.EBXExplorer
                     throw new Exception("Incorret type found in array: " + possiblyRef.Type);
             }
 
-            var nextNodeId = 0;
-
             foreach (var t in objects)
             {
                 var nodeDesc = new NodeDesc();
                 nodeDesc.name = t.Item2.name;
-                nodeDesc.labelName = "N" + nextNodeId + ": " + nodeDesc.name;
-                nextNodeId += 1;
+                nodeDesc.nodeGuid = t.Item1;
 
                 mdata.nodeGuidToNodeDesc.Add(t.Item1, nodeDesc);
             }
@@ -291,7 +306,7 @@ namespace DAI_Tools.EBXExplorer
             
             var ifaceNodeDesc = new NodeDesc();
             ifaceNodeDesc.name = "Interface";
-            ifaceNodeDesc.labelName = "Interface";
+            ifaceNodeDesc.nodeGuid = inref.instanceGuid;
             ifaceNodeDesc.isInterface = true;
 
             addAsPorts(ifaceNodeDesc, extractIdsFromArray(ifaceAstruct.get("Fields")), Type.PROPERTY, Dir.UNKNOWN);

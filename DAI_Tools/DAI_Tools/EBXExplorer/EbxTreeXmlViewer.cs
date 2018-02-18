@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 using DAI_Tools.Frostbite;
 
@@ -6,7 +9,8 @@ namespace DAI_Tools.EBXExplorer
 {
     public partial class EbxTreeXmlViewer : UserControl
     {
-        private EbxDataContainers currentEbx = null;        
+        private EbxDataContainers currentEbx = null;
+        private Dictionary<string, TreeNode> guidToTreeNodes = new Dictionary<string, TreeNode>();
 
         public EbxTreeXmlViewer()
         {
@@ -19,14 +23,32 @@ namespace DAI_Tools.EBXExplorer
         public void setEbxFile(DAIEbx ebxFile)
         {
             if (ebxFile != null)
+                setData(EbxDataContainers.fromDAIEbx(ebxFile));
+        }
+
+        public void setData(EbxDataContainers ebxData)
+        {
+            currentEbx = ebxData;
+            redrawTree();
+        }
+
+        public void selectByGuid(string guid)
+        {
+            if (guidToTreeNodes.ContainsKey(guid))
             {
-                currentEbx = EbxDataContainers.fromDAIEbx(ebxFile);
-                redrawTree();
+                var tnode = guidToTreeNodes[guid];
+                
+                if (!tnode.IsExpanded)
+                    tnode.Expand();
+                
+                treeView1.SelectedNode = tnode;
+                tnode.BackColor = Color.Yellow;
             }
         }
 
         private void redrawTree()
         {
+            guidToTreeNodes.Clear();
             treeView1.Nodes.Clear();
 
             if (!Visible)
@@ -35,13 +57,11 @@ namespace DAI_Tools.EBXExplorer
             if (currentEbx != null)
             {
                 var root = new TreeNode("EBX: " + currentEbx.fileGuid);
+                var rootTag = new TNDataRootTag(currentEbx.instances.Values.ToList());
+                root.Tag = rootTag;
+                rootTag.expand(root, currentEbx);
 
-                /* traverse tree, cache references */
-                foreach (var instance in currentEbx.instances)
-                {
-                    var tnode = processField(instance.Key, instance.Value.data, currentEbx);
-                    root.Nodes.Add(tnode);
-                }
+                guidToTreeNodes = rootTag.guidToTreeNode;
 
                 treeView1.Nodes.Add(root);
             }
@@ -98,18 +118,23 @@ namespace DAI_Tools.EBXExplorer
 
         private class TNDataRootTag : TreeNodeTag
         {
-            private string fieldName;
-            private AStruct astruct;
+            public Dictionary<string, TreeNode> guidToTreeNode { get; }
+            private List<DataContainer> containers;
 
-            public TNDataRootTag(string fieldName, AStruct astruct)
+            public TNDataRootTag(List<DataContainer> containers)
             {
-                this.fieldName = fieldName;
-                this.astruct = astruct;
+                this.containers = containers;
+                this.guidToTreeNode = new Dictionary<string, TreeNode>();
             }
 
             internal override void doExpand(TreeNode myNode, EbxDataContainers ebx)
             {
-                myNode.Nodes.Add(processField(fieldName, astruct, ebx));
+                foreach (var container in containers)
+                {
+                    var tnode = processField(container.guid, container.data, ebx);
+                    myNode.Nodes.Add(tnode);
+                    guidToTreeNode.Add(container.guid, tnode);
+                }
             }
         }
 
@@ -133,7 +158,9 @@ namespace DAI_Tools.EBXExplorer
                             throw new Exception("At this point intrefs should be resolved!");
                         case RefStatus.RESOLVED_SUCCESS:
                             tnode = simpleFieldTNode(fieldName, "INTREF");
-                            tnode.Tag = new TNDataRootTag(aintref.instanceGuid, containers.instances[aintref.instanceGuid].data);
+                            var singletonContainerList = new List<DataContainer>();
+                            singletonContainerList.Add(containers.instances[aintref.instanceGuid]);
+                            tnode.Tag = new TNDataRootTag(singletonContainerList);
                             break;
                         case RefStatus.RESOLVED_FAILURE:
                             tnode = simpleFieldTNode(fieldName, "Unresolved INTREF: " + aintref.instanceGuid);
@@ -170,6 +197,12 @@ namespace DAI_Tools.EBXExplorer
         private void EbxTreeXmlViewer_VisibleChanged(object sender, EventArgs e)
         {
             redrawTree();
+        }
+
+        private void treeView1_BeforeSelect(object sender, TreeViewCancelEventArgs e)
+        {
+            if (treeView1.SelectedNode != null)
+                treeView1.SelectedNode.BackColor = Color.White;
         }
     }
 }
