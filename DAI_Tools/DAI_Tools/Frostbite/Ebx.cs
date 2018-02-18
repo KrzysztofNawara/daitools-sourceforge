@@ -193,7 +193,10 @@ namespace DAI_Tools.Frostbite
                 case DAIFieldType.DAI_Complex:
                 case DAIFieldType.DAI_Array:
                     sb.Append("\n");
-                    ComplexValue.ToXml(EbxFile, ref sb);
+                    if (ComplexValue != null)
+                        ComplexValue.ToXml(EbxFile, ref sb);
+                    else 
+                        sb.Append("[null]\n");
                     sb.Append(DAIEbx.Tabs() + "</" + Descriptor.FieldName + ">\n");
                     return;
 
