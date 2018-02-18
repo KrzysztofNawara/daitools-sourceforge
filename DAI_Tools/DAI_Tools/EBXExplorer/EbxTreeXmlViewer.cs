@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using DAI_Tools.Frostbite;
@@ -41,6 +42,7 @@ namespace DAI_Tools.EBXExplorer
                     tnode.Expand();
                 
                 treeView1.SelectedNode = tnode;
+                tnode.BackColor = Color.Yellow;
             }
         }
 
@@ -195,6 +197,12 @@ namespace DAI_Tools.EBXExplorer
         private void EbxTreeXmlViewer_VisibleChanged(object sender, EventArgs e)
         {
             redrawTree();
+        }
+
+        private void treeView1_BeforeSelect(object sender, TreeViewCancelEventArgs e)
+        {
+            if (treeView1.SelectedNode != null)
+                treeView1.SelectedNode.BackColor = Color.White;
         }
     }
 }
