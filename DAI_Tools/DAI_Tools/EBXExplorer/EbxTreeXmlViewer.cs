@@ -8,7 +8,8 @@ namespace DAI_Tools.EBXExplorer
 {
     public partial class EbxTreeXmlViewer : UserControl
     {
-        private EbxDataContainers currentEbx = null;        
+        private EbxDataContainers currentEbx = null;
+        private Dictionary<string, TreeNode> guidToTreeNodes = new Dictionary<string, TreeNode>();
 
         public EbxTreeXmlViewer()
         {
@@ -30,9 +31,22 @@ namespace DAI_Tools.EBXExplorer
             redrawTree();
         }
 
-        //  @todo map guid -> treenode and select it after selecting and either replace root or simply focus it...
+        public void selectByGuid(string guid)
+        {
+            if (guidToTreeNodes.ContainsKey(guid))
+            {
+                var tnode = guidToTreeNodes[guid];
+                
+                if (!tnode.IsExpanded)
+                    tnode.Expand();
+                
+                treeView1.SelectedNode = tnode;
+            }
+        }
+
         private void redrawTree()
         {
+            guidToTreeNodes.Clear();
             treeView1.Nodes.Clear();
 
             if (!Visible)
@@ -44,6 +58,8 @@ namespace DAI_Tools.EBXExplorer
                 var rootTag = new TNDataRootTag(currentEbx.instances.Values.ToList());
                 root.Tag = rootTag;
                 rootTag.expand(root, currentEbx);
+
+                guidToTreeNodes = rootTag.guidToTreeNode;
 
                 treeView1.Nodes.Add(root);
             }
@@ -100,14 +116,23 @@ namespace DAI_Tools.EBXExplorer
 
         private class TNDataRootTag : TreeNodeTag
         {
+            public Dictionary<string, TreeNode> guidToTreeNode { get; }
             private List<DataContainer> containers;
 
-            public TNDataRootTag(List<DataContainer> containers) { this.containers = containers; }
+            public TNDataRootTag(List<DataContainer> containers)
+            {
+                this.containers = containers;
+                this.guidToTreeNode = new Dictionary<string, TreeNode>();
+            }
 
             internal override void doExpand(TreeNode myNode, EbxDataContainers ebx)
             {
                 foreach (var container in containers)
-                    myNode.Nodes.Add(processField(container.guid, container.data, ebx));
+                {
+                    var tnode = processField(container.guid, container.data, ebx);
+                    myNode.Nodes.Add(tnode);
+                    guidToTreeNode.Add(container.guid, tnode);
+                }
             }
         }
 

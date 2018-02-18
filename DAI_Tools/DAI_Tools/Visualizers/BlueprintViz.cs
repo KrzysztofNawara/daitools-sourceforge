@@ -58,6 +58,7 @@ namespace DAI_Tools.EBXExplorer
             if (viewer.SelectedObject != null && viewer.SelectedObject is Node)
             {
                 Node node = viewer.SelectedObject as Node;
+                ebxTreeViewer.selectByGuid(node.Id);
             }
         }
 
