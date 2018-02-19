@@ -114,6 +114,14 @@ namespace DAI_Tools.EBXExplorer
             public bool isInterface = false;
             public Dictionary<string, PortDesc> ownedPortIdToPortDesc = new Dictionary<string, PortDesc>();
 
+            public int getEdgeCount()
+            {
+                int count = 0;
+                foreach (var pdesc in ownedPortIdToPortDesc.Values)
+                    count += pdesc.refCount;
+                return count;
+            }
+
             public override string ToString()
             {
                 return "NODE[" + name + "," + nodeGuid + "]";
@@ -173,8 +181,15 @@ namespace DAI_Tools.EBXExplorer
             /* graph data processed, start drawing and formatting */
             foreach (var t in metadata.nodeGuidToNodeDesc)
             {
+                var refCount = t.Value.getEdgeCount();
+                var labelSb = new StringBuilder(refCount + t.Value.name.Length);
+                labelSb.Append('\n', refCount/2);
+                labelSb.Append(t.Value.name);
+                labelSb.Append('\n', refCount/2);
+                
                 var node = graph.AddNode(t.Value.nodeGuid);
-                node.Label.Text = t.Value.name;
+                node.Label.Text = labelSb.ToString();
+
                 node.Attr.LabelMargin = 30;
                 node.Label.FontSize = 16;
 
