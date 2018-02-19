@@ -145,7 +145,7 @@ namespace DAI_Tools.EBXExplorer
             {
                 foreach (var container in containers)
                 {
-                    AStruct dataRoot = settings.flattened ? container.getFlattenedData() : container.data;
+                    AStruct dataRoot = settings.flattened ? ebx.getFlattenedDataFor(container.guid) : container.data;
                     
                     var fieldName = settings.showGuids ? container.guid : "";
                     var tnode = processField(fieldName, dataRoot, ebx, settings);
