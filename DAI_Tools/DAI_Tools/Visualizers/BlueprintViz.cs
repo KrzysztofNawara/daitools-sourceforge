@@ -185,6 +185,7 @@ namespace DAI_Tools.EBXExplorer
                 var labelSb = new StringBuilder(refCount + t.Value.name.Length);
                 labelSb.Append('\n', refCount/2);
                 labelSb.Append(t.Value.name);
+                labelSb.Append('\n');
                 labelSb.Append('\n', refCount/2);
                 
                 var node = graph.AddNode(t.Value.nodeGuid);
