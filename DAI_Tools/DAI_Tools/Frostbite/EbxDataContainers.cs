@@ -224,7 +224,7 @@ namespace DAI_Tools.Frostbite
                     foreach (var exRefEntry in ctx.extRefs)
                     {
                         var exref = exRefEntry.Item1;
-                        var sqlCmdText = $"select name, type from ebx where guid = \"{exref.instanceGuid}\"";
+                        var sqlCmdText = $"select name, type from ebx where guid = \"{exref.fileGuid}\"";
                         using (var reader = new SQLiteCommand(sqlCmdText, dbconn).ExecuteReader())
                         {
                             if (!reader.HasRows)
