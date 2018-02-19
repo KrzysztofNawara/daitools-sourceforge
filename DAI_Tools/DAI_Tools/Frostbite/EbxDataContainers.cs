@@ -103,6 +103,12 @@ namespace DAI_Tools.Frostbite
             correspondingDaiFields = new List<DAIField>();
         }
 
+        public AArray(List<AValue> elements, List<DAIField> correspondinDaiFields) : base(ValueTypes.ARRAY)
+        {
+            this.elements = elements;
+            this.correspondingDaiFields = correspondinDaiFields;
+        }
+
         public List<AValue> elements { get; }
         public List<DAIField> correspondingDaiFields { get; }
     }
@@ -130,7 +136,7 @@ namespace DAI_Tools.Frostbite
         public AStruct getFlattenedData()
         {
             if (flattenedData == null)
-                this.flattenedData = flatten();
+                this.flattenedData = flatten(data);
             return flattenedData;
         }
 
@@ -160,26 +166,63 @@ namespace DAI_Tools.Frostbite
             intRefs.Add(guid);
         }
 
-        private AStruct flatten()
+        private AStruct flatten(AStruct what)
         {
             Debug.Assert(data != null);
-
-            var flattened = new AStruct();
-            flattened.name = data.name;
-            flattened.correspondingDaiFields = data.correspondingDaiFields;
             
-            doFlatten(data, flattened);
-            return flattened;
+            if (what.fields.ContainsKey("$"))
+            {
+                var flattened = new AStruct();
+                flattened.name = data.name;
+                flattened.correspondingDaiFields = data.correspondingDaiFields;
+                doFlatten(data, flattened);
+                return flattened;
+            }
+            else
+                return what;
+            
+        }
+
+        private AArray flatten(AArray what)
+        {
+            var processedFields = new List<AValue>();
+            var atLeastOneChanged = false;
+            foreach (var origElement in what.elements)
+            {
+                if (origElement.Type == ValueTypes.STRUCT)
+                {
+                    var flattened = flatten(origElement.castTo<AStruct>()); 
+                    processedFields.Add(flattened);
+                    if (!object.ReferenceEquals(flattened, origElement))
+                        atLeastOneChanged = true;
+                }
+            }
+
+            if (atLeastOneChanged)
+                return new AArray(processedFields, what.correspondingDaiFields);
+            else 
+                return what;
         }
 
         private void doFlatten(AStruct toProcess, AStruct toAdd)
         {
             foreach (var field in toProcess.fields)
             {
-                if (field.Key != "$") 
-                    toAdd.fields.Add(field.Key, field.Value);
-                else 
+                if (field.Key.Equals("$"))
                     doFlatten(field.Value.castTo<AStruct>(), toAdd);
+                else
+                {
+                    AValue val;
+                    var ftype = field.Value.Type;
+                    if (ftype == ValueTypes.STRUCT)
+                        val = flatten(field.Value.castTo<AStruct>());
+                    else if (ftype == ValueTypes.ARRAY)
+                        val = flatten(field.Value.castTo<AArray>());
+                    else
+                        val = field.Value;
+
+                    toAdd.fields.Add(field.Key, val);
+                } 
             }
         }
 
