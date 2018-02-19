@@ -173,16 +173,18 @@ namespace DAI_Tools.Frostbite
      */
     public class EbxDataContainers
     {
-        public static EbxDataContainers fromDAIEbx(DAIEbx file)
+        public static EbxDataContainers fromDAIEbx(DAIEbx file, Action<string> statusConsumer)
         {
             Dictionary<String, DataContainer> instances = new Dictionary<string, DataContainer>();
 
             var ctx = new ConverterContext();
             ctx.file = file;
 
+            statusConsumer("Converting instances...");
             foreach (var instance in file.Instances)
             {
                 var instanceGuid = DAIEbx.GuidToString(instance.Key);
+                statusConsumer($"Converting {instanceGuid}...");
                 ctx.instanceGuid = instanceGuid;
                 var rootFakeField = wrapWithFakeField(instance.Value);
                 AValue convertedTreeRoot = convert(rootFakeField, ctx);
@@ -192,6 +194,7 @@ namespace DAI_Tools.Frostbite
                 instances.Add(instanceGuid, new DataContainer(instanceGuid, treeRoot));
             }
 
+            statusConsumer("Processing IntRefs...");
             foreach (var refEntry in ctx.intReferences)
             {
                 var refObj = refEntry.Item1;
@@ -211,15 +214,17 @@ namespace DAI_Tools.Frostbite
                 instances[refObjTreeRootGuid].addIntRef(targetGuid);
             }
 
+            statusConsumer("Processing ExRefs...");
             using(var dbconn = Database.GetConnection())
             {
                 dbconn.Open();
                 using (var dbtrans = dbconn.BeginTransaction())
                 {
+                    int processedCount = 0;
                     foreach (var exRefEntry in ctx.extRefs)
                     {
                         var exref = exRefEntry.Item1;
-                        var sqlCmdText = $"select name, type from ebx where guid = {exref.instanceGuid}";
+                        var sqlCmdText = $"select name, type from ebx where guid = \"{exref.instanceGuid}\"";
                         using (var reader = new SQLiteCommand(sqlCmdText, dbconn).ExecuteReader())
                         {
                             if (!reader.HasRows)
@@ -235,15 +240,19 @@ namespace DAI_Tools.Frostbite
                                 exref.refStatus = RefStatus.RESOLVED_SUCCESS;
                             }
                         }
+                        processedCount += 1;
+                        statusConsumer($"Processed ExtRefs: {processedCount}/{ctx.extRefs.Count}");
                     }
                     dbtrans.Commit();
                 }
             }
 
+            statusConsumer("Populating partials...");
             var fileGuid = DAIEbx.GuidToString(file.FileGuid);
             var edc = new EbxDataContainers(fileGuid, instances, file);
             edc.populatePartials();
 
+            statusConsumer("DAIEbx -> EbxDataContainers done.");
             return edc;
         }
 

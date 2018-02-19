@@ -34,7 +34,7 @@ namespace DAI_Tools.EBXExplorer
             
             if (ebxFile != null)
             {
-                currentContainers = EbxDataContainers.fromDAIEbx(ebxFile);
+                currentContainers = EbxDataContainers.fromDAIEbx(ebxFile, newStatus => {});
                 var assets = currentContainers.getAllWithPartial("Asset");
 
                 foreach (var asset in assets)

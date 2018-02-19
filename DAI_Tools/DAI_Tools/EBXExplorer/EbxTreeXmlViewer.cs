@@ -23,7 +23,7 @@ namespace DAI_Tools.EBXExplorer
         public void setEbxFile(DAIEbx ebxFile)
         {
             if (ebxFile != null)
-                setData(EbxDataContainers.fromDAIEbx(ebxFile));
+                setData(EbxDataContainers.fromDAIEbx(ebxFile, newStatus => {}));
         }
 
         public void setData(EbxDataContainers ebxData)
