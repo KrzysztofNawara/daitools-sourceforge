@@ -59,7 +59,7 @@ namespace DAI_Tools.EBXExplorer
                 var root = new TreeNode("EBX: " + currentEbx.fileGuid);
                 var rootTag = new TNDataRootTag(currentEbx.instances.Values.ToList());
                 root.Tag = rootTag;
-                rootTag.expand(root, currentEbx);
+                rootTag.expand(root, currentEbx, new TreeSettings(flattendChbx.Checked));
 
                 guidToTreeNodes = rootTag.guidToTreeNode;
 
@@ -75,19 +75,29 @@ namespace DAI_Tools.EBXExplorer
                 var childTag = (TreeNodeTag) childNode.Tag;
 
                 if (childTag != null)
-                    childTag.expand(childNode, currentEbx);
+                    childTag.expand(childNode, currentEbx, new TreeSettings(flattendChbx.Checked));
+            }
+        }
+
+        private class TreeSettings
+        {
+            public bool flattened = false;
+
+            public TreeSettings(bool flattened)
+            {
+                this.flattened = flattened;
             }
         }
 
         private abstract class TreeNodeTag
         {
-            public void expand(TreeNode myNode, EbxDataContainers ebx)
+            public void expand(TreeNode myNode, EbxDataContainers ebx, TreeSettings settings)
             {
-                doExpand(myNode, ebx);
+                doExpand(myNode, ebx, settings);
                 myNode.Tag = null; // deactivate expansion logic
             }
 
-            internal abstract void doExpand(TreeNode myNode, EbxDataContainers ebx);
+            internal abstract void doExpand(TreeNode myNode, EbxDataContainers ebx, TreeSettings settings);
         }
 
         private class TNStructTag : TreeNodeTag
@@ -96,10 +106,10 @@ namespace DAI_Tools.EBXExplorer
 
             public TNStructTag(AStruct astruct) { this.astruct = astruct; }
 
-            internal override void doExpand(TreeNode myNode, EbxDataContainers ebx)
+            internal override void doExpand(TreeNode myNode, EbxDataContainers ebx, TreeSettings settings)
             {
                 foreach (var childField in astruct.fields)
-                    myNode.Nodes.Add(processField(childField.Key, childField.Value, ebx));
+                    myNode.Nodes.Add(processField(childField.Key, childField.Value, ebx, settings));
             }
         }
         private class TNArrayTag : TreeNodeTag
@@ -108,11 +118,11 @@ namespace DAI_Tools.EBXExplorer
 
             public TNArrayTag(AArray aarray) { this.aarray = aarray; }
 
-            internal override void doExpand(TreeNode myNode, EbxDataContainers ebx)
+            internal override void doExpand(TreeNode myNode, EbxDataContainers ebx, TreeSettings settings)
             {
                 var elements = aarray.elements;
                 for(int idx = 0; idx < elements.Count; idx++)
-                    myNode.Nodes.Add(processField(idx.ToString(), elements[idx], ebx));
+                    myNode.Nodes.Add(processField(idx.ToString(), elements[idx], ebx, settings));
             }
         }
 
@@ -127,18 +137,20 @@ namespace DAI_Tools.EBXExplorer
                 this.guidToTreeNode = new Dictionary<string, TreeNode>();
             }
 
-            internal override void doExpand(TreeNode myNode, EbxDataContainers ebx)
+            internal override void doExpand(TreeNode myNode, EbxDataContainers ebx, TreeSettings settings)
             {
                 foreach (var container in containers)
                 {
-                    var tnode = processField(container.guid, container.data, ebx);
+                    AStruct dataRoot = settings.flattened ? container.getFlattenedData() : container.data;
+                    
+                    var tnode = processField(container.guid, dataRoot, ebx, settings);
                     myNode.Nodes.Add(tnode);
                     guidToTreeNode.Add(container.guid, tnode);
                 }
             }
         }
 
-        private static TreeNode processField(String fieldName, AValue fieldValue, EbxDataContainers containers)
+        private static TreeNode processField(String fieldName, AValue fieldValue, EbxDataContainers containers, TreeSettings settings)
         {
             TreeNode tnode = null;
 
@@ -203,6 +215,11 @@ namespace DAI_Tools.EBXExplorer
         {
             if (treeView1.SelectedNode != null)
                 treeView1.SelectedNode.BackColor = Color.White;
+        }
+
+        private void flattendChbx_CheckedChanged(object sender, EventArgs e)
+        {
+            redrawTree();
         }
     }
 }

@@ -30,6 +30,7 @@
         {
             this.treeView1 = new System.Windows.Forms.TreeView();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
+            this.flattendChbx = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // treeView1
@@ -50,10 +51,22 @@
             this.toolStrip1.TabIndex = 1;
             this.toolStrip1.Text = "toolStrip1";
             // 
+            // flattendChbx
+            // 
+            this.flattendChbx.AutoSize = true;
+            this.flattendChbx.Location = new System.Drawing.Point(4, 4);
+            this.flattendChbx.Name = "flattendChbx";
+            this.flattendChbx.Size = new System.Drawing.Size(70, 17);
+            this.flattendChbx.TabIndex = 2;
+            this.flattendChbx.Text = "Flattened";
+            this.flattendChbx.UseVisualStyleBackColor = true;
+            this.flattendChbx.CheckedChanged += new System.EventHandler(this.flattendChbx_CheckedChanged);
+            // 
             // EbxTreeXmlViewer
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.flattendChbx);
             this.Controls.Add(this.treeView1);
             this.Controls.Add(this.toolStrip1);
             this.Name = "EbxTreeXmlViewer";
@@ -67,5 +80,6 @@
 
         private System.Windows.Forms.TreeView treeView1;
         private System.Windows.Forms.ToolStrip toolStrip1;
+        private System.Windows.Forms.CheckBox flattendChbx;
     }
 }
