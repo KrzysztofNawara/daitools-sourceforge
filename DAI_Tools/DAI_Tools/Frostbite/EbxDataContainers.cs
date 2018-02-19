@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
+using System.Data.SQLite;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
@@ -57,12 +59,14 @@ namespace DAI_Tools.Frostbite
         {
             this.fileGuid = fileGuid;
             this.instanceGuid = instanceGuid;
+            this.refStatus = RefStatus.UNRESOLVED;
         }
 
         public String fileGuid { get; set; }
         public String instanceGuid { get; set; }
         public String refName { get; set; }
         public String refType { get; set; }
+        public RefStatus refStatus { get; set; }
     }
 
     public class AStruct : AValue
@@ -205,6 +209,35 @@ namespace DAI_Tools.Frostbite
 
                 var refObjTreeRootGuid = refEntry.Item2; 
                 instances[refObjTreeRootGuid].addIntRef(targetGuid);
+            }
+
+            using(var dbconn = Database.GetConnection())
+            {
+                dbconn.Open();
+                using (var dbtrans = dbconn.BeginTransaction())
+                {
+                    foreach (var exRefEntry in ctx.extRefs)
+                    {
+                        var exref = exRefEntry.Item1;
+                        var sqlCmdText = $"select name, type from ebx where guid = {exref.instanceGuid}";
+                        using (var reader = new SQLiteCommand(sqlCmdText, dbconn).ExecuteReader())
+                        {
+                            if (!reader.HasRows)
+                                exref.refStatus = RefStatus.RESOLVED_FAILURE;
+                            else
+                            {
+                                reader.Read();
+                                var values = new object[2];
+                                reader.GetValues(values);
+
+                                exref.refName = (string) values[0];
+                                exref.refType = (string) values[1];
+                                exref.refStatus = RefStatus.RESOLVED_SUCCESS;
+                            }
+                        }
+                    }
+                    dbtrans.Commit();
+                }
             }
 
             var fileGuid = DAIEbx.GuidToString(file.FileGuid);
