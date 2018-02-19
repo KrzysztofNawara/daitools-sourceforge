@@ -75,7 +75,7 @@ namespace DAI_Tools.Frostbite
 
         public String name { get; set; }
         public SortedDictionary<String, AValue> fields { get; }
-        public Dictionary<String, DAIField> correspondingDaiFields { get; }
+        public Dictionary<String, DAIField> correspondingDaiFields { get; set; }
 
         public AValue get(string fieldName, bool searchAncestors = true)
         {
@@ -116,6 +116,7 @@ namespace DAI_Tools.Frostbite
         {
             this.guid = guid;
             this.data = data;
+            this.flattenedData = null;
             this.intRefs = new List<string>();
         }
         
@@ -123,6 +124,15 @@ namespace DAI_Tools.Frostbite
         public AStruct data;
         public uint internalRefCount = 0;
         public List<string> intRefs { get; }
+
+        private AStruct flattenedData;
+       
+        public AStruct getFlattenedData()
+        {
+            if (flattenedData == null)
+                this.flattenedData = flatten();
+            return flattenedData;
+        }
 
         public List<String> getAllPartials() { return partialsList; }
 
@@ -148,6 +158,29 @@ namespace DAI_Tools.Frostbite
         public void addIntRef(String guid)
         {
             intRefs.Add(guid);
+        }
+
+        private AStruct flatten()
+        {
+            Debug.Assert(data != null);
+
+            var flattened = new AStruct();
+            flattened.name = data.name;
+            flattened.correspondingDaiFields = data.correspondingDaiFields;
+            
+            doFlatten(data, flattened);
+            return flattened;
+        }
+
+        private void doFlatten(AStruct toProcess, AStruct toAdd)
+        {
+            foreach (var field in toProcess.fields)
+            {
+                if (field.Key != "$") 
+                    toAdd.fields.Add(field.Key, field.Value);
+                else 
+                    doFlatten(field.Value.castTo<AStruct>(), toAdd);
+            }
         }
 
         /* order: most specific to most generic */
