@@ -20,15 +20,17 @@ namespace DAI_Tools.EBXExplorer
         private string assetGuid;
         private GViewer viewer;
         private EbxTreeXmlViewer ebxTreeViewer;
+        private Action<string> statusConsumer;
 
-        public BlueprintViz(EbxDataContainers ebxContainers, string assetGuid)
+        public BlueprintViz(EbxDataContainers ebxContainers, string assetGuid, Action<string> statusConsumer)
         {
             this.ebxDataContainers = ebxContainers;
             this.assetGuid = assetGuid;
-            
+            this.statusConsumer = statusConsumer;
+
             InitializeComponent();
 
-            ebxTreeViewer = new EbxTreeXmlViewer();
+            ebxTreeViewer = new EbxTreeXmlViewer(statusConsumer);
             toolsSplitContainer.Panel2.Controls.Add(ebxTreeViewer);
             ebxTreeViewer.Visible = true;
             ebxTreeViewer.setData(ebxContainers);

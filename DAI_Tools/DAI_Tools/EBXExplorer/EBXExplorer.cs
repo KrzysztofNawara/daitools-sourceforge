@@ -30,6 +30,7 @@ namespace DAI_Tools.EBXExplorer
         private EbxTreeXmlViewer treeXmlViewer;
         private EbxAssetViewer assetViewer;
         private Control currentViewer = null;
+        private Action<string> statusConsumer;
 
         public struct EBXEntry
         {
@@ -39,13 +40,15 @@ namespace DAI_Tools.EBXExplorer
 
         public List<EBXEntry> EBXList;
 
-        public EBXExplorer()
+        public EBXExplorer(Action<string> statusConsumer)
         {
+            this.statusConsumer = statusConsumer;
+            
             InitializeComponent();
 
             rawXmlViewer = new EbxRawXmlViewer();
-            treeXmlViewer = new EbxTreeXmlViewer();
-            assetViewer = new EbxAssetViewer();
+            treeXmlViewer = new EbxTreeXmlViewer(statusConsumer);
+            assetViewer = new EbxAssetViewer(statusConsumer);
             viewerSelector.Items.Add(assetViewerStr);
             viewerSelector.Items.Add(rawXmlViewerStr);
             viewerSelector.Items.Add(treeXmlViewerStr);
@@ -75,7 +78,7 @@ namespace DAI_Tools.EBXExplorer
                 return;
             }
             this.WindowState = FormWindowState.Maximized;
-            status.Text = "Loading CAT for faster lookup...";
+            statusConsumer("Loading CAT for faster lookup...");
             Application.DoEvents();
             string path = GlobalStuff.FindSetting("gamepath");
             path += "Data\\cas.cat";
@@ -83,7 +86,7 @@ namespace DAI_Tools.EBXExplorer
             EBXList = new List<EBXEntry>();
             SQLiteConnection con = Database.GetConnection();
             con.Open();
-            status.Text = "Querying...";
+            statusConsumer("Querying...");
             Application.DoEvents();
             SQLiteDataReader reader = new SQLiteCommand("SELECT DISTINCT name,sha1 FROM ebx", con).ExecuteReader();
             while (reader.Read())
@@ -94,10 +97,10 @@ namespace DAI_Tools.EBXExplorer
                 EBXList.Add(e);
             }
             con.Close();
-            status.Text = "Making Tree...";
+            statusConsumer("Making Tree...");
             Application.DoEvents();
             MakeTree();
-            status.Text = "Done.";
+            statusConsumer("Done.");
             init = true;
         }
 
@@ -149,7 +152,7 @@ namespace DAI_Tools.EBXExplorer
                 }
                 else
                 {
-                    status.Text = "Loading requested EBX...";
+                    statusConsumer("Loading requested EBX...");
 
                     TreeNode t = treeView1.SelectedNode;
                     if (t == null || t.Name == "")
@@ -161,7 +164,7 @@ namespace DAI_Tools.EBXExplorer
                     DAIEbx ebxFile = deserializeEbx(data);
                     setEbxFile(ebxFile);
 
-                    status.Text = "Done.";
+                    statusConsumer("Done.");
                     showViewer();
             }
             } catch (Exception ex)
@@ -181,10 +184,10 @@ namespace DAI_Tools.EBXExplorer
             while ((t = FindNext(t)) != null)
             {
                 Application.DoEvents();
-                status.Text = "Searching : " + GetPath(t) + "...";
+                statusConsumer("Searching : " + GetPath(t) + "...");
                 if (stop)
                 {
-                    status.Text = "";
+                    statusConsumer("Search stopped.");
                     toolStripButton2.Visible = false;
                     return;
                 }
@@ -205,7 +208,7 @@ namespace DAI_Tools.EBXExplorer
                             setEbxFile(ebxFile);
                             rawXmlViewer.search(search);
 
-                            status.Text = "";
+                            statusConsumer("Match!");
                             toolStripButton2.Visible = false;
                             return;
                         }
@@ -217,7 +220,7 @@ namespace DAI_Tools.EBXExplorer
                 }
             }
             toolStripButton2.Visible = false;
-            status.Text = "Not found.";
+            statusConsumer("Not found.");
         }
 
         private string GetPath(TreeNode t)
