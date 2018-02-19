@@ -114,6 +114,14 @@ namespace DAI_Tools.EBXExplorer
             public bool isInterface = false;
             public Dictionary<string, PortDesc> ownedPortIdToPortDesc = new Dictionary<string, PortDesc>();
 
+            public int getEdgeCount()
+            {
+                int count = 0;
+                foreach (var pdesc in ownedPortIdToPortDesc.Values)
+                    count += pdesc.refCount;
+                return count;
+            }
+
             public override string ToString()
             {
                 return "NODE[" + name + "," + nodeGuid + "]";
@@ -173,9 +181,24 @@ namespace DAI_Tools.EBXExplorer
             /* graph data processed, start drawing and formatting */
             foreach (var t in metadata.nodeGuidToNodeDesc)
             {
+                var refCount = t.Value.getEdgeCount();
+                var labelSb = new StringBuilder(refCount + t.Value.name.Length);
+                labelSb.Append('\n', refCount/2);
+                labelSb.Append(t.Value.name);
+                labelSb.Append('\n');
+                labelSb.Append('\n', refCount/2);
+                
                 var node = graph.AddNode(t.Value.nodeGuid);
-                node.Label.Text = t.Value.name;
-                /* use guids when creating nodes, and set them labels... no need for field label, needs guid! */
+                node.Label.Text = labelSb.ToString();
+
+                node.Attr.LabelMargin = 30;
+                node.Label.FontSize = 16;
+
+                if (t.Value.isInterface)
+                {
+                    node.Attr.FillColor = Microsoft.Msagl.Drawing.Color.MediumPurple;
+                    node.Attr.LabelMargin = 50;
+                }
             }
 
             foreach (var edge in metadata.edges)
@@ -302,21 +325,25 @@ namespace DAI_Tools.EBXExplorer
 
         private void processInterface(Metadata mdata)
         {
-            var inref = mdata.dataRoot.get("Interface").castTo<AIntRef>();
-            var ifaceAstruct = ebxDataContainers.instances[inref.instanceGuid].data;
+            var iface = mdata.dataRoot.get("Interface");
+            if (iface.Type == ValueTypes.IN_REF)
+            {
+                var inref = iface.castTo<AIntRef>();
+                var ifaceAstruct = ebxDataContainers.instances[inref.instanceGuid].data;
             
-            var ifaceNodeDesc = new NodeDesc();
-            ifaceNodeDesc.name = "Interface";
-            ifaceNodeDesc.nodeGuid = inref.instanceGuid;
-            ifaceNodeDesc.isInterface = true;
+                var ifaceNodeDesc = new NodeDesc();
+                ifaceNodeDesc.name = "Interface";
+                ifaceNodeDesc.nodeGuid = inref.instanceGuid;
+                ifaceNodeDesc.isInterface = true;
 
-            addAsPorts(ifaceNodeDesc, extractIdsFromArray(ifaceAstruct.get("Fields")), Type.PROPERTY, Dir.UNKNOWN);
-            addAsPorts(ifaceNodeDesc, extractIdsFromArray(ifaceAstruct.get("InputEvents")), Type.EVENT, Dir.IN);
-            addAsPorts(ifaceNodeDesc, extractIdsFromArray(ifaceAstruct.get("OutputEvents")), Type.EVENT, Dir.OUT);
-            addAsPorts(ifaceNodeDesc, extractIdsFromArray(ifaceAstruct.get("InputLinks")), Type.LINK, Dir.IN);
-            addAsPorts(ifaceNodeDesc, extractIdsFromArray(ifaceAstruct.get("OutputLinks")), Type.LINK, Dir.OUT);
+                addAsPorts(ifaceNodeDesc, extractIdsFromArray(ifaceAstruct.get("Fields")), Type.PROPERTY, Dir.UNKNOWN);
+                addAsPorts(ifaceNodeDesc, extractIdsFromArray(ifaceAstruct.get("InputEvents")), Type.EVENT, Dir.IN);
+                addAsPorts(ifaceNodeDesc, extractIdsFromArray(ifaceAstruct.get("OutputEvents")), Type.EVENT, Dir.OUT);
+                addAsPorts(ifaceNodeDesc, extractIdsFromArray(ifaceAstruct.get("InputLinks")), Type.LINK, Dir.IN);
+                addAsPorts(ifaceNodeDesc, extractIdsFromArray(ifaceAstruct.get("OutputLinks")), Type.LINK, Dir.OUT);
 
-            mdata.nodeGuidToNodeDesc.Add(inref.instanceGuid, ifaceNodeDesc);
+                mdata.nodeGuidToNodeDesc.Add(inref.instanceGuid, ifaceNodeDesc);
+            }
         }
 
         private void processConnections(Metadata mdata, string holdingFieldName, Func<AStruct, string> srcPortIdExtractor, Func<AStruct, string> tgPortIdExtractor, Type type)

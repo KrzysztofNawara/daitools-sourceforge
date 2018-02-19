@@ -61,7 +61,7 @@ namespace DAI_Tools.EBXExplorer
 
                     if (currentlySelectedAsset.hasPartial("UIGraphAsset"))
                         graphVizButton.Enabled = true;
-                    else if (currentlySelectedAsset.hasPartial("LogicPrefabBlueprint"))
+                    else if (currentlySelectedAsset.hasPartial("PrefabBlueprint"))
                         blueprintVizButton.Enabled = true;
                 }
             }
@@ -88,7 +88,7 @@ namespace DAI_Tools.EBXExplorer
         {
             Debug.Assert(currentContainers != null);
             Debug.Assert(currentlySelectedAsset != null);
-            Debug.Assert(currentlySelectedAsset.hasPartial("LogicPrefabBlueprint"));
+            Debug.Assert(currentlySelectedAsset.hasPartial("PrefabBlueprint"));
 
             new BlueprintViz(currentContainers, currentlySelectedAsset.guid).Show();
         }
