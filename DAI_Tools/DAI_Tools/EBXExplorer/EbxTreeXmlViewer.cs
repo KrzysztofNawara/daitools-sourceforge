@@ -59,7 +59,7 @@ namespace DAI_Tools.EBXExplorer
                 var root = new TreeNode("EBX: " + currentEbx.fileGuid);
                 var rootTag = new TNDataRootTag(currentEbx.instances.Values.ToList());
                 root.Tag = rootTag;
-                rootTag.expand(root, currentEbx, new TreeSettings(flattendChbx.Checked, flatRefsChbx.Checked));
+                rootTag.expand(root, currentEbx, new TreeSettings(flattendChbx.Checked, flatRefsChbx.Checked, showGuidsChbx.Checked));
 
                 guidToTreeNodes = rootTag.guidToTreeNode;
 
@@ -75,7 +75,7 @@ namespace DAI_Tools.EBXExplorer
                 var childTag = (TreeNodeTag) childNode.Tag;
 
                 if (childTag != null)
-                    childTag.expand(childNode, currentEbx, new TreeSettings(flattendChbx.Checked, flatRefsChbx.Checked));
+                    childTag.expand(childNode, currentEbx, new TreeSettings(flattendChbx.Checked, flatRefsChbx.Checked, showGuidsChbx.Checked));
             }
         }
 
@@ -83,11 +83,13 @@ namespace DAI_Tools.EBXExplorer
         {
             public bool flattened = false;
             public bool flatRefs = false;
+            public bool showGuids = false;
 
-            public TreeSettings(bool flattened, bool flatRefs)
+            public TreeSettings(bool flattened, bool flatRefs, bool showGuids)
             {
                 this.flattened = flattened;
                 this.flatRefs = flatRefs;
+                this.showGuids = showGuids;
             }
         }
 
@@ -145,7 +147,8 @@ namespace DAI_Tools.EBXExplorer
                 {
                     AStruct dataRoot = settings.flattened ? container.getFlattenedData() : container.data;
                     
-                    var tnode = processField(container.guid, dataRoot, ebx, settings);
+                    var fieldName = settings.showGuids ? container.guid : "";
+                    var tnode = processField(fieldName, dataRoot, ebx, settings);
                     myNode.Nodes.Add(tnode);
                     guidToTreeNode.Add(container.guid, tnode);
                 }
@@ -198,7 +201,12 @@ namespace DAI_Tools.EBXExplorer
                     break;
                 case ValueTypes.STRUCT:
                     var astruct = fieldValue.castTo<AStruct>();
-                    var tnodeText = fieldName + " -> " + astruct.name;
+                    
+                    var tnodeText = "";
+                    if (fieldName.Length > 0)
+                        tnodeText += fieldName + " -> ";
+                    tnodeText += astruct.name;
+                    
                     tnode = new TreeNode(tnodeText);
                     tnode.Tag = new TNStructTag(astruct);
                     break;
@@ -233,6 +241,11 @@ namespace DAI_Tools.EBXExplorer
         }
 
         private void flatRefsChbx_CheckedChanged(object sender, EventArgs e)
+        {
+            redrawTree();
+        }
+
+        private void showGuidsChbx_CheckedChanged(object sender, EventArgs e)
         {
             redrawTree();
         }

@@ -32,6 +32,7 @@
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.flattendChbx = new System.Windows.Forms.CheckBox();
             this.flatRefsChbx = new System.Windows.Forms.CheckBox();
+            this.showGuidsChbx = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // treeView1
@@ -74,10 +75,24 @@
             this.flatRefsChbx.UseVisualStyleBackColor = true;
             this.flatRefsChbx.CheckedChanged += new System.EventHandler(this.flatRefsChbx_CheckedChanged);
             // 
+            // showGuidsChbx
+            // 
+            this.showGuidsChbx.AutoSize = true;
+            this.showGuidsChbx.Checked = true;
+            this.showGuidsChbx.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.showGuidsChbx.Location = new System.Drawing.Point(153, 4);
+            this.showGuidsChbx.Name = "showGuidsChbx";
+            this.showGuidsChbx.Size = new System.Drawing.Size(88, 17);
+            this.showGuidsChbx.TabIndex = 4;
+            this.showGuidsChbx.Text = "Show GUIDs";
+            this.showGuidsChbx.UseVisualStyleBackColor = true;
+            this.showGuidsChbx.CheckedChanged += new System.EventHandler(this.showGuidsChbx_CheckedChanged);
+            // 
             // EbxTreeXmlViewer
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.showGuidsChbx);
             this.Controls.Add(this.flatRefsChbx);
             this.Controls.Add(this.flattendChbx);
             this.Controls.Add(this.treeView1);
@@ -96,5 +111,6 @@
         private System.Windows.Forms.ToolStrip toolStrip1;
         private System.Windows.Forms.CheckBox flattendChbx;
         private System.Windows.Forms.CheckBox flatRefsChbx;
+        private System.Windows.Forms.CheckBox showGuidsChbx;
     }
 }
