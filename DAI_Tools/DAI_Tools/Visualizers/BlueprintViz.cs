@@ -175,7 +175,14 @@ namespace DAI_Tools.EBXExplorer
             {
                 var node = graph.AddNode(t.Value.nodeGuid);
                 node.Label.Text = t.Value.name;
-                /* use guids when creating nodes, and set them labels... no need for field label, needs guid! */
+                node.Attr.LabelMargin = 30;
+                node.Label.FontSize = 16;
+
+                if (t.Value.isInterface)
+                {
+                    node.Attr.FillColor = Microsoft.Msagl.Drawing.Color.MediumPurple;
+                    node.Attr.LabelMargin = 50;
+                }
             }
 
             foreach (var edge in metadata.edges)
