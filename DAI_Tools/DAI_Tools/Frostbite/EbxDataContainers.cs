@@ -61,6 +61,8 @@ namespace DAI_Tools.Frostbite
 
         public String fileGuid { get; set; }
         public String instanceGuid { get; set; }
+        public String refName { get; set; }
+        public String refType { get; set; }
     }
 
     public class AStruct : AValue
@@ -218,6 +220,7 @@ namespace DAI_Tools.Frostbite
             public string instanceGuid;
             /* inref to resolve, whom it belongs to */
             public List<Tuple<AIntRef, string>> intReferences = new List<Tuple<AIntRef, string>>();
+            public List<Tuple<AExRef, string>> extRefs = new List<Tuple<AExRef, string>>();
         }
 
         private static DAIField wrapWithFakeField(DAIComplex value)
@@ -277,7 +280,11 @@ namespace DAI_Tools.Frostbite
                 else
                 {
                     if (guid.external)
-                        result = new AExRef(guid.fileGuid, guid.instanceGuid);
+                    {
+                        var aexref = new AExRef(guid.fileGuid, guid.instanceGuid); 
+                        ctx.extRefs.Add(new Tuple<AExRef, string>(aexref, ctx.instanceGuid));
+                        result = aexref;
+                    }
                     else
                     {
                         var ainref = new AIntRef(guid.instanceGuid);
