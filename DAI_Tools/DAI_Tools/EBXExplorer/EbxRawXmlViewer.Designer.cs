@@ -79,7 +79,7 @@
             // matchesCountLabel
             // 
             this.matchesCountLabel.Name = "matchesCountLabel";
-            this.matchesCountLabel.Size = new System.Drawing.Size(86, 15);
+            this.matchesCountLabel.Size = new System.Drawing.Size(86, 22);
             this.matchesCountLabel.Text = "toolStripLabel1";
             this.matchesCountLabel.Visible = false;
             // 
@@ -91,6 +91,7 @@
             this.Controls.Add(this.toolStrip2);
             this.Name = "EbxRawXmlViewer";
             this.Size = new System.Drawing.Size(300, 300);
+            this.VisibleChanged += new System.EventHandler(this.EbxRawXmlViewer_VisibleChanged);
             this.toolStrip2.ResumeLayout(false);
             this.toolStrip2.PerformLayout();
             this.ResumeLayout(false);

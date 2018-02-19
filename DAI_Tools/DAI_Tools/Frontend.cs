@@ -19,17 +19,21 @@ namespace DAI_Tools
     {
         public bool init = false;
         public AboutBox box;
+        private Action<string> statusConsumer;
 
         public Frontend()
         {
             InitializeComponent();
+            
         }
 
         private void Frontend_Load(object sender, EventArgs e)
         {
             string version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
             this.Text = "DAI Tools by Warranty Voider, Ehamloptiran, Wogoodes and more... Version : " + version;
-            SetStatus("Initializing...");
+            
+            statusConsumer = newStatus => updateStatus(newStatus);
+            updateStatus("Initializing...");
         }
 
         private void SetStatus(string s)
@@ -107,7 +111,7 @@ namespace DAI_Tools
 
         private void eBXExplorerToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            OpenMaximized(new EBXExplorer.EBXExplorer());
+            OpenMaximized(new EBXExplorer.EBXExplorer(statusConsumer));
         }
 
         private void scriptExplorerToolStripMenuItem_Click(object sender, EventArgs e)
@@ -138,6 +142,12 @@ namespace DAI_Tools
             OpenMaximized(new ShaderExplorer.ShaderExplorer());
         }
 
+        private void updateStatus(String newStatus)
+        {
+            status.Text = newStatus;
+            statusStrip.Refresh();
+        }
+
         private static string hudCombinedHUDGuid = "919EA7A5E1FA3911DB5137B4482C0D7BC42851F7";
         private static string popUpEventsPrefabGuid = "6E712022A2DE2A7C71A9EAC55D585547E10BEAF6";
         private static string damageEffectPrefabGuid = "E78139132A608C0339BC7F04F121420E4BF117FA";
@@ -160,7 +170,7 @@ namespace DAI_Tools
 
             DAIEbx ebxFile = new DAIEbx();
             ebxFile.Serialize(new MemoryStream(data));
-            var containers = EbxDataContainers.fromDAIEbx(ebxFile);
+            var containers = EbxDataContainers.fromDAIEbx(ebxFile, statusConsumer);
 
             return containers;
         }
@@ -178,21 +188,21 @@ namespace DAI_Tools
         {
             var containers = loadEbx(popUpEventsPrefabGuid);
             var assetGuid = findAsset(containers, "LogicPrefabBlueprint");
-            new BlueprintViz(containers, assetGuid).Show();
+            new BlueprintViz(containers, assetGuid, statusConsumer).Show();
         }
 
         private void damageLogicToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var containers = loadEbx(damageEffectPrefabGuid);
             var assetGuid = findAsset(containers, "LogicPrefabBlueprint");
-            new BlueprintViz(containers, assetGuid).Show();
+            new BlueprintViz(containers, assetGuid, statusConsumer).Show();
         }
 
         private void uiGameLogicToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var containers = loadEbx(uiGameLogicPrefabGuid);
             var assetGuid = findAsset(containers, "LogicPrefabBlueprint");
-            new BlueprintViz(containers, assetGuid).Show();
+            new BlueprintViz(containers, assetGuid, statusConsumer).Show();
         }
     }
 }

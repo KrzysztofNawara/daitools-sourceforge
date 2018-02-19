@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
+using System.Data.SQLite;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
@@ -57,10 +59,14 @@ namespace DAI_Tools.Frostbite
         {
             this.fileGuid = fileGuid;
             this.instanceGuid = instanceGuid;
+            this.refStatus = RefStatus.UNRESOLVED;
         }
 
         public String fileGuid { get; set; }
         public String instanceGuid { get; set; }
+        public String refName { get; set; }
+        public String refType { get; set; }
+        public RefStatus refStatus { get; set; }
     }
 
     public class AStruct : AValue
@@ -167,16 +173,18 @@ namespace DAI_Tools.Frostbite
      */
     public class EbxDataContainers
     {
-        public static EbxDataContainers fromDAIEbx(DAIEbx file)
+        public static EbxDataContainers fromDAIEbx(DAIEbx file, Action<string> statusConsumer)
         {
             Dictionary<String, DataContainer> instances = new Dictionary<string, DataContainer>();
 
             var ctx = new ConverterContext();
             ctx.file = file;
 
+            statusConsumer("Converting instances...");
             foreach (var instance in file.Instances)
             {
                 var instanceGuid = DAIEbx.GuidToString(instance.Key);
+                statusConsumer($"Converting {instanceGuid}...");
                 ctx.instanceGuid = instanceGuid;
                 var rootFakeField = wrapWithFakeField(instance.Value);
                 AValue convertedTreeRoot = convert(rootFakeField, ctx);
@@ -186,6 +194,7 @@ namespace DAI_Tools.Frostbite
                 instances.Add(instanceGuid, new DataContainer(instanceGuid, treeRoot));
             }
 
+            statusConsumer("Processing IntRefs...");
             foreach (var refEntry in ctx.intReferences)
             {
                 var refObj = refEntry.Item1;
@@ -205,10 +214,45 @@ namespace DAI_Tools.Frostbite
                 instances[refObjTreeRootGuid].addIntRef(targetGuid);
             }
 
+            statusConsumer("Processing ExRefs...");
+            using(var dbconn = Database.GetConnection())
+            {
+                dbconn.Open();
+                using (var dbtrans = dbconn.BeginTransaction())
+                {
+                    int processedCount = 0;
+                    foreach (var exRefEntry in ctx.extRefs)
+                    {
+                        var exref = exRefEntry.Item1;
+                        var sqlCmdText = $"select name, type from ebx where guid = \"{exref.fileGuid}\"";
+                        using (var reader = new SQLiteCommand(sqlCmdText, dbconn).ExecuteReader())
+                        {
+                            if (!reader.HasRows)
+                                exref.refStatus = RefStatus.RESOLVED_FAILURE;
+                            else
+                            {
+                                reader.Read();
+                                var values = new object[2];
+                                reader.GetValues(values);
+
+                                exref.refName = (string) values[0];
+                                exref.refType = (string) values[1];
+                                exref.refStatus = RefStatus.RESOLVED_SUCCESS;
+                            }
+                        }
+                        processedCount += 1;
+                        statusConsumer($"Processed ExtRefs: {processedCount}/{ctx.extRefs.Count}");
+                    }
+                    dbtrans.Commit();
+                }
+            }
+
+            statusConsumer("Populating partials...");
             var fileGuid = DAIEbx.GuidToString(file.FileGuid);
             var edc = new EbxDataContainers(fileGuid, instances, file);
             edc.populatePartials();
 
+            statusConsumer("DAIEbx -> EbxDataContainers done.");
             return edc;
         }
 
@@ -218,6 +262,7 @@ namespace DAI_Tools.Frostbite
             public string instanceGuid;
             /* inref to resolve, whom it belongs to */
             public List<Tuple<AIntRef, string>> intReferences = new List<Tuple<AIntRef, string>>();
+            public List<Tuple<AExRef, string>> extRefs = new List<Tuple<AExRef, string>>();
         }
 
         private static DAIField wrapWithFakeField(DAIComplex value)
@@ -277,7 +322,11 @@ namespace DAI_Tools.Frostbite
                 else
                 {
                     if (guid.external)
-                        result = new AExRef(guid.fileGuid, guid.instanceGuid);
+                    {
+                        var aexref = new AExRef(guid.fileGuid, guid.instanceGuid); 
+                        ctx.extRefs.Add(new Tuple<AExRef, string>(aexref, ctx.instanceGuid));
+                        result = aexref;
+                    }
                     else
                     {
                         var ainref = new AIntRef(guid.instanceGuid);

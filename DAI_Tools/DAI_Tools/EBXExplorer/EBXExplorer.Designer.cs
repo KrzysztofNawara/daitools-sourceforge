@@ -29,8 +29,6 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(EBXExplorer));
-            this.statusStrip1 = new System.Windows.Forms.StatusStrip();
-            this.status = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.toolStripTextBox1 = new System.Windows.Forms.ToolStripTextBox();
             this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
@@ -39,27 +37,11 @@
             this.viewerSelector = new System.Windows.Forms.ToolStripComboBox();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.treeView1 = new System.Windows.Forms.TreeView();
-            this.statusStrip1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // statusStrip1
-            // 
-            this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.status});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 453);
-            this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(704, 22);
-            this.statusStrip1.TabIndex = 0;
-            this.statusStrip1.Text = "statusStrip1";
-            // 
-            // status
-            // 
-            this.status.Name = "status";
-            this.status.Size = new System.Drawing.Size(0, 17);
             // 
             // toolStrip1
             // 
@@ -123,7 +105,7 @@
             // splitContainer1.Panel1
             // 
             this.splitContainer1.Panel1.Controls.Add(this.treeView1);
-            this.splitContainer1.Size = new System.Drawing.Size(704, 428);
+            this.splitContainer1.Size = new System.Drawing.Size(704, 450);
             this.splitContainer1.SplitterDistance = 287;
             this.splitContainer1.TabIndex = 2;
             // 
@@ -134,7 +116,7 @@
             this.treeView1.HideSelection = false;
             this.treeView1.Location = new System.Drawing.Point(0, 0);
             this.treeView1.Name = "treeView1";
-            this.treeView1.Size = new System.Drawing.Size(287, 428);
+            this.treeView1.Size = new System.Drawing.Size(287, 450);
             this.treeView1.TabIndex = 0;
             this.treeView1.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeView1_AfterSelect);
             // 
@@ -145,13 +127,10 @@
             this.ClientSize = new System.Drawing.Size(704, 475);
             this.Controls.Add(this.splitContainer1);
             this.Controls.Add(this.toolStrip1);
-            this.Controls.Add(this.statusStrip1);
             this.Name = "EBXExplorer";
             this.Text = "EBX Explorer";
             this.Activated += new System.EventHandler(this.EBXExplorer_Activated);
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.EBXExplorer_FormClosing);
-            this.statusStrip1.ResumeLayout(false);
-            this.statusStrip1.PerformLayout();
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();
             this.splitContainer1.Panel1.ResumeLayout(false);
@@ -163,11 +142,8 @@
         }
 
         #endregion
-
-        private System.Windows.Forms.StatusStrip statusStrip1;
         private System.Windows.Forms.ToolStrip toolStrip1;
         private System.Windows.Forms.SplitContainer splitContainer1;
-        private System.Windows.Forms.ToolStripStatusLabel status;
         private System.Windows.Forms.TreeView treeView1;
         private System.Windows.Forms.ToolStripTextBox toolStripTextBox1;
         private System.Windows.Forms.ToolStripButton toolStripButton1;

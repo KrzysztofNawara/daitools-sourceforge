@@ -13,12 +13,15 @@ namespace DAI_Tools.EBXExplorer
 {
     public partial class EbxRawXmlViewer : UserControl
     {
+        private DAIEbx currentFile = null;
+        
         public EbxRawXmlViewer()
         {
             InitializeComponent();
 
             this.Dock = DockStyle.Fill;
             disableSearch();
+            this.Visible = false;
         }
 
         private void findButton_Click(object sender, EventArgs e)
@@ -28,15 +31,26 @@ namespace DAI_Tools.EBXExplorer
 
         public void setEbxFile(DAIEbx ebxFile)
         {
-            var xml = ebxFile.ToXml();
+           currentFile = ebxFile;
+        }
 
-            if (xml.Length > 0)
+        public void renderXml()
+        {
+            if (Visible)
             {
-                rtb1.Text = xml;
-                findButton.Enabled = true;
+                if (currentFile != null)
+                {
+                    var xml = currentFile.ToXml();
+
+                    if (xml.Length > 0)
+                    {
+                        rtb1.Text = xml;
+                        findButton.Enabled = true;
+                    }
+                    else
+                        disableSearch();
+                }
             }
-            else
-                disableSearch();
         }
 
         public void search(String what)
@@ -75,6 +89,11 @@ namespace DAI_Tools.EBXExplorer
             matchesCountLabel.Visible = false;
             findButton.Enabled = false;
             findTextBox.Clear();
+        }
+
+        private void EbxRawXmlViewer_VisibleChanged(object sender, EventArgs e)
+        {
+            renderXml();
         }
     }
 }

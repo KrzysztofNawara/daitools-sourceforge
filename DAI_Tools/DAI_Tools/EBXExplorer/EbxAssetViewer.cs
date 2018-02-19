@@ -16,9 +16,12 @@ namespace DAI_Tools.EBXExplorer
     {
         private EbxDataContainers currentContainers = null;
         private DataContainer currentlySelectedAsset = null;
+        private Action<string> statusConsumer;
         
-        public EbxAssetViewer()
+        public EbxAssetViewer(Action<string> statusConsumer)
         {
+            this.statusConsumer = statusConsumer;
+
             InitializeComponent();
 
             this.Dock = DockStyle.Fill;
@@ -34,7 +37,7 @@ namespace DAI_Tools.EBXExplorer
             
             if (ebxFile != null)
             {
-                currentContainers = EbxDataContainers.fromDAIEbx(ebxFile);
+                currentContainers = EbxDataContainers.fromDAIEbx(ebxFile, statusConsumer);
                 var assets = currentContainers.getAllWithPartial("Asset");
 
                 foreach (var asset in assets)
@@ -90,7 +93,7 @@ namespace DAI_Tools.EBXExplorer
             Debug.Assert(currentlySelectedAsset != null);
             Debug.Assert(currentlySelectedAsset.hasPartial("PrefabBlueprint"));
 
-            new BlueprintViz(currentContainers, currentlySelectedAsset.guid).Show();
+            new BlueprintViz(currentContainers, currentlySelectedAsset.guid, statusConsumer).Show();
         }
     }
 }

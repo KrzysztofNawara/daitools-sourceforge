@@ -11,9 +11,12 @@ namespace DAI_Tools.EBXExplorer
     {
         private EbxDataContainers currentEbx = null;
         private Dictionary<string, TreeNode> guidToTreeNodes = new Dictionary<string, TreeNode>();
+        private Action<string> statusConsumer;
 
-        public EbxTreeXmlViewer()
+        public EbxTreeXmlViewer(Action<string> statusConsumer)
         {
+            this.statusConsumer = statusConsumer;
+
             InitializeComponent();
 
             this.Dock = DockStyle.Fill;
@@ -23,7 +26,7 @@ namespace DAI_Tools.EBXExplorer
         public void setEbxFile(DAIEbx ebxFile)
         {
             if (ebxFile != null)
-                setData(EbxDataContainers.fromDAIEbx(ebxFile));
+                setData(EbxDataContainers.fromDAIEbx(ebxFile, statusConsumer));
         }
 
         public void setData(EbxDataContainers ebxData)
@@ -200,7 +203,11 @@ namespace DAI_Tools.EBXExplorer
                     break;
                 case ValueTypes.EX_REF:
                     var aexref = fieldValue.castTo<AExRef>();
-                    tnode = simpleFieldTNode(fieldName, aexref.fileGuid + " | " + aexref.instanceGuid);
+                    
+                    var axrefStrRepr = settings.showGuids ? (aexref.instanceGuid + " ") : "";
+                    axrefStrRepr += (aexref.refStatus == RefStatus.RESOLVED_SUCCESS) ? $"[{aexref.refType}] {aexref.refName}" : "Unresolved";
+                    
+                    tnode = simpleFieldTNode(fieldName, axrefStrRepr);
                     break;
                 case ValueTypes.STRUCT:
                     var astruct = fieldValue.castTo<AStruct>();
