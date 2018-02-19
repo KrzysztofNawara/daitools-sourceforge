@@ -56,6 +56,8 @@
             // flattendChbx
             // 
             this.flattendChbx.AutoSize = true;
+            this.flattendChbx.Checked = true;
+            this.flattendChbx.CheckState = System.Windows.Forms.CheckState.Checked;
             this.flattendChbx.Location = new System.Drawing.Point(4, 4);
             this.flattendChbx.Name = "flattendChbx";
             this.flattendChbx.Size = new System.Drawing.Size(70, 17);
@@ -67,6 +69,8 @@
             // flatRefsChbx
             // 
             this.flatRefsChbx.AutoSize = true;
+            this.flatRefsChbx.Checked = true;
+            this.flatRefsChbx.CheckState = System.Windows.Forms.CheckState.Checked;
             this.flatRefsChbx.Location = new System.Drawing.Point(81, 4);
             this.flatRefsChbx.Name = "flatRefsChbx";
             this.flatRefsChbx.Size = new System.Drawing.Size(65, 17);
@@ -78,8 +82,6 @@
             // showGuidsChbx
             // 
             this.showGuidsChbx.AutoSize = true;
-            this.showGuidsChbx.Checked = true;
-            this.showGuidsChbx.CheckState = System.Windows.Forms.CheckState.Checked;
             this.showGuidsChbx.Location = new System.Drawing.Point(153, 4);
             this.showGuidsChbx.Name = "showGuidsChbx";
             this.showGuidsChbx.Size = new System.Drawing.Size(88, 17);
