@@ -176,7 +176,10 @@ namespace DAI_Tools.EBXExplorer
                         case RefStatus.RESOLVED_SUCCESS:
                             if (settings.flatRefs)
                             {
-                                var targetAStruct = aintref.refTarget.castTo<AStruct>();
+                                var targetAStruct = settings.flattened 
+                                    ? containers.getFlattenedDataFor(aintref.instanceGuid) 
+                                    : containers.instances[aintref.instanceGuid].data;
+                                
                                 tnode = simpleFieldTNode(fieldName, targetAStruct.name);
                                 tnode.Tag = new TNStructTag(targetAStruct);
                             } else

@@ -44,12 +44,10 @@ namespace DAI_Tools.Frostbite
         public AIntRef(String instanceGuid) : base(ValueTypes.IN_REF)
         {
             this.instanceGuid = instanceGuid;
-            this.refTarget = null;
             this.refStatus = RefStatus.UNRESOLVED;
         }
 
         public String instanceGuid { get; set; }
-        public AValue refTarget { get; set; }
         public RefStatus refStatus { get; set; }
     }
 
@@ -196,7 +194,6 @@ namespace DAI_Tools.Frostbite
                 if (instances.ContainsKey(targetGuid))
                 {
                     var target = instances[targetGuid];
-                    refObj.refTarget = target.data;
                     target.internalRefCount += 1;
                     refObj.refStatus = RefStatus.RESOLVED_SUCCESS;
                 } else 
