@@ -325,21 +325,25 @@ namespace DAI_Tools.EBXExplorer
 
         private void processInterface(Metadata mdata)
         {
-            var inref = mdata.dataRoot.get("Interface").castTo<AIntRef>();
-            var ifaceAstruct = ebxDataContainers.instances[inref.instanceGuid].data;
+            var iface = mdata.dataRoot.get("Interface");
+            if (iface.Type == ValueTypes.IN_REF)
+            {
+                var inref = iface.castTo<AIntRef>();
+                var ifaceAstruct = ebxDataContainers.instances[inref.instanceGuid].data;
             
-            var ifaceNodeDesc = new NodeDesc();
-            ifaceNodeDesc.name = "Interface";
-            ifaceNodeDesc.nodeGuid = inref.instanceGuid;
-            ifaceNodeDesc.isInterface = true;
+                var ifaceNodeDesc = new NodeDesc();
+                ifaceNodeDesc.name = "Interface";
+                ifaceNodeDesc.nodeGuid = inref.instanceGuid;
+                ifaceNodeDesc.isInterface = true;
 
-            addAsPorts(ifaceNodeDesc, extractIdsFromArray(ifaceAstruct.get("Fields")), Type.PROPERTY, Dir.UNKNOWN);
-            addAsPorts(ifaceNodeDesc, extractIdsFromArray(ifaceAstruct.get("InputEvents")), Type.EVENT, Dir.IN);
-            addAsPorts(ifaceNodeDesc, extractIdsFromArray(ifaceAstruct.get("OutputEvents")), Type.EVENT, Dir.OUT);
-            addAsPorts(ifaceNodeDesc, extractIdsFromArray(ifaceAstruct.get("InputLinks")), Type.LINK, Dir.IN);
-            addAsPorts(ifaceNodeDesc, extractIdsFromArray(ifaceAstruct.get("OutputLinks")), Type.LINK, Dir.OUT);
+                addAsPorts(ifaceNodeDesc, extractIdsFromArray(ifaceAstruct.get("Fields")), Type.PROPERTY, Dir.UNKNOWN);
+                addAsPorts(ifaceNodeDesc, extractIdsFromArray(ifaceAstruct.get("InputEvents")), Type.EVENT, Dir.IN);
+                addAsPorts(ifaceNodeDesc, extractIdsFromArray(ifaceAstruct.get("OutputEvents")), Type.EVENT, Dir.OUT);
+                addAsPorts(ifaceNodeDesc, extractIdsFromArray(ifaceAstruct.get("InputLinks")), Type.LINK, Dir.IN);
+                addAsPorts(ifaceNodeDesc, extractIdsFromArray(ifaceAstruct.get("OutputLinks")), Type.LINK, Dir.OUT);
 
-            mdata.nodeGuidToNodeDesc.Add(inref.instanceGuid, ifaceNodeDesc);
+                mdata.nodeGuidToNodeDesc.Add(inref.instanceGuid, ifaceNodeDesc);
+            }
         }
 
         private void processConnections(Metadata mdata, string holdingFieldName, Func<AStruct, string> srcPortIdExtractor, Func<AStruct, string> tgPortIdExtractor, Type type)
