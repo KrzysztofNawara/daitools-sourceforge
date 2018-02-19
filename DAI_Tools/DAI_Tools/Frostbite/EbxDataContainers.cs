@@ -44,12 +44,10 @@ namespace DAI_Tools.Frostbite
         public AIntRef(String instanceGuid) : base(ValueTypes.IN_REF)
         {
             this.instanceGuid = instanceGuid;
-            this.refTarget = null;
             this.refStatus = RefStatus.UNRESOLVED;
         }
 
         public String instanceGuid { get; set; }
-        public AValue refTarget { get; set; }
         public RefStatus refStatus { get; set; }
     }
 
@@ -75,7 +73,7 @@ namespace DAI_Tools.Frostbite
 
         public String name { get; set; }
         public SortedDictionary<String, AValue> fields { get; }
-        public Dictionary<String, DAIField> correspondingDaiFields { get; }
+        public Dictionary<String, DAIField> correspondingDaiFields { get; set; }
 
         public AValue get(string fieldName, bool searchAncestors = true)
         {
@@ -103,6 +101,12 @@ namespace DAI_Tools.Frostbite
             correspondingDaiFields = new List<DAIField>();
         }
 
+        public AArray(List<AValue> elements, List<DAIField> correspondinDaiFields) : base(ValueTypes.ARRAY)
+        {
+            this.elements = elements;
+            this.correspondingDaiFields = correspondinDaiFields;
+        }
+
         public List<AValue> elements { get; }
         public List<DAIField> correspondingDaiFields { get; }
     }
@@ -116,6 +120,7 @@ namespace DAI_Tools.Frostbite
         {
             this.guid = guid;
             this.data = data;
+            this.flattenedData = null;
             this.intRefs = new List<string>();
         }
         
@@ -124,6 +129,8 @@ namespace DAI_Tools.Frostbite
         public uint internalRefCount = 0;
         public List<string> intRefs { get; }
 
+        public AStruct flattenedData = null;
+       
         public List<String> getAllPartials() { return partialsList; }
 
         public AStruct getPartial(String typeName)
@@ -187,7 +194,6 @@ namespace DAI_Tools.Frostbite
                 if (instances.ContainsKey(targetGuid))
                 {
                     var target = instances[targetGuid];
-                    refObj.refTarget = target.data;
                     target.internalRefCount += 1;
                     refObj.refStatus = RefStatus.RESOLVED_SUCCESS;
                 } else 
@@ -365,6 +371,72 @@ namespace DAI_Tools.Frostbite
                     result.Add(refedContainer);
             }
             return result;
+        }
+
+        public AStruct getFlattenedDataFor(string containerGuid)
+        {
+            var container = instances[containerGuid];
+            if (container.flattenedData == null)
+                container.flattenedData = flatten(container.data);
+            return container.flattenedData;
+        }
+
+        private static AStruct flatten(AStruct what)
+        {
+            if (what.fields.ContainsKey("$"))
+            {
+                var flattened = new AStruct();
+                flattened.name = what.name;
+                flattened.correspondingDaiFields = what.correspondingDaiFields;
+                doFlatten(what, flattened);
+                return flattened;
+            }
+            else
+                return what;
+            
+        }
+
+        private static AArray flatten(AArray what)
+        {
+            var processedFields = new List<AValue>();
+            var atLeastOneChanged = false;
+            foreach (var origElement in what.elements)
+            {
+                if (origElement.Type == ValueTypes.STRUCT)
+                {
+                    var flattened = flatten(origElement.castTo<AStruct>()); 
+                    processedFields.Add(flattened);
+                    if (!object.ReferenceEquals(flattened, origElement))
+                        atLeastOneChanged = true;
+                }
+            }
+
+            if (atLeastOneChanged)
+                return new AArray(processedFields, what.correspondingDaiFields);
+            else 
+                return what;
+        }
+
+        private static void doFlatten(AStruct toProcess, AStruct toAdd)
+        {
+            foreach (var field in toProcess.fields)
+            {
+                if (field.Key.Equals("$"))
+                    doFlatten(field.Value.castTo<AStruct>(), toAdd);
+                else
+                {
+                    AValue val;
+                    var ftype = field.Value.Type;
+                    if (ftype == ValueTypes.STRUCT)
+                        val = flatten(field.Value.castTo<AStruct>());
+                    else if (ftype == ValueTypes.ARRAY)
+                        val = flatten(field.Value.castTo<AArray>());
+                    else
+                        val = field.Value;
+
+                    toAdd.fields.Add(field.Key, val);
+                } 
+            }
         }
 
         private void populatePartials()

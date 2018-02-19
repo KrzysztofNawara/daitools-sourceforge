@@ -59,7 +59,7 @@ namespace DAI_Tools.EBXExplorer
                 var root = new TreeNode("EBX: " + currentEbx.fileGuid);
                 var rootTag = new TNDataRootTag(currentEbx.instances.Values.ToList());
                 root.Tag = rootTag;
-                rootTag.expand(root, currentEbx);
+                rootTag.expand(root, currentEbx, new TreeSettings(flattendChbx.Checked, flatRefsChbx.Checked, showGuidsChbx.Checked));
 
                 guidToTreeNodes = rootTag.guidToTreeNode;
 
@@ -75,19 +75,33 @@ namespace DAI_Tools.EBXExplorer
                 var childTag = (TreeNodeTag) childNode.Tag;
 
                 if (childTag != null)
-                    childTag.expand(childNode, currentEbx);
+                    childTag.expand(childNode, currentEbx, new TreeSettings(flattendChbx.Checked, flatRefsChbx.Checked, showGuidsChbx.Checked));
+            }
+        }
+
+        private class TreeSettings
+        {
+            public bool flattened = false;
+            public bool flatRefs = false;
+            public bool showGuids = false;
+
+            public TreeSettings(bool flattened, bool flatRefs, bool showGuids)
+            {
+                this.flattened = flattened;
+                this.flatRefs = flatRefs;
+                this.showGuids = showGuids;
             }
         }
 
         private abstract class TreeNodeTag
         {
-            public void expand(TreeNode myNode, EbxDataContainers ebx)
+            public void expand(TreeNode myNode, EbxDataContainers ebx, TreeSettings settings)
             {
-                doExpand(myNode, ebx);
+                doExpand(myNode, ebx, settings);
                 myNode.Tag = null; // deactivate expansion logic
             }
 
-            internal abstract void doExpand(TreeNode myNode, EbxDataContainers ebx);
+            internal abstract void doExpand(TreeNode myNode, EbxDataContainers ebx, TreeSettings settings);
         }
 
         private class TNStructTag : TreeNodeTag
@@ -96,10 +110,10 @@ namespace DAI_Tools.EBXExplorer
 
             public TNStructTag(AStruct astruct) { this.astruct = astruct; }
 
-            internal override void doExpand(TreeNode myNode, EbxDataContainers ebx)
+            internal override void doExpand(TreeNode myNode, EbxDataContainers ebx, TreeSettings settings)
             {
                 foreach (var childField in astruct.fields)
-                    myNode.Nodes.Add(processField(childField.Key, childField.Value, ebx));
+                    myNode.Nodes.Add(processField(childField.Key, childField.Value, ebx, settings));
             }
         }
         private class TNArrayTag : TreeNodeTag
@@ -108,11 +122,11 @@ namespace DAI_Tools.EBXExplorer
 
             public TNArrayTag(AArray aarray) { this.aarray = aarray; }
 
-            internal override void doExpand(TreeNode myNode, EbxDataContainers ebx)
+            internal override void doExpand(TreeNode myNode, EbxDataContainers ebx, TreeSettings settings)
             {
                 var elements = aarray.elements;
                 for(int idx = 0; idx < elements.Count; idx++)
-                    myNode.Nodes.Add(processField(idx.ToString(), elements[idx], ebx));
+                    myNode.Nodes.Add(processField(idx.ToString(), elements[idx], ebx, settings));
             }
         }
 
@@ -127,18 +141,21 @@ namespace DAI_Tools.EBXExplorer
                 this.guidToTreeNode = new Dictionary<string, TreeNode>();
             }
 
-            internal override void doExpand(TreeNode myNode, EbxDataContainers ebx)
+            internal override void doExpand(TreeNode myNode, EbxDataContainers ebx, TreeSettings settings)
             {
                 foreach (var container in containers)
                 {
-                    var tnode = processField(container.guid, container.data, ebx);
+                    AStruct dataRoot = settings.flattened ? ebx.getFlattenedDataFor(container.guid) : container.data;
+                    
+                    var fieldName = settings.showGuids ? container.guid : "";
+                    var tnode = processField(fieldName, dataRoot, ebx, settings);
                     myNode.Nodes.Add(tnode);
                     guidToTreeNode.Add(container.guid, tnode);
                 }
             }
         }
 
-        private static TreeNode processField(String fieldName, AValue fieldValue, EbxDataContainers containers)
+        private static TreeNode processField(String fieldName, AValue fieldValue, EbxDataContainers containers, TreeSettings settings)
         {
             TreeNode tnode = null;
 
@@ -157,10 +174,21 @@ namespace DAI_Tools.EBXExplorer
                         case RefStatus.UNRESOLVED:
                             throw new Exception("At this point intrefs should be resolved!");
                         case RefStatus.RESOLVED_SUCCESS:
-                            tnode = simpleFieldTNode(fieldName, "INTREF");
-                            var singletonContainerList = new List<DataContainer>();
-                            singletonContainerList.Add(containers.instances[aintref.instanceGuid]);
-                            tnode.Tag = new TNDataRootTag(singletonContainerList);
+                            if (settings.flatRefs)
+                            {
+                                var targetAStruct = settings.flattened 
+                                    ? containers.getFlattenedDataFor(aintref.instanceGuid) 
+                                    : containers.instances[aintref.instanceGuid].data;
+                                
+                                tnode = simpleFieldTNode(fieldName, targetAStruct.name);
+                                tnode.Tag = new TNStructTag(targetAStruct);
+                            } else
+                            {
+                                tnode = simpleFieldTNode(fieldName, "INTREF");
+                                var singletonContainerList = new List<DataContainer>();
+                                singletonContainerList.Add(containers.instances[aintref.instanceGuid]);
+                                tnode.Tag = new TNDataRootTag(singletonContainerList);
+                            }
                             break;
                         case RefStatus.RESOLVED_FAILURE:
                             tnode = simpleFieldTNode(fieldName, "Unresolved INTREF: " + aintref.instanceGuid);
@@ -176,7 +204,12 @@ namespace DAI_Tools.EBXExplorer
                     break;
                 case ValueTypes.STRUCT:
                     var astruct = fieldValue.castTo<AStruct>();
-                    var tnodeText = fieldName + " -> " + astruct.name;
+                    
+                    var tnodeText = "";
+                    if (fieldName.Length > 0)
+                        tnodeText += fieldName + " -> ";
+                    tnodeText += astruct.name;
+                    
                     tnode = new TreeNode(tnodeText);
                     tnode.Tag = new TNStructTag(astruct);
                     break;
@@ -203,6 +236,21 @@ namespace DAI_Tools.EBXExplorer
         {
             if (treeView1.SelectedNode != null)
                 treeView1.SelectedNode.BackColor = Color.White;
+        }
+
+        private void flattendChbx_CheckedChanged(object sender, EventArgs e)
+        {
+            redrawTree();
+        }
+
+        private void flatRefsChbx_CheckedChanged(object sender, EventArgs e)
+        {
+            redrawTree();
+        }
+
+        private void showGuidsChbx_CheckedChanged(object sender, EventArgs e)
+        {
+            redrawTree();
         }
     }
 }

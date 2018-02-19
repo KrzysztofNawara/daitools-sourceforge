@@ -283,7 +283,8 @@ namespace DAI_Tools.EBXExplorer
                 if (possiblyRef.Type == ValueTypes.IN_REF)
                 {
                     var inRef = possiblyRef.castTo<AIntRef>();
-                    objects.Add(new Tuple<string, AStruct>(inRef.instanceGuid, inRef.refTarget.castTo<AStruct>()));
+                    var referencedData = ebxDataContainers.instances[inRef.instanceGuid].data;
+                    objects.Add(new Tuple<string, AStruct>(inRef.instanceGuid, referencedData));
                 }
                 else 
                     throw new Exception("Incorret type found in array: " + possiblyRef.Type);
@@ -302,7 +303,7 @@ namespace DAI_Tools.EBXExplorer
         private void processInterface(Metadata mdata)
         {
             var inref = mdata.dataRoot.get("Interface").castTo<AIntRef>();
-            var ifaceAstruct = inref.refTarget.castTo<AStruct>();
+            var ifaceAstruct = ebxDataContainers.instances[inref.instanceGuid].data;
             
             var ifaceNodeDesc = new NodeDesc();
             ifaceNodeDesc.name = "Interface";

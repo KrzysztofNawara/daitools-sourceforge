@@ -88,7 +88,7 @@ namespace DAI_Tools.EBXExplorer
             foreach (var nodeRef in nodes.elements)
             {
                 var nodeInRef = nodeRef.castTo<AIntRef>();
-                var nodeAStruct = nodeInRef.refTarget.castTo<AStruct>();
+                var nodeAStruct = ebxDataContainers.instances[nodeInRef.instanceGuid].data;
                 var nodeName = nodeAStruct.get("Name").castTo<ASimpleValue>().Val;
                 bool isRoot = Convert.ToBoolean(nodeAStruct.get("IsRootNode").castTo<ASimpleValue>().Val);
                 var nodeContainer = ebxDataContainers.instances[nodeInRef.instanceGuid];
@@ -138,7 +138,7 @@ namespace DAI_Tools.EBXExplorer
 
             foreach (var connRef in connections.elements)
             {
-                var conn = connRef.castTo<AIntRef>().refTarget.castTo<AStruct>();
+                var conn = ebxDataContainers.instances[connRef.castTo<AIntRef>().instanceGuid].data;
                 var srcGuid = conn.get("SourcePort").castTo<AIntRef>().instanceGuid;
                 var targetGuid = conn.get("TargetPort").castTo<AIntRef>().instanceGuid;
                 var srcPortDesc = portsGuidToPortDesc[srcGuid];
