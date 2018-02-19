@@ -59,7 +59,7 @@ namespace DAI_Tools.EBXExplorer
                 var root = new TreeNode("EBX: " + currentEbx.fileGuid);
                 var rootTag = new TNDataRootTag(currentEbx.instances.Values.ToList());
                 root.Tag = rootTag;
-                rootTag.expand(root, currentEbx, new TreeSettings(flattendChbx.Checked));
+                rootTag.expand(root, currentEbx, new TreeSettings(flattendChbx.Checked, flatRefsChbx.Checked));
 
                 guidToTreeNodes = rootTag.guidToTreeNode;
 
@@ -75,17 +75,19 @@ namespace DAI_Tools.EBXExplorer
                 var childTag = (TreeNodeTag) childNode.Tag;
 
                 if (childTag != null)
-                    childTag.expand(childNode, currentEbx, new TreeSettings(flattendChbx.Checked));
+                    childTag.expand(childNode, currentEbx, new TreeSettings(flattendChbx.Checked, flatRefsChbx.Checked));
             }
         }
 
         private class TreeSettings
         {
             public bool flattened = false;
+            public bool flatRefs = false;
 
-            public TreeSettings(bool flattened)
+            public TreeSettings(bool flattened, bool flatRefs)
             {
                 this.flattened = flattened;
+                this.flatRefs = flatRefs;
             }
         }
 
@@ -169,10 +171,18 @@ namespace DAI_Tools.EBXExplorer
                         case RefStatus.UNRESOLVED:
                             throw new Exception("At this point intrefs should be resolved!");
                         case RefStatus.RESOLVED_SUCCESS:
-                            tnode = simpleFieldTNode(fieldName, "INTREF");
-                            var singletonContainerList = new List<DataContainer>();
-                            singletonContainerList.Add(containers.instances[aintref.instanceGuid]);
-                            tnode.Tag = new TNDataRootTag(singletonContainerList);
+                            if (settings.flatRefs)
+                            {
+                                var targetAStruct = aintref.refTarget.castTo<AStruct>();
+                                tnode = simpleFieldTNode(fieldName, targetAStruct.name);
+                                tnode.Tag = new TNStructTag(targetAStruct);
+                            } else
+                            {
+                                tnode = simpleFieldTNode(fieldName, "INTREF");
+                                var singletonContainerList = new List<DataContainer>();
+                                singletonContainerList.Add(containers.instances[aintref.instanceGuid]);
+                                tnode.Tag = new TNDataRootTag(singletonContainerList);
+                            }
                             break;
                         case RefStatus.RESOLVED_FAILURE:
                             tnode = simpleFieldTNode(fieldName, "Unresolved INTREF: " + aintref.instanceGuid);
@@ -218,6 +228,11 @@ namespace DAI_Tools.EBXExplorer
         }
 
         private void flattendChbx_CheckedChanged(object sender, EventArgs e)
+        {
+            redrawTree();
+        }
+
+        private void flatRefsChbx_CheckedChanged(object sender, EventArgs e)
         {
             redrawTree();
         }
