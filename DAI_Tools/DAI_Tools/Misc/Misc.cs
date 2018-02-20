@@ -325,7 +325,9 @@ namespace DAI_Tools.DBManager
             if (d.ShowDialog() == DialogResult.OK)
             {
                 var entries = Database.LoadAllEbxEntries();
-                
+                var stopwatch = new Stopwatch();
+                stopwatch.Start();
+
                 for(int i = 0; i < entries.Count; i++)
                 {
                     var ebxEntry = entries[i];
@@ -342,7 +344,7 @@ namespace DAI_Tools.DBManager
                     File.WriteAllText(outPath, txt, Encoding.UTF8);
 
                     if (i % 100 == 0)
-                        Frontend.updateStatus($"Exported {i}/{entries.Count}");
+                        Frontend.updateStatus($"Exported {i}/{entries.Count}, elapsec {stopwatch.ElapsedMilliseconds/1000}s");
                 }
 
                 Frontend.updateStatus("Finished export");
