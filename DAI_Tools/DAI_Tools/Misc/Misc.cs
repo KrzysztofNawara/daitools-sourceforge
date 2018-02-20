@@ -332,7 +332,7 @@ namespace DAI_Tools.DBManager
                     var ebxContainers = EbxDataContainers.fromDAIEbx(daiEbx, str => {});
                     var txt = ebxContainers.toText();
 
-                    var outPath = Path.Combine(d.SelectedPath, ebxEntry.path);
+                    var outPath = Path.Combine(d.SelectedPath, $"{ebxEntry.path}_{ebxEntry.sha1.Substring(0, 8)}");
                     var dir = Path.GetDirectoryName(outPath);
                     Directory.CreateDirectory(dir);
                     File.WriteAllText(outPath, txt, Encoding.UTF8);
