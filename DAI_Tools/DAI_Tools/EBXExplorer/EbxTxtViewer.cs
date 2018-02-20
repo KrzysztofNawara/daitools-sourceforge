@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using DAI_Tools.Frostbite;
+using DAI_Tools.Search;
 
 namespace DAI_Tools.EBXExplorer
 {
@@ -44,7 +45,7 @@ namespace DAI_Tools.EBXExplorer
             {
                 if (currentFile != null)
                 {
-                    var xml = currentFile.ToYaml();
+                    var xml = currentFile.toText();
 
                     if (xml.Length > 0)
                     {

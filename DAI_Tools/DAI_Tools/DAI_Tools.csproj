@@ -142,6 +142,7 @@
     <Compile Include="EBXExplorer\EbxTreeXmlViewer.Designer.cs">
       <DependentUpon>EbxTreeXmlViewer.cs</DependentUpon>
     </Compile>
+    <Compile Include="Search\TextSerialization.cs" />
     <Compile Include="Visualizers\BlueprintViz.cs">
       <SubType>Form</SubType>
     </Compile>
