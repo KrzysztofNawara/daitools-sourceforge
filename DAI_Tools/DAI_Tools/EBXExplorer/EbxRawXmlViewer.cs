@@ -31,7 +31,8 @@ namespace DAI_Tools.EBXExplorer
 
         public void setEbxFile(DAIEbx ebxFile)
         {
-           currentFile = ebxFile;
+            currentFile = ebxFile;
+            renderXml();
         }
 
         public void renderXml()

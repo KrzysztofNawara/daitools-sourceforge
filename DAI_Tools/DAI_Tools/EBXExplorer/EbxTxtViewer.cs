@@ -32,7 +32,10 @@ namespace DAI_Tools.EBXExplorer
         public void setEbxFile(DAIEbx ebxFile)
         {
            if (ebxFile != null)
+           {
                 currentFile = EbxDataContainers.fromDAIEbx(ebxFile, newStatus => {});
+                render();
+           }
         }
 
         public void render()
