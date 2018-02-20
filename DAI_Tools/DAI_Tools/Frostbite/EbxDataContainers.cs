@@ -6,7 +6,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using YamlDotNet.Serialization;
 
 namespace DAI_Tools.Frostbite
 {
@@ -23,7 +22,6 @@ namespace DAI_Tools.Frostbite
     public abstract class AValue
     {
         public AValue(ValueTypes type) { this.Type = type; }
-        [YamlIgnore]
         public ValueTypes Type { get; }
         public T castTo<T>() { return (T) Convert.ChangeType(this, typeof(T)); }
     }
@@ -73,7 +71,6 @@ namespace DAI_Tools.Frostbite
         public String instanceGuid { get; set; }
         public String refName { get; set; }
         public String refType { get; set; }
-        [YamlIgnore]
         public RefStatus refStatus { get; set; }
     }
 
@@ -87,7 +84,6 @@ namespace DAI_Tools.Frostbite
 
         public String name { get; set; }
         public SortedDictionary<String, AValue> fields { get; }
-        [YamlIgnore]
         public Dictionary<String, DAIField> correspondingDaiFields { get; set; }
 
         public AValue get(string fieldName, bool searchAncestors = true)
@@ -123,7 +119,6 @@ namespace DAI_Tools.Frostbite
         }
 
         public List<AValue> elements { get; }
-        [YamlIgnore]
         public List<DAIField> correspondingDaiFields { get; }
     }
 
@@ -145,15 +140,11 @@ namespace DAI_Tools.Frostbite
         public AStruct flattenedData { get; set; }
         public List<String> partialsList { get; }
         
-        [YamlIgnore]
         public AStruct data { get; set; }
-        [YamlIgnore]
         public String guid;
         public uint internalRefCount = 0;
-        [YamlIgnore]
         public List<string> intRefs { get; }
         /* order: most specific to most generic */
-        [YamlIgnore]
         private Dictionary<String, AStruct> partialsMap;
        
         public List<String> getAllPartials() { return partialsList; }
@@ -453,19 +444,6 @@ namespace DAI_Tools.Frostbite
             if (container.flattenedData == null)
                 container.flattenedData = flatten(container.data);
             return container.flattenedData;
-        }
-
-        public string ToYaml()
-        {
-            ensureAllFlattened();
-            var serializer = new SerializerBuilder().Build();
-            return serializer.Serialize(instances);
-        }
-
-        private void ensureAllFlattened()
-        {
-            foreach (var containerId in instances.Keys)
-                getFlattenedDataFor(containerId);
         }
 
         private static AStruct flatten(AStruct what)
