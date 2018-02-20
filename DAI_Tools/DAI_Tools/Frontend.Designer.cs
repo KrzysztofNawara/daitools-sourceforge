@@ -48,8 +48,8 @@
             this.blueprintVizToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.popUpEventToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.damageLogicToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.uiGraphVizButton = new System.Windows.Forms.ToolStripMenuItem();
             this.uiGameLogicToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.uiGraphVizButton = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -102,63 +102,63 @@
             // databaseManagerToolStripMenuItem
             // 
             this.databaseManagerToolStripMenuItem.Name = "databaseManagerToolStripMenuItem";
-            this.databaseManagerToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
-            this.databaseManagerToolStripMenuItem.Text = "Database Manager";
+            this.databaseManagerToolStripMenuItem.Size = new System.Drawing.Size(167, 22);
+            this.databaseManagerToolStripMenuItem.Text = "Misc";
             this.databaseManagerToolStripMenuItem.Click += new System.EventHandler(this.databaseManagerToolStripMenuItem_Click);
             // 
             // bundleBrowserToolStripMenuItem
             // 
             this.bundleBrowserToolStripMenuItem.Name = "bundleBrowserToolStripMenuItem";
-            this.bundleBrowserToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
+            this.bundleBrowserToolStripMenuItem.Size = new System.Drawing.Size(167, 22);
             this.bundleBrowserToolStripMenuItem.Text = "Bundle Browser";
             this.bundleBrowserToolStripMenuItem.Click += new System.EventHandler(this.bundleBrowserToolStripMenuItem_Click);
             // 
             // soundExplorerToolStripMenuItem
             // 
             this.soundExplorerToolStripMenuItem.Name = "soundExplorerToolStripMenuItem";
-            this.soundExplorerToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
+            this.soundExplorerToolStripMenuItem.Size = new System.Drawing.Size(167, 22);
             this.soundExplorerToolStripMenuItem.Text = "Sound Explorer";
             this.soundExplorerToolStripMenuItem.Click += new System.EventHandler(this.soundExplorerToolStripMenuItem_Click);
             // 
             // scriptExplorerToolStripMenuItem
             // 
             this.scriptExplorerToolStripMenuItem.Name = "scriptExplorerToolStripMenuItem";
-            this.scriptExplorerToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
+            this.scriptExplorerToolStripMenuItem.Size = new System.Drawing.Size(167, 22);
             this.scriptExplorerToolStripMenuItem.Text = "Script Explorer";
             this.scriptExplorerToolStripMenuItem.Click += new System.EventHandler(this.scriptExplorerToolStripMenuItem_Click);
             // 
             // textureExplorerToolStripMenuItem
             // 
             this.textureExplorerToolStripMenuItem.Name = "textureExplorerToolStripMenuItem";
-            this.textureExplorerToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
+            this.textureExplorerToolStripMenuItem.Size = new System.Drawing.Size(167, 22);
             this.textureExplorerToolStripMenuItem.Text = "Texture Explorer";
             this.textureExplorerToolStripMenuItem.Click += new System.EventHandler(this.textureExplorerToolStripMenuItem_Click);
             // 
             // eBXExplorerToolStripMenuItem
             // 
             this.eBXExplorerToolStripMenuItem.Name = "eBXExplorerToolStripMenuItem";
-            this.eBXExplorerToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
+            this.eBXExplorerToolStripMenuItem.Size = new System.Drawing.Size(167, 22);
             this.eBXExplorerToolStripMenuItem.Text = "EBX Explorer";
             this.eBXExplorerToolStripMenuItem.Click += new System.EventHandler(this.eBXExplorerToolStripMenuItem_Click);
             // 
             // modScriptToolToolStripMenuItem
             // 
             this.modScriptToolToolStripMenuItem.Name = "modScriptToolToolStripMenuItem";
-            this.modScriptToolToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
+            this.modScriptToolToolStripMenuItem.Size = new System.Drawing.Size(167, 22);
             this.modScriptToolToolStripMenuItem.Text = "Mod Script Tool";
             this.modScriptToolToolStripMenuItem.Click += new System.EventHandler(this.modScriptToolToolStripMenuItem_Click);
             // 
             // talktableExplorerToolStripMenuItem
             // 
             this.talktableExplorerToolStripMenuItem.Name = "talktableExplorerToolStripMenuItem";
-            this.talktableExplorerToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
+            this.talktableExplorerToolStripMenuItem.Size = new System.Drawing.Size(167, 22);
             this.talktableExplorerToolStripMenuItem.Text = "Talktable Explorer";
             this.talktableExplorerToolStripMenuItem.Click += new System.EventHandler(this.talktableExplorerToolStripMenuItem_Click);
             // 
             // shaderExplorerToolStripMenuItem
             // 
             this.shaderExplorerToolStripMenuItem.Name = "shaderExplorerToolStripMenuItem";
-            this.shaderExplorerToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
+            this.shaderExplorerToolStripMenuItem.Size = new System.Drawing.Size(167, 22);
             this.shaderExplorerToolStripMenuItem.Text = "Shader Explorer";
             this.shaderExplorerToolStripMenuItem.Click += new System.EventHandler(this.shaderExplorerToolStripMenuItem_Click);
             // 
@@ -186,7 +186,7 @@
             this.damageLogicToolStripMenuItem,
             this.uiGameLogicToolStripMenuItem});
             this.blueprintVizToolStripMenuItem.Name = "blueprintVizToolStripMenuItem";
-            this.blueprintVizToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.blueprintVizToolStripMenuItem.Size = new System.Drawing.Size(137, 22);
             this.blueprintVizToolStripMenuItem.Text = "BlueprintViz";
             // 
             // popUpEventToolStripMenuItem
@@ -203,19 +203,19 @@
             this.damageLogicToolStripMenuItem.Text = "DamageEffectLogic";
             this.damageLogicToolStripMenuItem.Click += new System.EventHandler(this.damageLogicToolStripMenuItem_Click);
             // 
-            // uiGraphVizButton
-            // 
-            this.uiGraphVizButton.Name = "uiGraphVizButton";
-            this.uiGraphVizButton.Size = new System.Drawing.Size(152, 22);
-            this.uiGraphVizButton.Text = "UIGraphViz";
-            this.uiGraphVizButton.Click += new System.EventHandler(this.uiGraphVizButton_Click);
-            // 
             // uiGameLogicToolStripMenuItem
             // 
             this.uiGameLogicToolStripMenuItem.Name = "uiGameLogicToolStripMenuItem";
             this.uiGameLogicToolStripMenuItem.Size = new System.Drawing.Size(177, 22);
             this.uiGameLogicToolStripMenuItem.Text = "UiGameLogic";
             this.uiGameLogicToolStripMenuItem.Click += new System.EventHandler(this.uiGameLogicToolStripMenuItem_Click);
+            // 
+            // uiGraphVizButton
+            // 
+            this.uiGraphVizButton.Name = "uiGraphVizButton";
+            this.uiGraphVizButton.Size = new System.Drawing.Size(137, 22);
+            this.uiGraphVizButton.Text = "UIGraphViz";
+            this.uiGraphVizButton.Click += new System.EventHandler(this.uiGraphVizButton_Click);
             // 
             // Frontend
             // 
