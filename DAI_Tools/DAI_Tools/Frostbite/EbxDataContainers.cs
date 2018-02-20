@@ -445,18 +445,18 @@ namespace DAI_Tools.Frostbite
         {
             var container = instances[containerGuid];
             if (container.flattenedData == null)
-                container.flattenedData = flatten(container.data);
+                container.flattenedData = flatten(container.data, new FlattenSharedState());
             return container.flattenedData;
         }
 
-        private static AStruct flatten(AStruct what)
+        private static AStruct flatten(AStruct what, FlattenSharedState fss)
         {
             if (what.fields.ContainsKey("$"))
             {
                 var flattened = new AStruct();
                 flattened.name = what.name;
                 flattened.correspondingDaiFields = what.correspondingDaiFields;
-                doFlatten(what, flattened);
+                doFlatten(what, flattened, fss);
                 return flattened;
             }
             else
@@ -464,7 +464,7 @@ namespace DAI_Tools.Frostbite
             
         }
 
-        private static AArray flatten(AArray what)
+        private static AArray flatten(AArray what, FlattenSharedState fss)
         {
             var processedFields = new List<AValue>();
             var atLeastOneChanged = false;
@@ -472,7 +472,7 @@ namespace DAI_Tools.Frostbite
             {
                 if (origElement.Type == ValueTypes.STRUCT)
                 {
-                    var flattened = flatten(origElement.castTo<AStruct>()); 
+                    var flattened = flatten(origElement.castTo<AStruct>(), fss); 
                     processedFields.Add(flattened);
                     if (!object.ReferenceEquals(flattened, origElement))
                         atLeastOneChanged = true;
@@ -485,26 +485,37 @@ namespace DAI_Tools.Frostbite
                 return what;
         }
 
-        private static void doFlatten(AStruct toProcess, AStruct toAdd)
+        private static void doFlatten(AStruct toProcess, AStruct toAdd, FlattenSharedState fss)
         {
             foreach (var field in toProcess.fields)
             {
                 if (field.Key.Equals("$"))
-                    doFlatten(field.Value.castTo<AStruct>(), toAdd);
+                    doFlatten(field.Value.castTo<AStruct>(), toAdd, fss);
                 else
                 {
                     AValue val;
                     var ftype = field.Value.Type;
                     if (ftype == ValueTypes.STRUCT)
-                        val = flatten(field.Value.castTo<AStruct>());
+                        val = flatten(field.Value.castTo<AStruct>(), fss);
                     else if (ftype == ValueTypes.ARRAY)
-                        val = flatten(field.Value.castTo<AArray>());
+                        val = flatten(field.Value.castTo<AArray>(), fss);
                     else
                         val = field.Value;
 
-                    toAdd.fields.Add(field.Key, val);
+                    string key;
+                    if (toAdd.fields.ContainsKey(field.Key))
+                        key = $"{field.Key}_{fss.nonUniquesCounter++}";
+                    else 
+                        key = field.Key;
+                    
+                    toAdd.fields.Add(key, val);
                 } 
             }
+        }
+
+        private class FlattenSharedState
+        {
+            public int nonUniquesCounter = 0;
         }
 
         private void populatePartials()
