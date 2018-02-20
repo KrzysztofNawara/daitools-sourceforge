@@ -253,7 +253,7 @@ namespace DAI_Tools.EBXExplorer
             if (srcPortDesc.id.Length == 0 && tgPortDesc.id.Length == 0)
                 return "";
             else 
-                return srcPortDesc.id + " > " + tgPortDesc.id;
+                return srcPortDesc.id + " -> " + tgPortDesc.id;
         }
 
         private CheckBox getEdgeTypeCheckbox(Edge e, Metadata mdata)
@@ -416,7 +416,11 @@ namespace DAI_Tools.EBXExplorer
 
         private string extractId(AValue value)
         {
-            return value.castTo<ASimpleValue>().Val;
+            var aval = value.castTo<ASimpleValue>();
+            if (aval.unhashed != null)
+                return aval.unhashed;
+            else 
+                return aval.Val;
         }
 
         private string extractInRef(AValue value)

@@ -20,11 +20,11 @@ namespace DAI_Tools
         public bool init = false;
         public AboutBox box;
         private Action<string> statusConsumer;
+        public static Dictionary<int, string> hashToString { get; private set; }
 
         public Frontend()
         {
             InitializeComponent();
-            
         }
 
         private void Frontend_Load(object sender, EventArgs e)
@@ -36,11 +36,6 @@ namespace DAI_Tools
             updateStatus("Initializing...");
         }
 
-        private void SetStatus(string s)
-        {
-            status.Text = "Status : " + s;
-        }
-
         private void Init()
         {
             init = true;
@@ -50,27 +45,32 @@ namespace DAI_Tools
                 Database.CheckIfDBExists(); steps++;
                 Database.LoadSettings(); steps++;
                 Database.CheckIfScanIsNeeded(); steps++;
+                hashToString = Tools.parseHashesInWorkingDir(); steps++;
             }
             catch (Exception ex)
             {
                 switch(steps)
                 { 
                     case 0:
-                        SetStatus("Error on finding/creating database");                        
+                        updateStatus("Error on finding/creating database");                        
                         break;
                     case 1:
-                        SetStatus("Error on loading settings");
+                        updateStatus("Error on loading settings");
                         break;
                     case 2:
-                        SetStatus("Error on scanning");
+                        updateStatus("Error on scanning");
                         break;
+                    case 3:
+                        updateStatus("Error on hash loading");
+                            break;
                     default:
-                        SetStatus("Error on initializing!");
+                        updateStatus("Error on initializing!");
                         break;
                 }
                 return;
             }
-            SetStatus("Ready");
+
+            updateStatus($"Ready. (loaded {hashToString.Count} hashes)");
             menuStrip1.Visible = true;
         }
 

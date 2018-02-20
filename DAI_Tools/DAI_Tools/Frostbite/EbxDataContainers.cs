@@ -28,8 +28,13 @@ namespace DAI_Tools.Frostbite
 
     public class ASimpleValue : AValue
     {
-        public ASimpleValue(String value) : base(ValueTypes.SIMPLE) { this.Val = value; }
+        public ASimpleValue(String value, String unhashed = null) : base(ValueTypes.SIMPLE)
+        {
+            this.Val = value;
+            this.unhashed = unhashed;
+        }
         public String Val { get; }
+        public String unhashed { get; }
     }
 
     public class ANullRef : AValue { public ANullRef() : base(ValueTypes.NULL_REF) { } }
@@ -380,10 +385,20 @@ namespace DAI_Tools.Frostbite
                         throw new ArgumentOutOfRangeException();
                 }
 
-                result = new ASimpleValue(strValue);
+                result = new ASimpleValue(strValue, tryUnhash(strValue));
             }
 
             return result;
+        }
+
+        private static string tryUnhash(string value)
+        {
+            int hash = -1;
+            if (int.TryParse(value, out hash))
+                if (Frontend.hashToString.ContainsKey(hash))
+                    return Frontend.hashToString[hash];
+
+            return null;
         }
 
         private EbxDataContainers(String fileGuid, Dictionary<String, DataContainer> instances, DAIEbx correspondingEbx)

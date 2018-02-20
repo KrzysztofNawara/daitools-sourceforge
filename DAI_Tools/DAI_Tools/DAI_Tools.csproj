@@ -306,7 +306,14 @@
       <Name>Be.Windows.Forms.HexBox</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="res\benji_SWBFStrings.tohash.txt" />
+    <Content Include="res\gman.tohash.txt" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>copy $(ProjectDir)res\* $(TargetDir)</PostBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
