@@ -335,7 +335,7 @@ namespace DAI_Tools.DBManager
                     var bytes = Tools.GetDataBySHA1(ebxEntry.sha1, GlobalStuff.getCatFile());
                     var daiEbx = new DAIEbx();
                     daiEbx.Serialize(new MemoryStream(bytes));
-                    var ebxContainers = EbxDataContainers.fromDAIEbx(daiEbx, str => {});
+                    var ebxContainers = EbxDataContainers.fromDAIEbx(daiEbx, str => {}, false);
                     var txt = ebxContainers.toText();
 
                     var outPath = Path.Combine(d.SelectedPath, $"{ebxEntry.path}_{ebxEntry.sha1.Substring(0, 8)}");
