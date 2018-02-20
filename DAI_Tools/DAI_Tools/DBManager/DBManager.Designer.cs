@@ -36,14 +36,14 @@
             this.button1 = new System.Windows.Forms.Button();
             this.rtb1 = new System.Windows.Forms.RichTextBox();
             this.tabControl1 = new System.Windows.Forms.TabControl();
-            this.tabPage1 = new System.Windows.Forms.TabPage();
-            this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.dbTab = new System.Windows.Forms.TabPage();
+            this.exportTab = new System.Windows.Forms.TabPage();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
             this.tabControl1.SuspendLayout();
-            this.tabPage1.SuspendLayout();
+            this.dbTab.SuspendLayout();
             this.SuspendLayout();
             // 
             // splitContainer1
@@ -131,8 +131,8 @@
             // 
             // tabControl1
             // 
-            this.tabControl1.Controls.Add(this.tabPage1);
-            this.tabControl1.Controls.Add(this.tabPage2);
+            this.tabControl1.Controls.Add(this.dbTab);
+            this.tabControl1.Controls.Add(this.exportTab);
             this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabControl1.Location = new System.Drawing.Point(0, 0);
             this.tabControl1.Name = "tabControl1";
@@ -140,26 +140,26 @@
             this.tabControl1.Size = new System.Drawing.Size(712, 414);
             this.tabControl1.TabIndex = 1;
             // 
-            // tabPage1
+            // dbTab
             // 
-            this.tabPage1.Controls.Add(this.splitContainer1);
-            this.tabPage1.Location = new System.Drawing.Point(4, 22);
-            this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(704, 388);
-            this.tabPage1.TabIndex = 0;
-            this.tabPage1.Text = "tabPage1";
-            this.tabPage1.UseVisualStyleBackColor = true;
+            this.dbTab.Controls.Add(this.splitContainer1);
+            this.dbTab.Location = new System.Drawing.Point(4, 22);
+            this.dbTab.Name = "dbTab";
+            this.dbTab.Padding = new System.Windows.Forms.Padding(3);
+            this.dbTab.Size = new System.Drawing.Size(704, 388);
+            this.dbTab.TabIndex = 0;
+            this.dbTab.Text = "Database";
+            this.dbTab.UseVisualStyleBackColor = true;
             // 
-            // tabPage2
+            // exportTab
             // 
-            this.tabPage2.Location = new System.Drawing.Point(4, 22);
-            this.tabPage2.Name = "tabPage2";
-            this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(192, 74);
-            this.tabPage2.TabIndex = 1;
-            this.tabPage2.Text = "tabPage2";
-            this.tabPage2.UseVisualStyleBackColor = true;
+            this.exportTab.Location = new System.Drawing.Point(4, 22);
+            this.exportTab.Name = "exportTab";
+            this.exportTab.Padding = new System.Windows.Forms.Padding(3);
+            this.exportTab.Size = new System.Drawing.Size(704, 388);
+            this.exportTab.TabIndex = 1;
+            this.exportTab.Text = "Export";
+            this.exportTab.UseVisualStyleBackColor = true;
             // 
             // DBManager
             // 
@@ -176,7 +176,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
             this.tabControl1.ResumeLayout(false);
-            this.tabPage1.ResumeLayout(false);
+            this.dbTab.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -191,7 +191,7 @@
         private System.Windows.Forms.ComboBox combo1;
         private System.Windows.Forms.TextBox textBox1;
         private System.Windows.Forms.TabControl tabControl1;
-        private System.Windows.Forms.TabPage tabPage1;
-        private System.Windows.Forms.TabPage tabPage2;
+        private System.Windows.Forms.TabPage dbTab;
+        private System.Windows.Forms.TabPage exportTab;
     }
 }
