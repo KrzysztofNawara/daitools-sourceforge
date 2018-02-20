@@ -60,14 +60,14 @@
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.rtb1);
-            this.splitContainer1.Size = new System.Drawing.Size(712, 273);
-            this.splitContainer1.SplitterDistance = 130;
+            this.splitContainer1.Size = new System.Drawing.Size(712, 414);
+            this.splitContainer1.SplitterDistance = 70;
             this.splitContainer1.TabIndex = 0;
             // 
             // textBox1
             // 
             this.textBox1.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.textBox1.Location = new System.Drawing.Point(0, 110);
+            this.textBox1.Location = new System.Drawing.Point(0, 50);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(712, 20);
             this.textBox1.TabIndex = 5;
@@ -77,7 +77,7 @@
             // combo1
             // 
             this.combo1.FormattingEnabled = true;
-            this.combo1.Location = new System.Drawing.Point(95, 43);
+            this.combo1.Location = new System.Drawing.Point(283, 14);
             this.combo1.Name = "combo1";
             this.combo1.Size = new System.Drawing.Size(121, 21);
             this.combo1.TabIndex = 3;
@@ -94,7 +94,7 @@
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(13, 43);
+            this.button2.Location = new System.Drawing.Point(202, 12);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(75, 23);
             this.button2.TabIndex = 1;
@@ -119,7 +119,7 @@
             this.rtb1.Font = new System.Drawing.Font("Courier New", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.rtb1.Location = new System.Drawing.Point(0, 0);
             this.rtb1.Name = "rtb1";
-            this.rtb1.Size = new System.Drawing.Size(712, 139);
+            this.rtb1.Size = new System.Drawing.Size(712, 340);
             this.rtb1.TabIndex = 0;
             this.rtb1.Text = "";
             this.rtb1.WordWrap = false;
@@ -128,7 +128,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(712, 273);
+            this.ClientSize = new System.Drawing.Size(712, 414);
             this.Controls.Add(this.splitContainer1);
             this.Name = "DBManager";
             this.Text = "Database Manager";
