@@ -13,7 +13,7 @@ namespace DAI_Tools.EBXExplorer
 {
     public partial class EbxTextViewer : UserControl
     {
-        private DAIEbx currentFile = null;
+        private EbxDataContainers currentFile = null;
         
         public EbxTextViewer()
         {
@@ -31,25 +31,23 @@ namespace DAI_Tools.EBXExplorer
 
         public void setEbxFile(DAIEbx ebxFile)
         {
-           currentFile = ebxFile;
+           if (currentFile != null)
+                currentFile = EbxDataContainers.fromDAIEbx(ebxFile, newStatus => {});
         }
 
-        public void renderXml()
+        public void render()
         {
             if (Visible)
             {
-                if (currentFile != null)
-                {
-                    var xml = currentFile.ToXml();
+                var xml = currentFile.ToYaml();
 
-                    if (xml.Length > 0)
-                    {
-                        rtb1.Text = xml;
-                        findButton.Enabled = true;
-                    }
-                    else
-                        disableSearch();
+                if (xml.Length > 0)
+                {
+                    rtb1.Text = xml;
+                    findButton.Enabled = true;
                 }
+                else
+                    disableSearch();
             }
         }
 
@@ -93,7 +91,7 @@ namespace DAI_Tools.EBXExplorer
 
         private void EbxTreeViewer_VisibleChanged(object sender, EventArgs e)
         {
-            renderXml();
+            render();
         }
     }
 }

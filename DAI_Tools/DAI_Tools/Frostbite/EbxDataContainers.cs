@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using YamlDotNet.Serialization;
 
 namespace DAI_Tools.Frostbite
 {
@@ -135,11 +136,13 @@ namespace DAI_Tools.Frostbite
             this.intRefs = new List<string>();
         }
         
+        [YamlIgnore]
         public String guid;
-        public AStruct data;
+        public AStruct data { get; set; }
         public uint internalRefCount = 0;
+        [YamlIgnore]
         public List<string> intRefs { get; }
-
+        [YamlIgnore]
         public AStruct flattenedData = null;
        
         public List<String> getAllPartials() { return partialsList; }
@@ -443,6 +446,12 @@ namespace DAI_Tools.Frostbite
             if (container.flattenedData == null)
                 container.flattenedData = flatten(container.data);
             return container.flattenedData;
+        }
+
+        public string ToYaml()
+        {
+            var serializer = new SerializerBuilder().Build();
+            return serializer.Serialize(instances);
         }
 
         private static AStruct flatten(AStruct what)
