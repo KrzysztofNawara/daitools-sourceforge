@@ -53,7 +53,7 @@ namespace DAI_Tools.Search
                     appendValue("ebx", aexref.fileGuid, indent+1, sb);
                     appendValue("instance", aexref.instanceGuid, indent+1, sb);
                     appendValue("refName", aexref.refName, indent+1, sb);
-                    appendValue("refType", aexref.refName, indent+1, sb);
+                    appendValue("refType", aexref.refType, indent+1, sb);
                     break;
                 case ValueTypes.STRUCT:
                     var astruct = avalue.castTo<AStruct>();
