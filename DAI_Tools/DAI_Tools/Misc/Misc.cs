@@ -324,8 +324,12 @@ namespace DAI_Tools.DBManager
             FolderBrowserDialog d = new FolderBrowserDialog();
             if (d.ShowDialog() == DialogResult.OK)
             {
-                foreach (var ebxEntry in Database.LoadAllEbxEntries())
+                var entries = Database.LoadAllEbxEntries();
+                
+                for(int i = 0; i < entries.Count; i++)
                 {
+                    var ebxEntry = entries[i];
+
                     var bytes = Tools.GetDataBySHA1(ebxEntry.sha1, GlobalStuff.getCatFile());
                     var daiEbx = new DAIEbx();
                     daiEbx.Serialize(new MemoryStream(bytes));
@@ -336,7 +340,12 @@ namespace DAI_Tools.DBManager
                     var dir = Path.GetDirectoryName(outPath);
                     Directory.CreateDirectory(dir);
                     File.WriteAllText(outPath, txt, Encoding.UTF8);
+
+                    if (i % 100 == 0)
+                        Frontend.updateStatus($"Exported {i}/{entries.Count}");
                 }
+
+                Frontend.updateStatus("Finished export");
             }
         }
     }

@@ -21,6 +21,19 @@ namespace DAI_Tools
         public AboutBox box;
         private Action<string> statusConsumer;
         public static Dictionary<int, string> hashToString { get; private set; }
+        
+        private static ToolStrip statusToolStrip;
+        private static ToolStripStatusLabel statusLabel;
+        
+        public static void updateStatus(String newStatus)
+        {
+            if (statusLabel != null && statusToolStrip != null)
+            {
+                statusLabel.Text = newStatus;
+                statusToolStrip.Refresh();
+                Application.DoEvents();
+            }
+        }
 
         public Frontend()
         {
@@ -38,6 +51,9 @@ namespace DAI_Tools
 
         private void Init()
         {
+            statusLabel = status;
+            statusToolStrip = statusStrip;
+            
             init = true;
             int steps = 0;
             try
@@ -140,12 +156,6 @@ namespace DAI_Tools
         private void shaderExplorerToolStripMenuItem_Click(object sender, EventArgs e)
         {
             OpenMaximized(new ShaderExplorer.ShaderExplorer());
-        }
-
-        private void updateStatus(String newStatus)
-        {
-            status.Text = newStatus;
-            statusStrip.Refresh();
         }
 
         private static string hudCombinedHUDGuid = "919EA7A5E1FA3911DB5137B4482C0D7BC42851F7";
