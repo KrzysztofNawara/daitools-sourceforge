@@ -64,7 +64,7 @@ namespace DAI_Tools.EBXExplorer
 
                     if (currentlySelectedAsset.hasPartial("UIGraphAsset"))
                         graphVizButton.Enabled = true;
-                    else if (currentlySelectedAsset.hasPartial("PrefabBlueprint"))
+                    else if (currentlySelectedAsset.hasPartial("PrefabBlueprint") || currentlySelectedAsset.hasPartial("ObjectBlueprint"))
                         blueprintVizButton.Enabled = true;
                 }
             }
