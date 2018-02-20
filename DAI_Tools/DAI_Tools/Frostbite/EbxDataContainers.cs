@@ -133,14 +133,19 @@ namespace DAI_Tools.Frostbite
             this.data = data;
             this.flattenedData = null;
             this.intRefs = new List<string>();
+            this.partialsList = new List<string>();
+            this.partialsMap = new Dictionary<string, AStruct>();
         }
+
+        public AStruct flattenedData { get; set; }
+        public List<String> partialsList { get; }
         
+        public AStruct data { get; set; }
         public String guid;
-        public AStruct data;
         public uint internalRefCount = 0;
         public List<string> intRefs { get; }
-
-        public AStruct flattenedData = null;
+        /* order: most specific to most generic */
+        private Dictionary<String, AStruct> partialsMap;
        
         public List<String> getAllPartials() { return partialsList; }
 
@@ -167,10 +172,6 @@ namespace DAI_Tools.Frostbite
         {
             intRefs.Add(guid);
         }
-
-        /* order: most specific to most generic */
-        private List<String> partialsList = new List<string>();
-        private Dictionary<String, AStruct> partialsMap = new Dictionary<string, AStruct>();
     }
     
     /**

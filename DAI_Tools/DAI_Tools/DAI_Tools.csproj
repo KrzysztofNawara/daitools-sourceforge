@@ -121,6 +121,12 @@
     <Compile Include="EBXExplorer\EBXExplorer.Designer.cs">
       <DependentUpon>EBXExplorer.cs</DependentUpon>
     </Compile>
+    <Compile Include="EBXExplorer\EbxTxtViewer.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="EBXExplorer\EbxTxtViewer.Designer.cs">
+      <DependentUpon>EbxTxtViewer.cs</DependentUpon>
+    </Compile>
     <Compile Include="EBXExplorer\EbxRawXmlViewer.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -133,6 +139,7 @@
     <Compile Include="EBXExplorer\EbxTreeXmlViewer.Designer.cs">
       <DependentUpon>EbxTreeXmlViewer.cs</DependentUpon>
     </Compile>
+    <Compile Include="Search\TextSerialization.cs" />
     <Compile Include="Visualizers\BlueprintViz.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -219,6 +226,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="DBManager\DBManager.resx">
       <DependentUpon>DBManager.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="EBXExplorer\EbxTxtViewer.resx">
+      <DependentUpon>EbxTxtViewer.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Visualizers\BlueprintViz.resx">
       <DependentUpon>BlueprintViz.cs</DependentUpon>

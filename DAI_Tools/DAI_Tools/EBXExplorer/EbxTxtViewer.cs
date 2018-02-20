@@ -8,14 +8,15 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using DAI_Tools.Frostbite;
+using DAI_Tools.Search;
 
 namespace DAI_Tools.EBXExplorer
 {
-    public partial class EbxRawXmlViewer : UserControl
+    public partial class EbxTextViewer : UserControl
     {
-        private DAIEbx currentFile = null;
+        private EbxDataContainers currentFile = null;
         
-        public EbxRawXmlViewer()
+        public EbxTextViewer()
         {
             InitializeComponent();
 
@@ -31,17 +32,20 @@ namespace DAI_Tools.EBXExplorer
 
         public void setEbxFile(DAIEbx ebxFile)
         {
-            currentFile = ebxFile;
-            renderXml();
+           if (ebxFile != null)
+           {
+                currentFile = EbxDataContainers.fromDAIEbx(ebxFile, newStatus => {});
+                render();
+           }
         }
 
-        public void renderXml()
+        public void render()
         {
             if (Visible)
             {
                 if (currentFile != null)
                 {
-                    var xml = currentFile.ToXml();
+                    var xml = currentFile.toText();
 
                     if (xml.Length > 0)
                     {
@@ -92,9 +96,9 @@ namespace DAI_Tools.EBXExplorer
             findTextBox.Clear();
         }
 
-        private void EbxRawXmlViewer_VisibleChanged(object sender, EventArgs e)
+        private void EbxTreeViewer_VisibleChanged(object sender, EventArgs e)
         {
-            renderXml();
+            render();
         }
     }
 }
