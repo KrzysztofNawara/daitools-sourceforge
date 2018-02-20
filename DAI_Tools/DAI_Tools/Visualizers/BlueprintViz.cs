@@ -359,6 +359,9 @@ namespace DAI_Tools.EBXExplorer
                 addAsPorts(ifaceNodeDesc, extractIdsFromArray(ifaceAstruct.get("InputLinks")), Type.LINK, Dir.IN);
                 addAsPorts(ifaceNodeDesc, extractIdsFromArray(ifaceAstruct.get("OutputLinks")), Type.LINK, Dir.OUT);
 
+                if (mdata.nodeGuidToNodeDesc.ContainsKey(inref.instanceGuid))
+                    mdata.nodeGuidToNodeDesc.Remove(inref.instanceGuid);
+
                 mdata.nodeGuidToNodeDesc.Add(inref.instanceGuid, ifaceNodeDesc);
             }
         }
