@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Data.SQLite;
 using DAI_Tools.Frostbite;
+using DAI_Tools.Search;
 
 namespace DAI_Tools.DBManager
 {
@@ -323,7 +324,19 @@ namespace DAI_Tools.DBManager
             FolderBrowserDialog d = new FolderBrowserDialog();
             if (d.ShowDialog() == DialogResult.OK)
             {
-                MessageBox.Show(d.SelectedPath);
+                foreach (var ebxEntry in Database.LoadAllEbxEntries())
+                {
+                    var bytes = Tools.GetDataBySHA1(ebxEntry.sha1, GlobalStuff.getCatFile());
+                    var daiEbx = new DAIEbx();
+                    daiEbx.Serialize(new MemoryStream(bytes));
+                    var ebxContainers = EbxDataContainers.fromDAIEbx(daiEbx, str => {});
+                    var txt = ebxContainers.toText();
+
+                    var outPath = Path.Combine(d.SelectedPath, ebxEntry.path);
+                    var dir = Path.GetDirectoryName(outPath);
+                    Directory.CreateDirectory(dir);
+                    File.WriteAllText(outPath, txt, Encoding.UTF8);
+                }
             }
         }
     }
