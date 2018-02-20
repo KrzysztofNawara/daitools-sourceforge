@@ -317,5 +317,14 @@ namespace DAI_Tools.DBManager
                 rtb1.Text = CustomQuery(textBox1.Text);
             }
         }
+
+        private void exportAllButton_Click(object sender, EventArgs e)
+        {
+            FolderBrowserDialog d = new FolderBrowserDialog();
+            if (d.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                MessageBox.Show(d.SelectedPath);
+            }
+        }
     }
 }

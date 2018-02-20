@@ -38,12 +38,14 @@
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.dbTab = new System.Windows.Forms.TabPage();
             this.exportTab = new System.Windows.Forms.TabPage();
+            this.exportAllButton = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.dbTab.SuspendLayout();
+            this.exportTab.SuspendLayout();
             this.SuspendLayout();
             // 
             // splitContainer1
@@ -153,6 +155,7 @@
             // 
             // exportTab
             // 
+            this.exportTab.Controls.Add(this.exportAllButton);
             this.exportTab.Location = new System.Drawing.Point(4, 22);
             this.exportTab.Name = "exportTab";
             this.exportTab.Padding = new System.Windows.Forms.Padding(3);
@@ -160,6 +163,16 @@
             this.exportTab.TabIndex = 1;
             this.exportTab.Text = "Export";
             this.exportTab.UseVisualStyleBackColor = true;
+            // 
+            // exportAllButton
+            // 
+            this.exportAllButton.Location = new System.Drawing.Point(9, 7);
+            this.exportAllButton.Name = "exportAllButton";
+            this.exportAllButton.Size = new System.Drawing.Size(75, 23);
+            this.exportAllButton.TabIndex = 0;
+            this.exportAllButton.Text = "Export All";
+            this.exportAllButton.UseVisualStyleBackColor = true;
+            this.exportAllButton.Click += new System.EventHandler(this.exportAllButton_Click);
             // 
             // DBManager
             // 
@@ -177,6 +190,7 @@
             this.splitContainer1.ResumeLayout(false);
             this.tabControl1.ResumeLayout(false);
             this.dbTab.ResumeLayout(false);
+            this.exportTab.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -193,5 +207,6 @@
         private System.Windows.Forms.TabControl tabControl1;
         private System.Windows.Forms.TabPage dbTab;
         private System.Windows.Forms.TabPage exportTab;
+        private System.Windows.Forms.Button exportAllButton;
     }
 }
