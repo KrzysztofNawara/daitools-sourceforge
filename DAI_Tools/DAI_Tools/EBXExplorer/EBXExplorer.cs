@@ -19,7 +19,6 @@ namespace DAI_Tools.EBXExplorer
     public partial class EBXExplorer : Form
     {
         public bool init = false;
-        public CATFile cat;
         public bool stop = false;
         public bool ignoreonce = false;
 
@@ -34,14 +33,8 @@ namespace DAI_Tools.EBXExplorer
         private Control currentViewer = null;
         private Action<string> statusConsumer;
 
-        public struct EBXEntry
-        {
-            public string path;
-            public string sha1;
-        }
-
-        public List<EBXEntry> EBXList;
-
+        public List<Database.EBXEntry> EBXList;
+        
         public EBXExplorer(Action<string> statusConsumer)
         {
             this.statusConsumer = statusConsumer;
@@ -77,32 +70,15 @@ namespace DAI_Tools.EBXExplorer
         {
             if (GlobalStuff.FindSetting("isNew") == "1")
             {
-                MessageBox.Show("Please initialize the database in Database Manager with Scan");
+                MessageBox.Show("Please initialize the database in Misc > Database with Scan");
                 this.BeginInvoke(new MethodInvoker(Close));
                 return;
             }
             this.WindowState = FormWindowState.Maximized;
-            statusConsumer("Loading CAT for faster lookup...");
             Application.DoEvents();
-            string path = GlobalStuff.FindSetting("gamepath");
-            path += "Data\\cas.cat";
-            cat = new CATFile(path);
-            EBXList = new List<EBXEntry>();
-            SQLiteConnection con = Database.GetConnection();
-            con.Open();
             statusConsumer("Querying...");
-            Application.DoEvents();
-            SQLiteDataReader reader = new SQLiteCommand("SELECT DISTINCT name,sha1 FROM ebx", con).ExecuteReader();
-            while (reader.Read())
-            {
-                EBXEntry e = new EBXEntry();
-                e.path = reader.GetString(0);
-                e.sha1 = reader.GetString(1);
-                EBXList.Add(e);
-            }
-            con.Close();
+            EBXList = Database.LoadAllEbxEntries();
             statusConsumer("Making Tree...");
-            Application.DoEvents();
             MakeTree();
             statusConsumer("Done.");
             init = true;
@@ -112,7 +88,7 @@ namespace DAI_Tools.EBXExplorer
         {
             treeView1.Nodes.Clear();
             TreeNode t = new TreeNode("EBX");
-            foreach (EBXEntry e in EBXList)
+            foreach (Database.EBXEntry e in EBXList)
                 t = AddPath(t, e.path, e.sha1);
             t.Expand();
             treeView1.Nodes.Add(t);
@@ -163,7 +139,7 @@ namespace DAI_Tools.EBXExplorer
                         return;
 
                     string sha1 = t.Name;
-                    byte[] data = Tools.GetDataBySHA1(sha1, cat);
+                    byte[] data = Tools.GetDataBySHA1(sha1, GlobalStuff.getCatFile());
 
                     DAIEbx ebxFile = deserializeEbx(data);
                     setEbxFile(ebxFile);
@@ -197,7 +173,7 @@ namespace DAI_Tools.EBXExplorer
                 }
                 try
                 {
-                    byte[] data = Tools.GetDataBySHA1(t.Name, cat);
+                    byte[] data = Tools.GetDataBySHA1(t.Name, GlobalStuff.getCatFile());
                     if (data.Length != 0)
                     {
                         DAIEbx ebxFile = deserializeEbx(data);

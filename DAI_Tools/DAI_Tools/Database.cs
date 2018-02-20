@@ -85,7 +85,7 @@ namespace DAI_Tools
 
         public static SQLiteDataReader getAllWhere(string table, string where, SQLiteConnection con)
         {
-            SQLiteCommand command = new SQLiteCommand("SELECT * FROM " + table + " WHERE " + where, con);
+            SQLiteCommand command = new SQLiteCommand("SELECT * FROM " + table + " WHERE " + @where, con);
             return command.ExecuteReader();
         }
 
@@ -300,6 +300,34 @@ namespace DAI_Tools
             CASFile cas = new CASFile(reader.GetString(0));
             CASFile.CASEntry entry = cas.ReadEntry(offset, size);
             return entry.data;
+        }
+
+        public struct EBXEntry
+        {
+            public string path;
+            public string sha1;
+        }
+
+        public static List<EBXEntry> LoadAllEbxEntries()
+        {
+            var EBXList = new List<EBXEntry>();
+            using (SQLiteConnection con = Database.GetConnection())
+            {
+                con.Open();
+                
+                using (var reader = new SQLiteCommand("SELECT DISTINCT name,sha1 FROM ebx", con).ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        EBXEntry e = new EBXEntry();
+                        e.path = reader.GetString(0);
+                        e.sha1 = reader.GetString(1);
+                        EBXList.Add(e);
+                    }
+                }
+            }
+
+            return EBXList;
         }
     }
 }

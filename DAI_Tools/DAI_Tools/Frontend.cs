@@ -21,6 +21,19 @@ namespace DAI_Tools
         public AboutBox box;
         private Action<string> statusConsumer;
         public static Dictionary<int, string> hashToString { get; private set; }
+        
+        private static ToolStrip statusToolStrip;
+        private static ToolStripStatusLabel statusLabel;
+        
+        public static void updateStatus(String newStatus)
+        {
+            if (statusLabel != null && statusToolStrip != null)
+            {
+                statusLabel.Text = newStatus;
+                statusToolStrip.Refresh();
+                Application.DoEvents();
+            }
+        }
 
         public Frontend()
         {
@@ -38,6 +51,9 @@ namespace DAI_Tools
 
         private void Init()
         {
+            statusLabel = status;
+            statusToolStrip = statusStrip;
+            
             init = true;
             int steps = 0;
             try
@@ -142,12 +158,6 @@ namespace DAI_Tools
             OpenMaximized(new ShaderExplorer.ShaderExplorer());
         }
 
-        private void updateStatus(String newStatus)
-        {
-            status.Text = newStatus;
-            statusStrip.Refresh();
-        }
-
         private static string hudCombinedHUDGuid = "919EA7A5E1FA3911DB5137B4482C0D7BC42851F7";
         private static string popUpEventsPrefabGuid = "6E712022A2DE2A7C71A9EAC55D585547E10BEAF6";
         private static string damageEffectPrefabGuid = "E78139132A608C0339BC7F04F121420E4BF117FA";
@@ -162,11 +172,7 @@ namespace DAI_Tools
 
         private EbxDataContainers loadEbx(string ebxGuid)
         {
-            string path = GlobalStuff.FindSetting("gamepath");
-            path += "Data\\cas.cat";
-            var cat = new CATFile(path);
-            
-            byte[] data = Tools.GetDataBySHA1(ebxGuid, cat);
+            byte[] data = Tools.GetDataBySHA1(ebxGuid, GlobalStuff.getCatFile());
 
             DAIEbx ebxFile = new DAIEbx();
             ebxFile.Serialize(new MemoryStream(data));

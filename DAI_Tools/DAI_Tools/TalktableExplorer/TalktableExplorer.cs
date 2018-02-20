@@ -41,7 +41,7 @@ namespace DAI_Tools.TalktableExplorer
         {
             if (GlobalStuff.FindSetting("isNew") == "1")
             {
-                MessageBox.Show("Please initialize the database in Database Manager with Scan");
+                MessageBox.Show("Please initialize the database in Misc > Database with Scan");
                 this.BeginInvoke(new MethodInvoker(Close));
                 return;
             }

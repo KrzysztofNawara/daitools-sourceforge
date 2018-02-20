@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DAI_Tools.Frostbite;
 
 namespace DAI_Tools
 {
     public static class GlobalStuff
     {
         public static Dictionary<string, string> settings;
+        private static CATFile cat;
 
         public static string FindSetting(string name)
         {
@@ -22,6 +24,18 @@ namespace DAI_Tools
         {
             settings[key] = value;
             Database.SaveSettings();
+        }
+
+        public static CATFile getCatFile()
+        {
+            if (cat == null)
+            {
+                string path = GlobalStuff.FindSetting("gamepath");
+                path += "Data\\cas.cat";
+                cat = new CATFile(path);
+            }
+            
+            return cat;
         }
     }
 }

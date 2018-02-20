@@ -179,7 +179,7 @@ namespace DAI_Tools.Frostbite
      */
     public class EbxDataContainers
     {
-        public static EbxDataContainers fromDAIEbx(DAIEbx file, Action<string> statusConsumer)
+        public static EbxDataContainers fromDAIEbx(DAIEbx file, Action<string> statusConsumer, bool resolveExternalRefs = true)
         {
             Dictionary<String, DataContainer> instances = new Dictionary<string, DataContainer>();
 
@@ -220,37 +220,40 @@ namespace DAI_Tools.Frostbite
                 instances[refObjTreeRootGuid].addIntRef(targetGuid);
             }
 
-            statusConsumer("Processing ExRefs...");
-            using(var dbconn = Database.GetConnection())
+            if (resolveExternalRefs)
             {
-                dbconn.Open();
-                using (var dbtrans = dbconn.BeginTransaction())
+                statusConsumer("Processing ExRefs...");
+                using(var dbconn = Database.GetConnection())
                 {
-                    int processedCount = 0;
-                    foreach (var exRefEntry in ctx.extRefs)
+                    dbconn.Open();
+                    using (var dbtrans = dbconn.BeginTransaction())
                     {
-                        var exref = exRefEntry.Item1;
-                        var sqlCmdText = $"select name, type from ebx where guid = \"{exref.fileGuid}\"";
-                        using (var reader = new SQLiteCommand(sqlCmdText, dbconn).ExecuteReader())
+                        int processedCount = 0;
+                        foreach (var exRefEntry in ctx.extRefs)
                         {
-                            if (!reader.HasRows)
-                                exref.refStatus = RefStatus.RESOLVED_FAILURE;
-                            else
+                            var exref = exRefEntry.Item1;
+                            var sqlCmdText = $"select name, type from ebx where guid = \"{exref.fileGuid}\"";
+                            using (var reader = new SQLiteCommand(sqlCmdText, dbconn).ExecuteReader())
                             {
-                                reader.Read();
-                                var values = new object[2];
-                                reader.GetValues(values);
+                                if (!reader.HasRows)
+                                    exref.refStatus = RefStatus.RESOLVED_FAILURE;
+                                else
+                                {
+                                    reader.Read();
+                                    var values = new object[2];
+                                    reader.GetValues(values);
 
-                                exref.refName = (string) values[0];
-                                exref.refType = (string) values[1];
-                                exref.refStatus = RefStatus.RESOLVED_SUCCESS;
+                                    exref.refName = (string) values[0];
+                                    exref.refType = (string) values[1];
+                                    exref.refStatus = RefStatus.RESOLVED_SUCCESS;
+                                }
                             }
+                            processedCount += 1;
+                            statusConsumer($"Processed ExtRefs: {processedCount}/{ctx.extRefs.Count}");
                         }
-                        processedCount += 1;
-                        statusConsumer($"Processed ExtRefs: {processedCount}/{ctx.extRefs.Count}");
+                        dbtrans.Commit();
                     }
-                    dbtrans.Commit();
-                }
+                } 
             }
 
             statusConsumer("Populating partials...");

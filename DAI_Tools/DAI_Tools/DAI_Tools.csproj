@@ -103,11 +103,11 @@
       <DependentUpon>BundleBrowser.cs</DependentUpon>
     </Compile>
     <Compile Include="Database.cs" />
-    <Compile Include="DBManager\DBManager.cs">
+    <Compile Include="Misc\Misc.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="DBManager\DBManager.Designer.cs">
-      <DependentUpon>DBManager.cs</DependentUpon>
+    <Compile Include="Misc\Misc.Designer.cs">
+      <DependentUpon>Misc.cs</DependentUpon>
     </Compile>
     <Compile Include="EBXExplorer\EbxAssetViewer.cs">
       <SubType>UserControl</SubType>
@@ -224,8 +224,8 @@
     <EmbeddedResource Include="BundleBrowser\BundleBrowser.resx">
       <DependentUpon>BundleBrowser.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="DBManager\DBManager.resx">
-      <DependentUpon>DBManager.cs</DependentUpon>
+    <EmbeddedResource Include="Misc\Misc.resx">
+      <DependentUpon>Misc.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="EBXExplorer\EbxTxtViewer.resx">
       <DependentUpon>EbxTxtViewer.cs</DependentUpon>

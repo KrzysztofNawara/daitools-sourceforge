@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Data.SQLite;
 using DAI_Tools.Frostbite;
+using DAI_Tools.Search;
 
 namespace DAI_Tools.DBManager
 {
@@ -315,6 +316,38 @@ namespace DAI_Tools.DBManager
             {
                 rtb1.Text = "Querying...";
                 rtb1.Text = CustomQuery(textBox1.Text);
+            }
+        }
+
+        private void exportAllButton_Click(object sender, EventArgs e)
+        {
+            FolderBrowserDialog d = new FolderBrowserDialog();
+            if (d.ShowDialog() == DialogResult.OK)
+            {
+                var entries = Database.LoadAllEbxEntries();
+                var stopwatch = new Stopwatch();
+                stopwatch.Start();
+
+                for(int i = 0; i < entries.Count; i++)
+                {
+                    var ebxEntry = entries[i];
+
+                    var bytes = Tools.GetDataBySHA1(ebxEntry.sha1, GlobalStuff.getCatFile());
+                    var daiEbx = new DAIEbx();
+                    daiEbx.Serialize(new MemoryStream(bytes));
+                    var ebxContainers = EbxDataContainers.fromDAIEbx(daiEbx, str => {}, false);
+                    var txt = ebxContainers.toText();
+
+                    var outPath = Path.Combine(d.SelectedPath, $"{ebxEntry.path}_{ebxEntry.sha1.Substring(0, 8)}");
+                    var dir = Path.GetDirectoryName(outPath);
+                    Directory.CreateDirectory(dir);
+                    File.WriteAllText(outPath, txt, Encoding.UTF8);
+
+                    if (i % 100 == 0)
+                        Frontend.updateStatus($"Exported {i}/{entries.Count}, elapsec {stopwatch.ElapsedMilliseconds/1000}s");
+                }
+
+                Frontend.updateStatus("Finished export");
             }
         }
     }

@@ -16,11 +16,11 @@ namespace DAI_Tools.Search
         {
             var sb = new StringBuilder();
             foreach(var instance in containers.instances.Values)
-                convertToText(instance.guid, containers.getFlattenedDataFor(instance.guid), 0, sb);
+                convertToText(instance.guid, containers.getFlattenedDataFor(instance.guid), 0, sb, instance.partialsList);
             return sb.ToString();
         }
 
-        public static void convertToText(string fieldName, AValue avalue, int indent, StringBuilder sb)
+        public static void convertToText(string fieldName, AValue avalue, int indent, StringBuilder sb, List<string> partials)
         {
             if (avalue == null)
             {
@@ -53,14 +53,18 @@ namespace DAI_Tools.Search
                     appendValue("ebx", aexref.fileGuid, indent+1, sb);
                     appendValue("instance", aexref.instanceGuid, indent+1, sb);
                     appendValue("refName", aexref.refName, indent+1, sb);
-                    appendValue("refType", aexref.refName, indent+1, sb);
+                    appendValue("refType", aexref.refType, indent+1, sb);
                     break;
                 case ValueTypes.STRUCT:
                     var astruct = avalue.castTo<AStruct>();
                     appendTypeFieldname(fieldName, astruct.name, indent, sb);
                     
+                    if (partials != null)
+                        foreach(var partial in partials)
+                            appendWithIndent("- " + partial, indent+2, sb);
+
                     foreach (var childField in astruct.fields)
-                        convertToText(childField.Key, childField.Value, indent+1, sb);
+                        convertToText(childField.Key, childField.Value, indent+1, sb, null);
 
                     break;
                 case ValueTypes.ARRAY:
@@ -68,7 +72,7 @@ namespace DAI_Tools.Search
                     appendTypeFieldname(fieldName, "array", indent, sb);
 
                     for(int i = 0; i < aarray.Count; i++)
-                        convertToText(i.ToString(), aarray[i], indent+1, sb);
+                        convertToText(i.ToString(), aarray[i], indent+1, sb, null);
 
                     break;
                 default:
@@ -76,17 +80,22 @@ namespace DAI_Tools.Search
             }
         }
 
-        public static void appendTypeFieldname(string fieldName, string type, int indent, StringBuilder sb)
+        private static void appendWithIndent(string line, int indent, StringBuilder sb)
+        {
+            sb.Append(INDENT_CHAR, indent).Append(line).Append(NL);
+        }
+
+        private static void appendTypeFieldname(string fieldName, string type, int indent, StringBuilder sb)
         {
             sb.Append(INDENT_CHAR, indent).Append(fieldName).Append(" [").Append(type).Append("]:").Append(NL);
         }
 
-        public static void appendValue(string fieldName, string value, int indent, StringBuilder sb)
+        private static void appendValue(string fieldName, string value, int indent, StringBuilder sb)
         {
             sb.Append(INDENT_CHAR, indent).Append(fieldName).Append(": ").Append(value).Append(NL);
         }
 
-        public static void appendValue(string fieldName, Action<StringBuilder> valueProvider, int indent, StringBuilder sb)
+        private static void appendValue(string fieldName, Action<StringBuilder> valueProvider, int indent, StringBuilder sb)
         {
             sb.Append(INDENT_CHAR, indent).Append(fieldName).Append(": ");
             valueProvider(sb);
