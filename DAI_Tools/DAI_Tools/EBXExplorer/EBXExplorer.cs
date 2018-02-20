@@ -33,14 +33,8 @@ namespace DAI_Tools.EBXExplorer
         private Control currentViewer = null;
         private Action<string> statusConsumer;
 
-        public struct EBXEntry
-        {
-            public string path;
-            public string sha1;
-        }
-
-        public List<EBXEntry> EBXList;
-
+        public List<Database.EBXEntry> EBXList;
+        
         public EBXExplorer(Action<string> statusConsumer)
         {
             this.statusConsumer = statusConsumer;
@@ -82,22 +76,9 @@ namespace DAI_Tools.EBXExplorer
             }
             this.WindowState = FormWindowState.Maximized;
             Application.DoEvents();
-            EBXList = new List<EBXEntry>();
-            SQLiteConnection con = Database.GetConnection();
-            con.Open();
             statusConsumer("Querying...");
-            Application.DoEvents();
-            SQLiteDataReader reader = new SQLiteCommand("SELECT DISTINCT name,sha1 FROM ebx", con).ExecuteReader();
-            while (reader.Read())
-            {
-                EBXEntry e = new EBXEntry();
-                e.path = reader.GetString(0);
-                e.sha1 = reader.GetString(1);
-                EBXList.Add(e);
-            }
-            con.Close();
+            EBXList = Database.LoadAllEbxEntries();
             statusConsumer("Making Tree...");
-            Application.DoEvents();
             MakeTree();
             statusConsumer("Done.");
             init = true;
@@ -107,7 +88,7 @@ namespace DAI_Tools.EBXExplorer
         {
             treeView1.Nodes.Clear();
             TreeNode t = new TreeNode("EBX");
-            foreach (EBXEntry e in EBXList)
+            foreach (Database.EBXEntry e in EBXList)
                 t = AddPath(t, e.path, e.sha1);
             t.Expand();
             treeView1.Nodes.Add(t);
