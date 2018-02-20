@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -82,6 +83,41 @@ namespace DAI_Tools.Frostbite
                 hash = Crc32Table[(byte)hash ^ (byte)((input[i] & 0xFF00) >> 8)] ^ (hash >> 8);
             }
             return ~hash;
+        }
+
+        public static int BenjiFNV(string StrToHash)
+        {
+            uint Hash = 0x1505;
+            for (int i = 0; i < StrToHash.Length; i++)
+            {
+                byte b = (byte) StrToHash[i];
+                Hash = (Hash * 33) ^ b;
+            }
+            return (int)Hash;
+        }
+
+        public static Dictionary<int, string> parseHashesInWorkingDir()
+        {
+            var hashToString = new Dictionary<int, string>();
+            
+            foreach (string filename in Directory.EnumerateFiles(".\\"))
+            {
+                if (filename.EndsWith(".tohash.txt"))
+                {
+                    using (StreamReader reader = new StreamReader(filename))
+                    {
+                        while (!reader.EndOfStream)
+                        {
+                            string s = reader.ReadLine();
+                            int hash = BenjiFNV(s);
+                            if (!hashToString.ContainsKey(hash))
+                                hashToString.Add(hash, s);
+                        }
+                    }
+                }
+            }
+
+            return hashToString;
         }
 
         private static UInt32[] Crc32Table =
