@@ -31,7 +31,7 @@ namespace DAI_Tools.EBXExplorer
 
         public void setEbxFile(DAIEbx ebxFile)
         {
-           if (currentFile != null)
+           if (ebxFile != null)
                 currentFile = EbxDataContainers.fromDAIEbx(ebxFile, newStatus => {});
         }
 
@@ -39,15 +39,18 @@ namespace DAI_Tools.EBXExplorer
         {
             if (Visible)
             {
-                var xml = currentFile.ToYaml();
-
-                if (xml.Length > 0)
+                if (currentFile != null)
                 {
-                    rtb1.Text = xml;
-                    findButton.Enabled = true;
+                    var xml = currentFile.ToYaml();
+
+                    if (xml.Length > 0)
+                    {
+                        rtb1.Text = xml;
+                        findButton.Enabled = true;
+                    }
+                    else
+                        disableSearch();
                 }
-                else
-                    disableSearch();
             }
         }
 
