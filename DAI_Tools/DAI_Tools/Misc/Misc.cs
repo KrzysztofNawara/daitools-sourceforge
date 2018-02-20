@@ -321,7 +321,7 @@ namespace DAI_Tools.DBManager
         private void exportAllButton_Click(object sender, EventArgs e)
         {
             FolderBrowserDialog d = new FolderBrowserDialog();
-            if (d.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            if (d.ShowDialog() == DialogResult.OK)
             {
                 MessageBox.Show(d.SelectedPath);
             }

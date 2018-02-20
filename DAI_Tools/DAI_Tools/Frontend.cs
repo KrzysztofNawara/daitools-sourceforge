@@ -162,11 +162,7 @@ namespace DAI_Tools
 
         private EbxDataContainers loadEbx(string ebxGuid)
         {
-            string path = GlobalStuff.FindSetting("gamepath");
-            path += "Data\\cas.cat";
-            var cat = new CATFile(path);
-            
-            byte[] data = Tools.GetDataBySHA1(ebxGuid, cat);
+            byte[] data = Tools.GetDataBySHA1(ebxGuid, GlobalStuff.getCatFile());
 
             DAIEbx ebxFile = new DAIEbx();
             ebxFile.Serialize(new MemoryStream(data));

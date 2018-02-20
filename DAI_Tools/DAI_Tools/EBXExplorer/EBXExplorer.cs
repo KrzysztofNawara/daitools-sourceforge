@@ -19,7 +19,6 @@ namespace DAI_Tools.EBXExplorer
     public partial class EBXExplorer : Form
     {
         public bool init = false;
-        public CATFile cat;
         public bool stop = false;
         public bool ignoreonce = false;
 
@@ -82,11 +81,7 @@ namespace DAI_Tools.EBXExplorer
                 return;
             }
             this.WindowState = FormWindowState.Maximized;
-            statusConsumer("Loading CAT for faster lookup...");
             Application.DoEvents();
-            string path = GlobalStuff.FindSetting("gamepath");
-            path += "Data\\cas.cat";
-            cat = new CATFile(path);
             EBXList = new List<EBXEntry>();
             SQLiteConnection con = Database.GetConnection();
             con.Open();
@@ -163,7 +158,7 @@ namespace DAI_Tools.EBXExplorer
                         return;
 
                     string sha1 = t.Name;
-                    byte[] data = Tools.GetDataBySHA1(sha1, cat);
+                    byte[] data = Tools.GetDataBySHA1(sha1, GlobalStuff.getCatFile());
 
                     DAIEbx ebxFile = deserializeEbx(data);
                     setEbxFile(ebxFile);
@@ -197,7 +192,7 @@ namespace DAI_Tools.EBXExplorer
                 }
                 try
                 {
-                    byte[] data = Tools.GetDataBySHA1(t.Name, cat);
+                    byte[] data = Tools.GetDataBySHA1(t.Name, GlobalStuff.getCatFile());
                     if (data.Length != 0)
                     {
                         DAIEbx ebxFile = deserializeEbx(data);
