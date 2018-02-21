@@ -148,6 +148,7 @@ namespace DAI_Tools.EBXExplorer
 
         private class Metadata
         {
+            public List<string> partials;
             public AStruct dataRoot;
             public Dictionary<string, NodeDesc> nodeGuidToNodeDesc = new Dictionary<string, NodeDesc>();
             public List<Edge> edges = new List<Edge>();
@@ -172,6 +173,7 @@ namespace DAI_Tools.EBXExplorer
 
             /* draw graph */
             var metadata = new Metadata();
+            metadata.partials = uiGraphAsset.partialsList;
             metadata.dataRoot = uiGraphAsset.data;
             
             processObjects(metadata);
@@ -300,20 +302,33 @@ namespace DAI_Tools.EBXExplorer
 
         private void processObjects(Metadata mdata)
         {
-            var objectRefsArray = mdata.dataRoot.get("Objects").castTo<AArray>();
-            var objects = new List<Tuple<string, AStruct>>(objectRefsArray.elements.Count);
-
-            foreach (var possiblyRef in objectRefsArray.elements)
+            var objects = new List<Tuple<string, AStruct>>();
+            
+            if (mdata.partials.Contains("PrefabBlueprint"))
             {
-                if (possiblyRef.Type == ValueTypes.IN_REF)
+                var objectRefsArray = mdata.dataRoot.get("Objects").castTo<AArray>();
+
+                foreach (var possiblyRef in objectRefsArray.elements)
                 {
-                    var inRef = possiblyRef.castTo<AIntRef>();
-                    var referencedData = ebxDataContainers.instances[inRef.instanceGuid].data;
-                    objects.Add(new Tuple<string, AStruct>(inRef.instanceGuid, referencedData));
+                    if (possiblyRef.Type == ValueTypes.IN_REF)
+                    {
+                        var inRef = possiblyRef.castTo<AIntRef>();
+                        var referencedData = ebxDataContainers.instances[inRef.instanceGuid].data;
+                        objects.Add(new Tuple<string, AStruct>(inRef.instanceGuid, referencedData));
+                    }
+                    else 
+                        throw new Exception("Incorret type found in array: " + possiblyRef.Type);
                 }
-                else 
-                    throw new Exception("Incorret type found in array: " + possiblyRef.Type);
             }
+            else if (mdata.partials.Contains("ObjectBlueprint"))
+            {
+                foreach (var instance in ebxDataContainers.instances.Values)
+                    if (instance.guid != assetGuid)
+                        objects.Add(new Tuple<string, AStruct>(instance.guid, instance.data));
+            }
+            else
+                throw new Exception("Unsupported blueprint encountered");
+            
 
             foreach (var t in objects)
             {
@@ -343,6 +358,9 @@ namespace DAI_Tools.EBXExplorer
                 addAsPorts(ifaceNodeDesc, extractIdsFromArray(ifaceAstruct.get("OutputEvents")), Type.EVENT, Dir.OUT);
                 addAsPorts(ifaceNodeDesc, extractIdsFromArray(ifaceAstruct.get("InputLinks")), Type.LINK, Dir.IN);
                 addAsPorts(ifaceNodeDesc, extractIdsFromArray(ifaceAstruct.get("OutputLinks")), Type.LINK, Dir.OUT);
+
+                if (mdata.nodeGuidToNodeDesc.ContainsKey(inref.instanceGuid))
+                    mdata.nodeGuidToNodeDesc.Remove(inref.instanceGuid);
 
                 mdata.nodeGuidToNodeDesc.Add(inref.instanceGuid, ifaceNodeDesc);
             }
